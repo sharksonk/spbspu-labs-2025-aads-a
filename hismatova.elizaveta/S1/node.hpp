@@ -7,10 +7,10 @@ namespace hismatova
   struct Node
   {
     T data;
-    Node< T >* next;
-    Node(const T& value):
+    Node* next;
+    Node(const T& value, Node* nextNode = nullptr):
       data(value),
-      next(nullptr)
+      next(nextNode)
     {}
   };
 }
