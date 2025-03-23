@@ -4,7 +4,7 @@
 #include <utility>
 namespace hismatova
 {
-  template <typename T>
+  template < typename T >
   class List
   {
   private:
@@ -36,7 +36,7 @@ namespace hismatova
       fake = new Node(T());
       fake->next = fake;
     }
-    List(std::initializer_list<T> ilist) : List()
+    List(std::initializer_list< T > ilist) : List()
     {
       for (const auto& val : ilist) push_back(val);
     }

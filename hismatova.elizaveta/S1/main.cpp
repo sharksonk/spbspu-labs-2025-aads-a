@@ -4,6 +4,7 @@
 #include <numeric>
 #include <sstream>
 #include <stdexcept>
+#include <limits>
 #include <initializer_list>
 #include "list.hpp"
 
@@ -12,12 +13,17 @@ int main()
   using namespace hismatova;
   std::vector< std::pair< std::string, List< int > > > sequences;
   std::string name;
-  int num = 0;
+  unsigned long long num = 0;
   while (std::cin >> name)
   {
     List< int > numbers;
     while (std::cin.peek() != '\n' && std::cin >> num)
     {
+      if (num > std::numeric_limits< int >::max())
+      {
+        std::cerr << "ERROR: overflow\n";
+        return 1;
+      }
       numbers.push_back(num);
     }
     sequences.emplace_back(name, numbers);
@@ -27,9 +33,13 @@ int main()
     std::cout << "0\n";
     return 0;
   }
-  for (const auto& seq: sequences)
+  for (size_t i = 0; i < sequences.size(); ++i)
   {
-    std::cout << seq.first << " ";
+    std::cout << sequences[i].first;
+    if (i < sequences.size() - 1)
+    {
+      std::cout << " ";
+    }
   }
   std::cout << "\n";
   size_t max_length = 0;
@@ -55,9 +65,13 @@ int main()
   }
   for (const auto& v_seq: vertical_sequences)
   {
-    for (int num: v_seq)
+    for (size_t j = 0; j < v_seq.size(); ++j)
     {
-      std::cout << num << " ";
+      std::cout << v_seq[j];
+      if (j < v_seq.size() - 1)
+      {
+        std::cout << " ";
+      }
     }
     std::cout << "\n";
   }
@@ -75,9 +89,18 @@ int main()
     std::cerr << "ERROR: empty sequence\n";
     return 1;
   }
-  for (int sum: sums)
+  if (sums.empty())
   {
-    std::cout << sum << " ";
+    std::cout << "0\n";
+    return 0;
+  }
+  for (size_t i = 0; i < sums.size(); ++i)
+  {
+    std::cout << sums[i];
+    if (i < sums.size() - 1)
+    {
+      std::cout << " ";
+    }
   }
   std::cout << "\n";
   return 0;

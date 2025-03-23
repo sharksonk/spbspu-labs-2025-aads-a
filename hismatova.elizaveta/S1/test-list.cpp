@@ -1,9 +1,10 @@
 #include <boost/test/unit_test.hpp>
 #include "main.cpp"
+using namespace hismatova;
 
 BOOST_AUTO_TEST_CASE(constructorAndPushBack)
 {
-  List<int> lst;
+  List< int > lst;
   BOOST_TEST(lst.empty());
   BOOST_TEST(lst.size() == 0);
 
@@ -18,7 +19,7 @@ BOOST_AUTO_TEST_CASE(constructorAndPushBack)
 
 BOOST_AUTO_TEST_CASE(popFront)
 {
-  List<int> lst;
+  List< int > lst;
   lst.push_back(10);
   lst.push_back(20);
 
@@ -30,15 +31,15 @@ BOOST_AUTO_TEST_CASE(popFront)
 
 BOOST_AUTO_TEST_CASE(initializerListConstructor)
 {
-  List<int> lst = { 1, 2, 3, 4 };
+  List< int > lst = { 1, 2, 3, 4 };
   BOOST_TEST(lst.size() == 4);
   BOOST_TEST(lst.front() == 1);
 }
 
 BOOST_AUTO_TEST_CASE(copyConstructor)
 {
-  List<int> lst1 = { 1, 2, 3 };
-  List<int> lst2 = lst1;
+  List< int > lst1 = { 1, 2, 3 };
+  List< int > lst2 = lst1;
 
   BOOST_TEST(lst1.size() == lst2.size());
   BOOST_TEST(lst1 == lst2);
@@ -46,8 +47,8 @@ BOOST_AUTO_TEST_CASE(copyConstructor)
 
 BOOST_AUTO_TEST_CASE(assignmentOperator)
 {
-  List<int> lst1 = { 1, 2, 3 };
-  List<int> lst2;
+  List< int > lst1 = { 1, 2, 3 };
+  List< int > lst2;
   lst2 = lst1;
 
   BOOST_TEST(lst1.size() == lst2.size());
@@ -56,8 +57,8 @@ BOOST_AUTO_TEST_CASE(assignmentOperator)
 
 BOOST_AUTO_TEST_CASE(moveConstructor)
 {
-  List<int> lst1 = { 1, 2, 3 };
-  List<int> lst2 = std::move(lst1);
+  List< int > lst1 = { 1, 2, 3 };
+  List< int > lst2 = std::move(lst1);
 
   BOOST_TEST(lst2.size() == 3);
   BOOST_TEST(lst1.size() == 0);
@@ -65,16 +66,16 @@ BOOST_AUTO_TEST_CASE(moveConstructor)
 
 BOOST_AUTO_TEST_CASE(remove)
 {
-  List<int> lst = { 1, 2, 3, 4, 5 };
+  List< int > lst = { 1, 2, 3, 4, 5 };
   lst.remove(3);
 
   BOOST_TEST(lst.size() == 4);
-  BOOST_TEST(!(lst == List<int>({ 1, 2, 3, 4, 5 })));
+  BOOST_TEST(!(lst == List< int >({ 1, 2, 3, 4, 5 })));
 }
 
 BOOST_AUTO_TEST_CASE(reverse)
 {
-  List<int> lst = { 1, 2, 3, 4, 5 };
+  List< int > lst = { 1, 2, 3, 4, 5 };
   lst.reverse();
 
   BOOST_TEST(lst.front() == 5);
@@ -83,7 +84,7 @@ BOOST_AUTO_TEST_CASE(reverse)
 
 BOOST_AUTO_TEST_CASE(iterators)
 {
-  List<int> lst = { 1, 2, 3 };
+  List< int > lst = { 1, 2, 3 };
 
   auto it = lst.begin();
   BOOST_TEST(*it == 1);
@@ -95,8 +96,8 @@ BOOST_AUTO_TEST_CASE(iterators)
 
 BOOST_AUTO_TEST_CASE(swap)
 {
-  List<int> lst1 = { 1, 2 };
-  List<int> lst2 = { 3, 4, 5 };
+  List< int > lst1 = { 1, 2 };
+  List< int > lst2 = { 3, 4, 5 };
 
   lst1.swap(lst2);
 
@@ -108,7 +109,7 @@ BOOST_AUTO_TEST_CASE(swap)
 
 BOOST_AUTO_TEST_CASE(insert)
 {
-  List<int> lst = { 1, 2, 4, 5 };
+  List< int > lst = { 1, 2, 4, 5 };
 
   auto it = lst.begin();
   ++it;
@@ -131,9 +132,9 @@ BOOST_AUTO_TEST_CASE(insert)
 
 BOOST_AUTO_TEST_CASE(equalityOperator)
 {
-  List<int> lst1 = { 1, 2, 3 };
-  List<int> lst2 = { 1, 2, 3 };
-  List<int> lst3 = { 1, 2 };
+  List< int > lst1 = { 1, 2, 3 };
+  List< int > lst2 = { 1, 2, 3 };
+  List< int > lst3 = { 1, 2 };
 
   BOOST_TEST(lst1 == lst2);
   BOOST_TEST(!(lst1 == lst3));
@@ -141,7 +142,7 @@ BOOST_AUTO_TEST_CASE(equalityOperator)
 
 BOOST_AUTO_TEST_CASE(erase)
 {
-  List<int> lst = { 1, 2, 3, 4 };
+  List< int > lst = { 1, 2, 3, 4 };
   auto it = lst.begin();
   ++it;
   lst.erase(it);
@@ -155,7 +156,7 @@ BOOST_AUTO_TEST_CASE(erase)
 
 BOOST_AUTO_TEST_CASE(empty)
 {
-  List<int> lst;
+  List< int > lst;
   BOOST_TEST(lst.empty());
 
   lst.push_back(10);
@@ -164,13 +165,13 @@ BOOST_AUTO_TEST_CASE(empty)
 
 BOOST_AUTO_TEST_CASE(verticalSums)
 {
-  std::vector<std::pair<std::string, List<int>>> sequences;
-  sequences.emplace_back("Seq1", List<int>{1, 2, 3});
-  sequences.emplace_back("Seq2", List<int>{4, 5});
-  sequences.emplace_back("Seq3", List<int>{6, 7, 8, 9});
+  std::vector<std::pair<std::string, List< int >>> sequences;
+  sequences.emplace_back("Seq1", List< int >{1, 2, 3});
+  sequences.emplace_back("Seq2", List< int >{4, 5});
+  sequences.emplace_back("Seq3", List< int >{6, 7, 8, 9});
 
-  std::vector<int> sums;
-  std::vector<std::vector<int>> vertical_sequences = { {1, 4, 6}, {2, 5, 7}, {3, 8}, {9} };
+  std::vector< int > sums;
+  std::vector<std::vector< int >> vertical_sequences = { {1, 4, 6}, {2, 5, 7}, {3, 8}, {9} };
 
   for (const auto& v_seq : vertical_sequences) {
     if (!v_seq.empty()) {
@@ -188,7 +189,7 @@ BOOST_AUTO_TEST_CASE(verticalSums)
 
 BOOST_AUTO_TEST_CASE(emptyListOperations)
 {
-  List<int> lst;
+  List< int > lst;
 
   lst.push_back(10);
   BOOST_TEST(lst.front() == 10);
@@ -202,8 +203,8 @@ BOOST_AUTO_TEST_CASE(emptyListOperations)
 
 BOOST_AUTO_TEST_CASE(assign)
 {
-  List<int> lst = { 1, 2, 3 };
-  List<int> lst2;
+  List< int > lst = { 1, 2, 3 };
+  List< int > lst2;
   lst2.assign({ 4, 5, 6 });
 
   BOOST_TEST(lst2.size() == 3);
@@ -217,7 +218,7 @@ BOOST_AUTO_TEST_CASE(assign)
 
 BOOST_AUTO_TEST_CASE(reverseEmptyList)
 {
-  List<int> lst;
+  List< int > lst;
   lst.reverse();
 
   BOOST_TEST(lst.empty());
@@ -225,7 +226,7 @@ BOOST_AUTO_TEST_CASE(reverseEmptyList)
 
 BOOST_AUTO_TEST_CASE(circularList)
 {
-  List<int> lst = { 1, 2, 3 };
+  List< int > lst = { 1, 2, 3 };
 
   auto it = lst.begin();
   ++it;
