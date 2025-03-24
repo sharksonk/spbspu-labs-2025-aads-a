@@ -14,6 +14,7 @@ int main()
   std::vector< std::pair< std::string, List< int > > > sequences;
   std::string name;
   unsigned long long num = 0;
+  bool overflow = false;
   while (std::cin >> name)
   {
     List< int > numbers;
@@ -21,12 +22,17 @@ int main()
     {
       if (num > std::numeric_limits< int >::max())
       {
-        std::cerr << "ERROR: overflow\n";
-        return 1;
+        overflow = true;
+        continue;
       }
       numbers.push_back(num);
     }
     sequences.emplace_back(name, numbers);
+  }
+  if (overflow)
+  {
+    std::cerr << "ERROR: overflow\n";
+    return 1;
   }
   if (sequences.empty())
   {
