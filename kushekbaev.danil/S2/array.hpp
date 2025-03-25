@@ -6,6 +6,13 @@
 namespace kushekbaev
 {
   template< typename T >
+  class Queue;
+
+  template< typename T >
+  class Stack;
+
+
+  template< typename T >
   class Array
   {
     public:
@@ -33,6 +40,8 @@ namespace kushekbaev
       size_t size_;
       size_t capacity_;
       void resizeArray();
+      friend class Queue<T>;
+      friend class Stack<T>;
   };
 
   template< typename T >
@@ -146,7 +155,7 @@ namespace kushekbaev
     {
       data_[i - 1] = data_[i];
     }
-    --size_;
+    --size;
   }
 
   template< typename T >

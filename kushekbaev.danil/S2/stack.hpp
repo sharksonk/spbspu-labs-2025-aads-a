@@ -65,13 +65,13 @@ namespace kushekbaev
   template< typename T >
   T& Stack< T >::top() noexcept
   {
-    return const_cast< T & >(static_cast< const Stack< T > & >(*this).top());
+    return const_cast< T& >(static_cast< const Stack< T >& >(*this).top());
   }
 
   template< typename T >
   const T& Stack< T >::top() const noexcept
   {
-    return const_cast< T & >(static_cast< const Stack< T > & >(*this).top());
+    return const_cast< T& >(static_cast< const Stack< T >& >(*this).top());
   }
 
   template< typename T >

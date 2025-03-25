@@ -2,7 +2,6 @@
 #define QUEUE_HPP
 
 #include "array.hpp"
-#include <stdexcept>
 
 namespace kushekbaev
 {
@@ -62,7 +61,7 @@ namespace kushekbaev
   template< typename T >
   T& Queue< T >::back() noexcept
   {
-    return array_.back();
+    return array_.data();
   }
 
   template< typename T >
@@ -74,7 +73,7 @@ namespace kushekbaev
   template< typename T >
   const T& Queue< T >::back() const noexcept
   {
-    return array_.back();
+    return array_.data();
   }
 
   template< typename T >
@@ -92,7 +91,7 @@ namespace kushekbaev
   template< typename T >
   void Queue< T >::push(const T& value)
   {
-    array_.push_back(value);
+   return array_.push_back(value);
   }
 
   template< typename T >
@@ -103,7 +102,7 @@ namespace kushekbaev
       throw std::out_of_range("The array in the queue is empty!");
     }
     T tmp = front();
-    array_.pop_front();
+    --array_.size_;
     return tmp;
   }
 
