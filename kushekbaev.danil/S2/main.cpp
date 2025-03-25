@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
     kushekbaev::output(std::cout, results);
     std::cout << "\n";
   }
+
   catch (std::exception& e)
   {
     std::cerr << e.what() << "\n";
