@@ -91,9 +91,9 @@ namespace kushekbaev
   template< typename T >
   void Queue< T >::push(const T& value)
   {
-   return array_.push_back(value);
+    return array_.push_back(value);
   }
-
+ 
   template< typename T >
   T Queue< T >::drop()
   {
@@ -102,7 +102,7 @@ namespace kushekbaev
       throw std::out_of_range("The array in the queue is empty!");
     }
     T tmp = front();
-    --array_.size_;
+    array_.pop_front();
     return tmp;
   }
 
@@ -113,7 +113,7 @@ namespace kushekbaev
     {
       throw std::out_of_range("The array in the queue is empty!");
     }
-    array_.pop_front();
+    --array_.size_;
   }
 }
 

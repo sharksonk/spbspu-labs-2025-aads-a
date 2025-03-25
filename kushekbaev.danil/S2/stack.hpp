@@ -99,7 +99,7 @@ namespace kushekbaev
     {
       throw std::out_of_range("The array in the queue is empty!");
     }
-    array_.pop_front();
+    --array_.size_;
   }
 }
 

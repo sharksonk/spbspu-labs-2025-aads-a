@@ -11,7 +11,6 @@ namespace kushekbaev
   template< typename T >
   class Stack;
 
-
   template< typename T >
   class Array
   {
