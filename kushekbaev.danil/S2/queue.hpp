@@ -93,7 +93,7 @@ namespace kushekbaev
   {
     return array_.push_back(value);
   }
- 
+  
   template< typename T >
   T Queue< T >::drop()
   {
