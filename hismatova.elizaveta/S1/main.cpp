@@ -13,19 +13,22 @@ int main()
   using namespace hismatova;
   std::vector< std::pair< std::string, List< int > > > sequences;
   std::string name;
-  unsigned long long num = 0;
-  bool overflow = false;
   while (std::cin >> name)
   {
     List< int > numbers;
-    while (std::cin.peek() != '\n' && std::cin >> num)
+    std::string num_str;
+    while (std::cin.peek() != '\n' && std::cin >> num_str)
     {
-      if (num > std::numeric_limits< int >::max())
+      try
       {
-        overflow = true;
-        break;
+        unsigned long long num = std::stoull(num_str);
+        numbers.push_back(static_cast< int >(num));
       }
-      numbers.push_back(num);
+      catch (const std::exception&)
+      {
+        std::cerr << "ERROR: overflow\n";
+        return 1;
+      }
     }
     sequences.emplace_back(name, numbers);
   }
@@ -33,11 +36,6 @@ int main()
   {
     std::cout << "0\n";
     return 0;
-  }
-  if (overflow)
-  {
-    std::cerr << "ERROR: overflow\n";
-    return 1;
   }
   for (size_t i = 0; i < sequences.size(); ++i)
   {
