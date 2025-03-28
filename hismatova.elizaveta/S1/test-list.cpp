@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "list.h"
+#include "list.hpp"
 using namespace hismatova;
 
 BOOST_AUTO_TEST_CASE(constructorAndPushBack)
