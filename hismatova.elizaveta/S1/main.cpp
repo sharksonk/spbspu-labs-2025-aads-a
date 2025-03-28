@@ -23,21 +23,21 @@ int main()
       if (num > std::numeric_limits< int >::max())
       {
         overflow = true;
-        continue;
+        break;
       }
       numbers.push_back(num);
     }
     sequences.emplace_back(name, numbers);
   }
-  if (overflow)
-  {
-    std::cerr << "ERROR: overflow\n";
-    return 1;
-  }
   if (sequences.empty())
   {
     std::cout << "0\n";
     return 0;
+  }
+  if (overflow)
+  {
+    std::cerr << "ERROR: overflow\n";
+    return 1;
   }
   for (size_t i = 0; i < sequences.size(); ++i)
   {
