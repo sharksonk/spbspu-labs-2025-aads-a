@@ -13,21 +13,21 @@ int main()
   using namespace hismatova;
   std::vector< std::pair< std::string, List< int > > > sequences;
   std::string name;
+  bool over = false;
   while (std::cin >> name)
   {
     List< int > numbers;
-    std::string num_str;
-    while (std::cin.peek() != '\n' && std::cin >> num_str)
+    unsigned long long num = 0;
+    while (std::cin.peek() != '\n' && std::cin >> num)
     {
-      try
+      if (num > std::numeric_limits< int >::max())
       {
-        unsigned long long num = std::stoull(num_str);
-        numbers.push_back(static_cast< int >(num));
+        numbers.push_back(-1);
+        over = true;
       }
-      catch (const std::exception&)
+      else
       {
-        std::cerr << "ERROR: overflow\n";
-        return 1;
+        numbers.push_back(num);
       }
     }
     sequences.emplace_back(name, numbers);
@@ -87,6 +87,11 @@ int main()
       int sum = std::accumulate(v_seq.begin(), v_seq.end(), 0);
       sums.push_back(sum);
     }
+  }
+  if (over)
+  {
+    std::cerr << "ERROR: overflow\n";
+    return 1;
   }
   if (sums.size() != vertical_sequences.size())
   {

@@ -1,6 +1,7 @@
 #ifndef LIST_HPP
 #define LIST_HPP
 #include <cstddef>
+#include <numeric>
 #include <utility>
 namespace hismatova
 {
@@ -19,9 +20,8 @@ namespace hismatova
   public:
     class iterator
     {
-    private:
-      Node* current;
     public:
+      Node* current;
       explicit iterator(Node* node) : current(node) {}
       T& operator*() { return current->data; }
       iterator& operator++()
