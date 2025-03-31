@@ -22,8 +22,8 @@ int main()
     {
       if (num > std::numeric_limits< int >::max())
       {
-        numbers.push_back(-1);
         over = true;
+        continue;
       }
       else
       {
