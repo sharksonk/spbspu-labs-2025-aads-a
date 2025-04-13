@@ -132,7 +132,7 @@ namespace kushekbaev
     {
       resizeArray();
     }
-    data_[++size_] = value;
+    data_[size_++] = value;
   }
 
   template< typename T >
@@ -163,13 +163,21 @@ namespace kushekbaev
   {
     size_t newCapacity = capacity_ * 2;
     T* newData = new T[newCapacity];
-    for (size_t i = 0; i < size_; ++i)
+    try
     {
-      newData[i] = data_[i];
+      for (size_t i = 0; i < size_; ++i)
+      {
+        newData[i] = std::move(data_[i]);
+      }
+      delete[] data_;
+      data_ = newData;
+      capacity_ = newCapacity;
     }
-    delete[] data_;
-    data_ = newData;
-    capacity_ = newCapacity;
+    catch (...)
+    {
+      delete[] newData;
+      throw;
+    }
   }
 }
 

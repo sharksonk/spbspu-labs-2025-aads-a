@@ -65,13 +65,13 @@ namespace kushekbaev
   template< typename T >
   T& Stack< T >::top() noexcept
   {
-    return const_cast< T & >(static_cast< const Stack< T > & >(*this).top());
+    return array_.back();
   }
 
   template< typename T >
   const T& Stack< T >::top() const noexcept
   {
-    return const_cast< T & >(static_cast< const Stack< T > & >(*this).top());
+    return array_.back();
   }
 
   template< typename T >
@@ -88,7 +88,7 @@ namespace kushekbaev
       throw std::out_of_range("The array in the queue is empty!");
     }
     T tmp = top();
-    array_.pop_front();
+    array_.pop_back();
     return tmp;
   }
 
@@ -99,7 +99,7 @@ namespace kushekbaev
     {
       throw std::out_of_range("The array in the queue is empty!");
     }
-    array_.pop_front();
+    array_.pop_back();
   }
 }
 

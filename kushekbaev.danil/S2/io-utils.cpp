@@ -2,43 +2,43 @@
 #include <iostream>
 #include <fstream>
 
-namespace
+void kushekbaev::splitExpr(const std::string& string, kushekbaev::Queue< std::string >& arithmeticQ)
 {
-  void splitExpr(std::string string, kushekbaev::Queue< std::string >& arithmeticQ)
+  std::string symbol;
+  char space = ' ';
+  for (size_t i = 0; i < string.length(); ++i)
   {
-    std::string symbol;
-    const char* space = " ";
-    for (size_t i = 0; i < string.length(); ++i)
+    if (string[i] != space)
     {
-      if (string[i] != *space)
-      {
-        symbol += string[i];
-      }
-      else if (!symbol.empty())
+      symbol += string[i];
+    }
+    else
+    {
+      if (!symbol.empty())
       {
         arithmeticQ.push(symbol);
         symbol.clear();
       }
     }
-    if (!symbol.empty())
-    {
-      arithmeticQ.push(symbol);
-    }
   }
-
-  void inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Queue< std::string > >& Q)
+  if (!symbol.empty())
   {
-    std::string string;
-    while (std::getline(input, string))
+    arithmeticQ.push(symbol);
+  }
+}
+
+void kushekbaev::inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Queue< std::string > >& Q)
+{
+  std::string string;
+  while (std::getline(input, string))
+  {
+    if (string.empty())
     {
-      if (string.empty())
-      {
-        continue;
-      }
-      kushekbaev::Queue< std::string > infixQ;
-      splitExpr(string, infixQ);
-      Q.push(infixQ);
+      continue;
     }
+    kushekbaev::Queue< std::string > infixQ;
+    splitExpr(string, infixQ);
+    Q.push(infixQ);
   }
 }
 
