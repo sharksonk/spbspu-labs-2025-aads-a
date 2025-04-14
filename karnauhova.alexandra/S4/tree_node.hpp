@@ -5,8 +5,8 @@ namespace karnauhova
 {
   enum Color 
   {
-	Red,
-	Black
+	Black,
+	Red
   };
 
   template< typename Key, typename Value >
