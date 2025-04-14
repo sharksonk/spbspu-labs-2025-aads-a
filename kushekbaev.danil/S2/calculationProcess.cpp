@@ -19,7 +19,7 @@ namespace
 
   bool isOperator(const std::string& symbol)
   {
-    return (symbol == "+" || symbol == "-" || symbol == "/" || symbol == "%" || symbol == "*");
+    return (symbol == "+" || symbol == "-" || symbol == "/" || symbol == "%" || symbol == "*" || symbol == "**");
   }
 
   int calculatePriority(const std::string& operation)
@@ -31,6 +31,10 @@ namespace
     if (operation == "*" || operation == "/" || operation == "%")
     {
       return 2;
+    }
+    if (operation == "**")
+    {
+      return 3;
     }
     return 0;
   }
@@ -85,15 +89,73 @@ namespace
     }
     else if (operation == "*")
     {
-      if ((operand2 != 0) && (operand1 > (max / operand2)))
+      if (operand1 > 0)
       {
-        throw std::runtime_error("Multiplication overflow!");
+        if (operand2 > 0)
+        {
+          if (operand1 > max / operand2)
+          {
+            throw std::runtime_error("Multiplication overflow!");
+          }
+          else if (operand2 < min / operand1)
+          {
+            throw std::runtime_error("Multiplication underflow!");
+          }
+        }
       }
-      if ((operand2 != 0) && (operand1 < (min / operand2)))
+      else if (operand1 < 0)
       {
-        throw std::runtime_error("Multiplication underflow!");
+        if (operand2 > 0)
+        {
+          if (operand1 < min / operand2)
+          {
+            throw std::runtime_error("Multiplication underflow!");
+          }
+          else if (operand2 != 0 && operand1 > max / operand2)
+          {
+            throw std::runtime_error("Multiplication overflow!");
+          }
+        }
       }
       return operand1 * operand2;
+    }
+    else if (operation == "**")
+    {
+      if (operand1 == 0)
+      {
+        if (operand2 <= 0)
+        {
+          throw std::runtime_error("Undefined power!");
+        }
+        else
+        {
+          return 0;
+        }
+      }
+      else if (operand2 < 0)
+      {
+        throw std::runtime_error("Negative power!");
+      }
+      else if (operand2 == 0 || operand1 == 1)
+      {
+        return 1;
+      }
+      if (operand1 == -1)
+      {
+        return (operand2 % 2 == 0) ? 1 : -1;
+      }
+      bool isNegative = (operand1 < 0) && (operand2 % 2 != 0);
+      operand1 = std::abs(operand1);
+      long long int result = 1;
+      for (long long int i = 0; i < operand2; ++i)
+      {
+        if (result > max / operand1)
+        {
+          throw std::runtime_error("Power overflow!");
+        }
+        result *= operand1;
+      }
+      return isNegative ? -result : result;
     }
     else
     {
@@ -179,7 +241,7 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
       stack.pop();
       long long int operand1 = stack.top();
       stack.pop();
-      stack.push(calculateOperation(symbol, operand2, operand1));
+      stack.push(calculateOperation(symbol, operand1, operand2));
     }
   }
   long long int result  = stack.top();
