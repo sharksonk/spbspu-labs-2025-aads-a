@@ -1,20 +1,15 @@
 #ifndef TREE_NODE_HPP
 #define TREE_NODE_HPP
-
+#include <utility>
 namespace karnauhova
 {
-  enum Color 
-  {
-	Black,
-	Red
-  };
-
   template< typename Key, typename Value >
   struct TreeNode
   {
-    Color color;
-    std::pair< Key, Value > data;
-    TreeNode< Key, Value >* left, * right, * parent;
+    bool full;
+    std::pair< Key, Value > data1;
+    std::pair< Key, Value > data2;
+    TreeNode< Key, Value >* left, * right, * middle, * parent;
   };
 }
 
