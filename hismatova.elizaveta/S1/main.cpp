@@ -85,6 +85,7 @@ int main()
     }
     std::cout << "\n";
   }
+
   std::vector< int > sums;
   for (const auto& v_seq : vertical_sequences)
   {
@@ -94,16 +95,19 @@ int main()
       sums.push_back(sum);
     }
   }
+
   if (overflow_occurred)
   {
-    std::cerr << "ERROR: overflow\n";
+    std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
     return 1;
   }
+
   if (sums.empty())
   {
     std::cout << "0\n";
     return 0;
   }
+
   for (size_t i = 0; i < sums.size(); ++i)
   {
     std::cout << sums[i];
@@ -115,3 +119,4 @@ int main()
   std::cout << "\n";
   return 0;
 }
+
