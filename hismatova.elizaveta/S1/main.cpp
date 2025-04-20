@@ -43,7 +43,7 @@ int main()
   }
   if (overflow_occurred)
   {
-    std::cout << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
+    std::cout << "Formed lists with exit code 1 and error message in standard error because of overflow";
     return 1;
   }
   if (sequences.empty())
