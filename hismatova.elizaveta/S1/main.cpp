@@ -41,6 +41,11 @@ int main()
       break;
     }
   }
+  if (overflow_occurred)
+  {
+    std::cout << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
+    return 1;
+  }
   if (sequences.empty())
   {
     std::cout << "0\n";
@@ -94,12 +99,6 @@ int main()
       int sum = std::accumulate(v_seq.begin(), v_seq.end(), 0);
       sums.push_back(sum);
     }
-  }
-
-  if (overflow_occurred)
-  {
-    std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
-    return 1;
   }
 
   if (sums.empty())
