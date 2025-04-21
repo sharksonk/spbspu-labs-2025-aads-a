@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstddef>
 #include <stdexcept>
+#include "bitree_iterator.hpp"
 namespace karnauhova
 {
   template< typename Key, typename Value, typename Compare = std::less< Key >>
@@ -11,6 +12,7 @@ namespace karnauhova
   {
   public:
     using Node = TreeNode< Key, Value >;
+    using Iter = BiTreeIterator< Key, Value>;
     BiTree();
     ~BiTree();
 
@@ -18,6 +20,9 @@ namespace karnauhova
     Node* get(Key k);
     Value get_value(Key k);
     Value drop(Key k);
+
+    Iter begin() const noexcept;
+    Iter end() const noexcept;
 
     void clear(Node* root);
   private:
@@ -227,6 +232,18 @@ namespace karnauhova
         }
       }
     }
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename BiTree< Key, Value, Compare >::Iter BiTree< Key, Value, Compare >::begin() const noexcept
+  {
+    return Iter(root_, 0);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename BiTree< Key, Value, Compare >::Iter BiTree< Key, Value, Compare >::end() const noexcept
+  {
+    return Iter(fake_, 0);
   }
 }
 

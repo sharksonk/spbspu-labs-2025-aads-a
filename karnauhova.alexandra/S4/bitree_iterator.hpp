@@ -1,17 +1,24 @@
 #ifndef BITREE_ITERATOR_HPP
 #define BITREE_ITERATOR_HPP
-#include "bitree.hpp"
+#include "tree_node.hpp"
+#include <iostream>
+#include <cstddef>
+#include <stdexcept>
 namespace karnauhova
 {
+  template<typename Key, typename Value, typename Compare>
+  class BiTree;
+
   template< typename Key, typename Value, typename Compare = std::less< Key >>
   struct BiTreeIterator
   {
-    friend BiTree< Key, Value >;
+    friend class BiTree< Key, Value, Compare >;
   public:
+    BiTreeIterator(karnauhova::TreeNode< Key, Value >* node, bool position);
     using this_t = BiTreeIterator< Key, Value >;
-    this_t& operator++() noexcept;
+    this_t operator++() noexcept;
     this_t operator++(int) noexcept;
-    this_t& operator--() noexcept;
+    this_t operator--() noexcept;
     this_t operator--(int) noexcept;
     
     std::pair< Key, Value >& operator*() const;
@@ -27,7 +34,12 @@ namespace karnauhova
   };
 
   template< typename Key, typename Value, typename Compare>
-  typename BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator++() noexcept
+  BiTreeIterator< Key, Value, Compare >::BiTreeIterator(karnauhova::TreeNode< Key, Value >* node, bool position):
+    node_(node),
+    isData2(position)
+  {}
+  template< typename Key, typename Value, typename Compare>
+  typename BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator++() noexcept
   {
     if (!isData2 && node_->full)
     {
@@ -38,10 +50,10 @@ namespace karnauhova
         {
           current = current->left;
         }
-        BiTreeIterator< Key, Value > it{current, 0};
+        BiTreeIterator< Key, Value > it(current, 0);
         return it;
       }
-      BiTreeIterator< Key, Value > it{node_, 1};
+      BiTreeIterator< Key, Value > it(node_, 1);
       return it;
     }
     if (node_->right)
@@ -51,7 +63,7 @@ namespace karnauhova
       {
         current = current->left;
       }
-      BiTreeIterator< Key, Value > it{current, 0};
+      BiTreeIterator< Key, Value > it(current, 0);
       return it;
     }
     TreeNode< Key, Value >* parent = node_->parent;
@@ -63,18 +75,18 @@ namespace karnauhova
     }
     if (parent->middle == last && parent->full)
     {
-      BiTreeIterator< Key, Value > it{parent, 1};
+      BiTreeIterator< Key, Value > it(parent, 1);
       return it;
     }
     else
     {
-      BiTreeIterator< Key, Value > it{parent, 0};
+      BiTreeIterator< Key, Value > it(parent, 0);
       return it;
     }
   }
 
   template< typename Key, typename Value, typename Compare>
-  typename BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator--() noexcept
+  typename BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator--() noexcept
   {
     if (isData2 && node_->full)
     {
@@ -87,16 +99,16 @@ namespace karnauhova
         }
         if (current->full)
         {
-          BiTreeIterator< Key, Value > it{current, 1};
+          BiTreeIterator< Key, Value > it(current, 1);
           return it;
         }
         else
         {
-          BiTreeIterator< Key, Value > it{current, 0};
+          BiTreeIterator< Key, Value > it(current, 0);
           return it;
         }
       }
-      BiTreeIterator< Key, Value > it{node_, 0};
+      BiTreeIterator< Key, Value > it(node_, 0);
       return it;
     }
     if (node_->left)
@@ -108,12 +120,12 @@ namespace karnauhova
       }
       if (node_->full)
       {
-        BiTreeIterator< Key, Value > it{current, 1};
+        BiTreeIterator< Key, Value > it(current, 1);
         return it;
       }
       else
       {
-        BiTreeIterator< Key, Value > it{current, 0};
+        BiTreeIterator< Key, Value > it(current, 0);
         return it;
       }
     }
@@ -126,12 +138,12 @@ namespace karnauhova
     }
     if (parent->right == last && parent->full)
     {
-      BiTreeIterator< Key, Value > it{parent, 1};
+      BiTreeIterator< Key, Value > it(parent, 1);
       return it;
     }
     else
     {
-      BiTreeIterator< Key, Value > it{parent, 0};
+      BiTreeIterator< Key, Value > it(parent, 0);
       return it;
     }
   }

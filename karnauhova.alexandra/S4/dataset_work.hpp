@@ -7,6 +7,6 @@ namespace karnauhova
 {
   using TreeKey = karnauhova::BiTree< size_t, std::string >;
   using DataTree = karnauhova::BiTree< std::string, TreeKey >;
-  void print_dataset(std::ostream& out, std::string named, DataTree* dataset);
+  void print_dataset(std::ostream& out, std::string named, DataTree& dataset);
 }
 #endif
