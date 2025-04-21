@@ -5,8 +5,8 @@
 
 int main()
 {
-  using TreeKey = karnauhova::BiTree< size_t, std::string >;
-  using DataTree = karnauhova::BiTree< std::string, TreeKey >;
+  //using TreeKey = karnauhova::BiTree< size_t, std::string >;
+  //using DataTree = karnauhova::BiTree< std::string, TreeKey >;
 
 }
 /* karnauhova::BiTree< size_t, std::string, std::less< std::pair< size_t, std::string > > > meow;

@@ -8,7 +8,7 @@ namespace karnauhova
   {
     friend BiTree< Key, Value >;
   public:
-    using this_t = BiTreeIterator< Key, T, Cmp >;
+    using this_t = BiTreeIterator< Key, Value >;
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
     this_t& operator--() noexcept;
@@ -27,7 +27,7 @@ namespace karnauhova
   };
 
   template< typename Key, typename Value, typename Compare>
-  BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator++() noexcept
+  typename BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator++() noexcept
   {
     if (!isData2 && node_->full)
     {
@@ -64,16 +64,17 @@ namespace karnauhova
     if (parent->middle == last && parent->full)
     {
       BiTreeIterator< Key, Value > it{parent, 1};
+      return it;
     }
     else
     {
       BiTreeIterator< Key, Value > it{parent, 0};
+      return it;
     }
-    return it;
   }
 
   template< typename Key, typename Value, typename Compare>
-  BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator--() noexcept
+  typename BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator--() noexcept
   {
     if (isData2 && node_->full)
     {
@@ -87,12 +88,13 @@ namespace karnauhova
         if (current->full)
         {
           BiTreeIterator< Key, Value > it{current, 1};
+          return it;
         }
         else
         {
           BiTreeIterator< Key, Value > it{current, 0};
+          return it;
         }
-        return it;
       }
       BiTreeIterator< Key, Value > it{node_, 0};
       return it;
@@ -107,12 +109,13 @@ namespace karnauhova
       if (node_->full)
       {
         BiTreeIterator< Key, Value > it{current, 1};
+        return it;
       }
       else
       {
         BiTreeIterator< Key, Value > it{current, 0};
+        return it;
       }
-      return it;
     }
     TreeNode< Key, Value >* parent = node_->parent;
     TreeNode< Key, Value >* last = node_;
@@ -124,16 +127,17 @@ namespace karnauhova
     if (parent->right == last && parent->full)
     {
       BiTreeIterator< Key, Value > it{parent, 1};
+      return it;
     }
     else
     {
       BiTreeIterator< Key, Value > it{parent, 0};
+      return it;
     }
-    return it;
   }
 
   template< typename Key, typename Value, typename Compare>
-  BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator++(int) noexcept
+  typename BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator++(int) noexcept
   {
     this_t res(*this);
     ++(*this);
@@ -141,7 +145,7 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare>
-  BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator--(int) noexcept
+  typename BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator--(int) noexcept
   {
     this_t res(*this);
     --(*this);
@@ -161,7 +165,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare>
   const Value& BiTreeIterator< Key, Value, Compare >::value() const
   {
-    return (*this_t).second;
+    return *this.second;
   }
 
   template< typename Key, typename Value, typename Compare>

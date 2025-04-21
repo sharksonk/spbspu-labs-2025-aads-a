@@ -140,7 +140,7 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  BiTree< Key, Value, Compare >::Node* BiTree< Key, Value, Compare >::get(Key k)
+  typename BiTree< Key, Value, Compare >::Node* BiTree< Key, Value, Compare >::get(Key k)
   {
     Node* now = root_;
     if (!now)
@@ -220,7 +220,7 @@ namespace karnauhova
           right_brother->data1 = right_brother->data2;
           right_brother->data2 = 0;
           right_brother->full = 0;
-          while (right_brother->left != fake)
+          while (right_brother->left != fake_)
           {
             
           }
