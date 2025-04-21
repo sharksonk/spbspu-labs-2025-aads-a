@@ -6,125 +6,196 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare = std::less< Key >>
   struct BiTreeIterator
   {
+    friend BiTree< Key, Value >;
   public:
-    bool hasPrev() const;
-    bool hasNext() const;
-    BiTreeIterator< Key, Value > next() const;
-    BiTreeIterator< Key, Value > prev() const;
+    using this_t = BiTreeIterator< Key, T, Cmp >;
+    this_t& operator++() noexcept;
+    this_t operator++(int) noexcept;
+    this_t& operator--() noexcept;
+    this_t operator--(int) noexcept;
+    
+    std::pair< Key, Value >& operator*() const;
+    std::pair< Key, Value >* operator->() const noexcept;
+
+    bool operator==(const this_t& rhs) const noexcept;
+    bool operator!=(const this_t& rhs) const noexcept;
     
     const Value& value() const;
   private:
-    karnauhova::BiTree< Key, Value >* node_;
+    karnauhova::TreeNode< Key, Value >* node_;
+    bool isData2;
   };
 
   template< typename Key, typename Value, typename Compare>
-  bool BiTreeIterator< Key, Value, Compare >::hasPrev() const
+  BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator++() noexcept
   {
-    if (node_ == nullptr)
+    if (!isData2 && node_->full)
     {
-        return false;
-    }
-    if (node->left)
-    {
-        return true;
-    }
-    BiTree< Key, Value >* last = node_;
-    while(last->parent)
-    {
-        BiTree< Key, Value >* parent = last->parent;
-        if (parent->right == last)
-        {
-        return true;
-        }
-        last = last->parent;
-    }
-    return false;
-    }
-
-    template< class T >
-    bool BiTreeIterator< T >::hasNext() const
-    {
-    if (node == nullptr)
-    {
-        return false;
-    }
-    if (node->right)
-    {
-        return true;
-    }
-    BiTree< T >* last = node;
-    while(last->parent)
-    {
-        BiTree< T >* parent = last->parent;
-        if (parent->left == last)
-        {
-        return true;
-        }
-        last = last->parent;
-    }
-    return false;
-    }
-
-    template< class T >
-    BiTreeIterator< T > BiTreeIterator< T >::next() const
-    {
-    if (!hasNext())
-    {
-        throw std::logic_error("Error: no next");
-    }
-    if (node->right)
-    {
-        BiTree< T >* current = node->right;
+      if (node_->middle)
+      {
+        TreeNode< Key, Value >* current = node_->middle;
         while (current->left)
         {
-        current = current->left;
+          current = current->left;
         }
-        BiTreeIterator< T > it{current};
+        BiTreeIterator< Key, Value > it{current, 0};
         return it;
+      }
+      BiTreeIterator< Key, Value > it{node_, 1};
+      return it;
     }
-    BiTree< T >* parent = node->parent;
-    BiTree< T >* last = node;
-    while (parent->left != last && parent->parent)
+    if (node_->right)
     {
-        last = last->parent;
-        parent = parent->parent;
+      TreeNode< Key, Value >* current = node_->right;
+      while (current->left)
+      {
+        current = current->left;
+      }
+      BiTreeIterator< Key, Value > it{current, 0};
+      return it;
     }
-    BiTreeIterator< T > it{parent};
+    TreeNode< Key, Value >* parent = node_->parent;
+    TreeNode< Key, Value >* last = node_;
+    while ((parent->left != last || parent->middle != last) && parent->parent)
+    {
+      last = last->parent;
+      parent = parent->parent;
+    }
+    if (parent->middle == last && parent->full)
+    {
+      BiTreeIterator< Key, Value > it{parent, 1};
+    }
+    else
+    {
+      BiTreeIterator< Key, Value > it{parent, 0};
+    }
     return it;
-    }
+  }
 
-    template< class T >
-    BiTreeIterator< T > BiTreeIterator< T >::prev() const
+  template< typename Key, typename Value, typename Compare>
+  BiTreeIterator< Key, Value, Compare >::this_t& BiTreeIterator< Key, Value, Compare >::operator--() noexcept
+  {
+    if (isData2 && node_->full)
     {
-    if (!hasPrev())
-    {
-        throw std::logic_error("Error: no prev");
-    }
-    if (node->left)
-    {
-        BiTree< T >* current = node->left;
+      if (node_->middle)
+      {
+        TreeNode< Key, Value >* current = node_->middle;
         while (current->right)
         {
-        current = current->right;
+          current = current->right;
         }
-        BiTreeIterator< T > it{current};
+        if (current->full)
+        {
+          BiTreeIterator< Key, Value > it{current, 1};
+        }
+        else
+        {
+          BiTreeIterator< Key, Value > it{current, 0};
+        }
         return it;
+      }
+      BiTreeIterator< Key, Value > it{node_, 0};
+      return it;
     }
-    BiTree< T >* parent = node->parent;
-    BiTree< T >* last = node;
-    while (parent->right != last && parent->parent)
+    if (node_->left)
     {
-        last = last->parent;
-        parent = parent->parent;
+      TreeNode< Key, Value >* current = node_->left;
+      while (current->right)
+      {
+        current = current->right;
+      }
+      if (node_->full)
+      {
+        BiTreeIterator< Key, Value > it{current, 1};
+      }
+      else
+      {
+        BiTreeIterator< Key, Value > it{current, 0};
+      }
+      return it;
     }
-    BiTreeIterator< T > it{parent};
+    TreeNode< Key, Value >* parent = node_->parent;
+    TreeNode< Key, Value >* last = node_;
+    while ((parent->right != last || parent->middle != last) && parent->parent)
+    {
+      last = last->parent;
+      parent = parent->parent;
+    }
+    if (parent->right == last && parent->full)
+    {
+      BiTreeIterator< Key, Value > it{parent, 1};
+    }
+    else
+    {
+      BiTreeIterator< Key, Value > it{parent, 0};
+    }
     return it;
-    }
+  }
 
-    template< class T >
-    const T& BiTreeIterator< T >::data() const
+  template< typename Key, typename Value, typename Compare>
+  BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator++(int) noexcept
+  {
+    this_t res(*this);
+    ++(*this);
+    return res;
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  BiTreeIterator< Key, Value, Compare >::this_t BiTreeIterator< Key, Value, Compare >::operator--(int) noexcept
+  {
+    this_t res(*this);
+    --(*this);
+    return res;
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  std::pair< Key, Value >& BiTreeIterator< Key, Value, Compare >::operator*() const
+  {
+    if (isData2)
     {
-    return node->data;
+      return node_->data2;
     }
+    return node_->data1;
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  const Value& BiTreeIterator< Key, Value, Compare >::value() const
+  {
+    return (*this_t).second;
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  std::pair< Key, Value >* BiTreeIterator< Key, Value, Compare >::operator->() const noexcept
+  {
+    if (isData2)
+    {
+      return std::addressof(node_->data2);
+    }
+    return std::addressof(node_->data1);
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  bool BiTreeIterator< Key, Value, Compare >::operator==(const this_t& rhs) const noexcept
+  {
+    if (isData2)
+    {
+      if (rhs.isData2)
+      {
+        return node_->data2 == rhs.node_->data2;
+      }
+      return node_->data2 == rhs.node_->data1;
+    }
+    if (rhs.isData2)
+    {
+      return node_->data1 == rhs.node_->data2;
+    }
+    return node_->data1 == rhs.node_->data1;
+  }
+
+  template< typename Key, typename Value, typename Compare>
+  bool BiTreeIterator< Key, Value, Compare >::operator!=(const this_t& rhs) const noexcept
+  {
+    return !(*this == rhs);
+  }
 }
 #endif
