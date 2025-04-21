@@ -202,6 +202,30 @@ namespace karnauhova
         it->data2 = 0;
         it->full = 0;
       }
+      else
+      {
+
+      }
+    }
+    if (!it->full)
+    {
+      Node* parent = it->parent;
+      if (parent->left == it)
+      {
+        Node* right_brother = parent->right;
+        if (right_brother->full && !parent->full)
+        {
+          it->data1 = parent->data1;
+          parent->data1 = right_brother->data1;
+          right_brother->data1 = right_brother->data2;
+          right_brother->data2 = 0;
+          right_brother->full = 0;
+          while (right_brother->left != fake)
+          {
+            
+          }
+        }
+      }
     }
   }
 }
