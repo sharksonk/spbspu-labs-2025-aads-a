@@ -6,7 +6,7 @@
 #include <stdexcept>
 namespace karnauhova
 {
-  template< typename Key, typename Value, typename Compare >
+  template< typename Key, typename Value, typename Compare = std::less< Key >>
   class BiTree
   {
   public:
