@@ -29,7 +29,7 @@ namespace karnauhova
     
     const Value& value() const;
   private:
-    karnauhova::TreeNode< Key, Value >* node_;
+    TreeNode< Key, Value >* node_;
     bool isData2;
   };
 

@@ -11,10 +11,10 @@ namespace
   using DataTree = karnauhova::BiTree< std::string, TreeKey >;
   void input_trees(std::ifstream& in, DataTree& map_trees)
   {
-    TreeKey tree_value;
     std::string name_map;
     while (!in.eof())
     {
+      TreeKey tree_value;
       in >> name_map;
       size_t key = 0;
       while (in >> key)
@@ -22,8 +22,10 @@ namespace
         std::string value;
         in >> value;
         tree_value.push(key, value);
+        std::cout << "1";
       }
       map_trees.push(name_map, tree_value);
+      in.clear();
     }
   }
 }
@@ -45,7 +47,7 @@ int main(int argc, char* argv[])
   }
   catch(const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    std::cerr << "1" << e.what() << '\n';
     return 1;
   }
   while (!std::cin.eof())

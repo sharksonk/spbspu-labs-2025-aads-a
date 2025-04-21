@@ -24,11 +24,13 @@ namespace karnauhova
     Iter begin() const noexcept;
     Iter end() const noexcept;
 
-    void clear(Node* root);
+    void clear();
+    Node* getNode();
   private:
     Node* fake_;
     Node* root_;
     size_t size_;
+    void clear_tree(Node* root);
   };
 
   template< typename Key, typename Value, typename Compare >
@@ -39,31 +41,48 @@ namespace karnauhova
   {}
 
   template< typename Key, typename Value, typename Compare >
-  BiTree< Key, Value, Compare >::~BiTree()
+  void BiTree< Key, Value, Compare >::clear_tree(Node* root)
   {
-    clear(root_);
-    delete[] reinterpret_cast< char* >(fake_);
-  } 
-
-  template< typename Key, typename Value, typename Compare >
-  void BiTree< Key, Value, Compare >::clear(Node* root)
-  {
-    if (root == fake_)
+    if (!root || root == fake_)
     {
       return;
     }
-    clear(root->left);
-    clear(root->right);
+    clear_tree(root->left);
+    clear_tree(root->right);
+    clear_tree(root->middle);
     delete root;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename BiTree< Key, Value, Compare >::Node* BiTree< Key, Value, Compare >::getNode()
+  {
+    return root_;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  void BiTree< Key, Value, Compare >::clear()
+  {
+    clear_tree(root_);
     size_ = 0;
   }
+
+  template< typename Key, typename Value, typename Compare >
+  BiTree< Key, Value, Compare >::~BiTree()
+  {
+    clear();
+    fake_->left = nullptr;
+    fake_->right = nullptr;
+    fake_->middle = nullptr;
+    delete[] reinterpret_cast<char*>(fake_);
+    fake_ = nullptr;
+  } 
 
   template< typename Key, typename Value, typename Compare >
   void BiTree< Key, Value, Compare >::push(Key k, Value v)
   {
     if (!root_)
     {
-      root_ = new Node{0, {k, v}, {}, fake_, fake_, fake_, nullptr};
+      root_ = new Node{0, {k, v}, {}, fake_, fake_, fake_, fake_};
       size_++;
       return;
     }
@@ -192,7 +211,7 @@ namespace karnauhova
     return it->data2.second;
   }
 
-  template< typename Key, typename Value, typename Compare >
+  /* template< typename Key, typename Value, typename Compare >
   Value BiTree< Key, Value, Compare >::drop(Key k)
   {
     Node* it = get(k);
@@ -233,7 +252,7 @@ namespace karnauhova
       }
     }
   }
-
+ */
   template< typename Key, typename Value, typename Compare >
   typename BiTree< Key, Value, Compare >::Iter BiTree< Key, Value, Compare >::begin() const noexcept
   {
