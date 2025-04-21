@@ -75,7 +75,7 @@ namespace karnauhova
     fake_->middle = nullptr;
     delete[] reinterpret_cast<char*>(fake_);
     fake_ = nullptr;
-  } 
+  }
 
   template< typename Key, typename Value, typename Compare >
   void BiTree< Key, Value, Compare >::push(Key k, Value v)
@@ -246,7 +246,7 @@ namespace karnauhova
           right_brother->full = 0;
           while (right_brother->left != fake_)
           {
-            
+
           }
         }
       }

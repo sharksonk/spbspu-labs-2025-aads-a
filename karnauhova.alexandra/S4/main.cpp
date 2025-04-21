@@ -5,7 +5,7 @@
 #include "bitree.hpp"
 #include "dataset_work.hpp"
 
-namespace 
+namespace
 {
   using TreeKey = karnauhova::BiTree< size_t, std::string >;
   using DataTree = karnauhova::BiTree< std::string, TreeKey >;
@@ -70,3 +70,4 @@ int main(int argc, char* argv[])
   meow.push(3, "meow meow meow");
   meow.push(4, "lol");
   std::cout  << meow.get_value(4) << "\n"; */
+

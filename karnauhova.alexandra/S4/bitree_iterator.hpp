@@ -20,13 +20,13 @@ namespace karnauhova
     this_t operator++(int) noexcept;
     this_t operator--() noexcept;
     this_t operator--(int) noexcept;
-    
+
     std::pair< Key, Value >& operator*() const;
     std::pair< Key, Value >* operator->() const noexcept;
 
     bool operator==(const this_t& rhs) const noexcept;
     bool operator!=(const this_t& rhs) const noexcept;
-    
+
     const Value& value() const;
   private:
     TreeNode< Key, Value >* node_;
@@ -215,3 +215,4 @@ namespace karnauhova
   }
 }
 #endif
+
