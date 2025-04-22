@@ -90,8 +90,6 @@ int main(int argc, char* argv[])
     {
       std::cerr << "<INVALID COMMAND>\n" << '\n';
     }
-    
-    
   }
 
 }
