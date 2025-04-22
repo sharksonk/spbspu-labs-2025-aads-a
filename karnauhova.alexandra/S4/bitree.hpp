@@ -26,6 +26,7 @@ namespace karnauhova
 
     void clear();
     Node* getNode();
+    bool empty() const;
   private:
     Node* fake_;
     Node* root_;
@@ -39,6 +40,12 @@ namespace karnauhova
     root_(nullptr),
     size_(0)
   {}
+
+  template< typename Key, typename Value, typename Compare >
+  bool BiTree< Key, Value, Compare >::empty() const
+  {
+    return size_ == 0;
+  }
 
   template< typename Key, typename Value, typename Compare >
   void BiTree< Key, Value, Compare >::clear_tree(Node* root)
