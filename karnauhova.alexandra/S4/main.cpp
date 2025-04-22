@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <map>
+#include <stdexcept>
 #include "bitree.hpp"
 #include "dataset_work.hpp"
 
@@ -53,6 +54,10 @@ int main(int argc, char* argv[])
   {
     std::string name_operat;
     std::cin >> name_operat;
+    if (std::cin.eof())
+    {
+      break;
+    }
     try
     {
       if (name_operat == "print")
@@ -84,6 +89,10 @@ int main(int argc, char* argv[])
         std::string name_tree2;
         std::cin >> name_new_tree >> name_tree1 >> name_tree2;
         karnauhova::union_data(name_new_tree, name_tree1, name_tree2, set_trees);
+      }
+      else
+      {
+        throw std::logic_error("Error in commands");
       }
     }
     catch(const std::exception& e)

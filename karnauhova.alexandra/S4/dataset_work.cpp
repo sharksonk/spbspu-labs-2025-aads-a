@@ -30,7 +30,7 @@ void karnauhova::complement(std::string name_new_tree, std::string name_tree1, s
       new_tree.insert(now);
     }
   }
-  set_trees.insert(std::pair< std::string, TreeKey >{name_new_tree, new_tree});
+  set_trees[name_new_tree] = new_tree;
 }
 
 void karnauhova::intersect(std::string name_new_tree, std::string name_tree1, std::string name_tree2, DataTree& set_trees)
@@ -46,7 +46,7 @@ void karnauhova::intersect(std::string name_new_tree, std::string name_tree1, st
       new_tree.insert(now);
     }
   }
-  set_trees.insert(std::pair< std::string, TreeKey >{name_new_tree, new_tree});
+  set_trees[name_new_tree] = new_tree;
 }
 
 void karnauhova::union_data(std::string name_new_tree, std::string name_tree1, std::string name_tree2, DataTree& set_trees)
@@ -78,5 +78,5 @@ void karnauhova::union_data(std::string name_new_tree, std::string name_tree1, s
       new_tree.insert(now);
     }
   }
-  set_trees.insert(std::pair< std::string, TreeKey >{name_new_tree, new_tree});
+  set_trees[name_new_tree] = new_tree;
 }
