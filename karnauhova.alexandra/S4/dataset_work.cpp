@@ -3,6 +3,11 @@
 void karnauhova::print_dataset(std::ostream& out, std::string named, DataTree& dataset)
 {
   TreeKey& tree = dataset.at(named);
+  if (tree.empty())
+  {
+    out << "<EMPTY>\n";
+    return;
+  }
   out << named;
   for (auto it = tree.cbegin(); it != tree.cend(); it++)
   {
