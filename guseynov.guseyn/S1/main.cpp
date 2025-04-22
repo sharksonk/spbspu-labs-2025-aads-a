@@ -5,7 +5,7 @@
 
 namespace
 {
-  using slop = std::list< std::pair< std::string, std::list< unsigned int > > >;
+  using slop = std::list< std::pair< std::string, std::list< unsigned long long > > >;
 
   void printNums(std::ostream & out, const slop & listOfPairs)
   {
@@ -17,11 +17,11 @@ namespace
         maxNums = it->second.size();
       }
     }
-    std::list< unsigned int > sumList;
-    const unsigned long long max = std::numeric_limits< unsigned int >::max();
+    std::list< unsigned long long > sumList;
+    const unsigned long long max = std::numeric_limits< unsigned long long >::max();
     for (size_t i = 0; i < maxNums; i++)
     {
-      unsigned int sum = 0;
+      unsigned long long sum = 0;
       auto it = listOfPairs.begin();
       auto currIt = it->second.begin();
       if (it->second.size() > i)
@@ -79,12 +79,12 @@ namespace
 
 int main()
 {
-  std::list< std::pair< std::string, std::list< unsigned int > > > listOfPairs;
+  std::list< std::pair< std::string, std::list< unsigned long long > > > listOfPairs;
   std::string nameList;
   while (std::cin >> nameList)
   {
-    std::list< unsigned int > numList;
-    unsigned int num = 0;
+    std::list< unsigned long long > numList;
+    unsigned long long num = 0;
     while (std::cin >> num)
     {
       numList.push_back(num);
