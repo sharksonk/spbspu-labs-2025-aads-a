@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <stdexcept>
+#include <limits>
 #include "bitree.hpp"
 #include "dataset_work.hpp"
 
@@ -98,16 +99,8 @@ int main(int argc, char* argv[])
     catch(const std::exception& e)
     {
       std::cerr << "<INVALID COMMAND>\n";
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
   }
-
 }
-
-
-/* karnauhova::BiTree< size_t, std::string, std::less< std::pair< size_t, std::string > > > meow;
-  meow.push(1, "meow");
-  meow.push(2, "meow meow");
-  meow.push(3, "meow meow meow");
-  meow.push(4, "lol");
-  std::cout  << meow.get_value(4) << "\n"; */
-
