@@ -20,7 +20,6 @@ namespace
       while (in >> key)
       {
         std::string value;
-        
         in >> value;
         tree_value.insert(std::pair< size_t, std::string >{key, value});
       }
