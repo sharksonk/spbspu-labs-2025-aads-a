@@ -70,11 +70,7 @@ namespace karnauhova
   BiTree< Key, Value, Compare >::~BiTree()
   {
     clear();
-    fake_->left = nullptr;
-    fake_->right = nullptr;
-    fake_->middle = nullptr;
     delete[] reinterpret_cast<char*>(fake_);
-    fake_ = nullptr;
   }
 
   template< typename Key, typename Value, typename Compare >

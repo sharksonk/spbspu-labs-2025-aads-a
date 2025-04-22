@@ -2,29 +2,29 @@
 #include <functional>
 #include <cstring>
 #include <fstream>
+#include <map>
 #include "bitree.hpp"
 #include "dataset_work.hpp"
 
 namespace
 {
-  using TreeKey = karnauhova::BiTree< size_t, std::string >;
-  using DataTree = karnauhova::BiTree< std::string, TreeKey >;
+  using TreeKey = std::map< size_t, std::string >;
+  using DataTree = std::map< std::string, TreeKey >;
   void input_trees(std::ifstream& in, DataTree& map_trees)
   {
     std::string name_map;
-    while (!in.eof())
+    while (in >> name_map)
     {
       TreeKey tree_value;
-      in >> name_map;
       size_t key = 0;
       while (in >> key)
       {
         std::string value;
+        
         in >> value;
-        tree_value.push(key, value);
-        std::cout << "1";
+        tree_value.insert(std::pair< size_t, std::string >{key, value});
       }
-      map_trees.push(name_map, tree_value);
+      map_trees.insert(std::pair< std::string, TreeKey >{name_map, tree_value});
       in.clear();
     }
   }
@@ -32,8 +32,8 @@ namespace
 
 int main(int argc, char* argv[])
 {
-  using TreeKey = karnauhova::BiTree< size_t, std::string >;
-  using DataTree = karnauhova::BiTree< std::string, TreeKey >;
+  using TreeKey = std::map< size_t, std::string >;
+  using DataTree = std::map< std::string, TreeKey >;
   if (argc != 2)
   {
     std::cerr << "Incorrect file\n";
@@ -57,7 +57,36 @@ int main(int argc, char* argv[])
     if (name_operat == "print")
     {
       std::string name_tree;
+      std::cin >> name_tree;
       karnauhova::print_dataset(std::cout, name_tree, set_trees);
+    }
+    else if (name_operat == "complement")
+    {
+      std::string name_new_tree;
+      std::string name_tree1;
+      std::string name_tree2;
+      std::cin >> name_new_tree >> name_tree1 >> name_tree2;
+      karnauhova::complement(name_new_tree, name_tree1, name_tree2, set_trees);
+    }
+    else if (name_operat == "intersect")
+    {
+      std::string name_new_tree;
+      std::string name_tree1;
+      std::string name_tree2;
+      std::cin >> name_new_tree >> name_tree1 >> name_tree2;
+      karnauhova::intersect(name_new_tree, name_tree1, name_tree2, set_trees);
+    }
+    else if (name_operat == "union")
+    {
+      std::string name_new_tree;
+      std::string name_tree1;
+      std::string name_tree2;
+      std::cin >> name_new_tree >> name_tree1 >> name_tree2;
+      karnauhova::union_data(name_new_tree, name_tree1, name_tree2, set_trees);
+    }
+    else
+    {
+      std::cerr << "<INVALID COMMAND>\n";
     }
   }
 
