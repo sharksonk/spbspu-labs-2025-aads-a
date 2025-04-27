@@ -17,12 +17,15 @@ namespace kushekbaev
     FwdList();
     FwdList(size_t count, const T& value);
     FwdList(std::initializer_list< T > init);
+    template< typename InputIterator, typename = enableIf< InputIterator > >
+    FwdList(InputIterator first, InputIterator last);
     FwdList(const FwdList& other);
-    FwdList(FwdList&& other) noexcept;
+    FwdList(FwdList&& other);
     ~FwdList();
 
-    FwdList& operator=(const FwdList& other) noexcept;
-    FwdList& operator=(FwdList&& other) noexcept;
+    FwdList& operator=(const FwdList& other) = default;
+    bool operator==(const FwdList& other) noexcept;
+    bool operator!=(FwdList&& other) noexcept;
 
     Iterator< T > begin() const noexcept;
     Iterator< T > end() const noexcept;
@@ -41,9 +44,7 @@ namespace kushekbaev
 
     void assign(size_t size, const T& value);
     void push_front(const T& value);
-    void push_back(const T& value);
     void pop_front() noexcept;
-    void pop_back() noexcept;
     void swap(FwdList& other) noexcept;
     void clear() noexcept;
     Iterator< T > insert_after(Iterator< T > position, const T& value);
@@ -55,6 +56,7 @@ namespace kushekbaev
     Iterator< T > erase_after(Iterator< T > position);
     Iterator< T > erase_after(Iterator< T > position, Iterator< T > last);
 
+    void reverse() noexcept;
     void remove(const T& value);
     template< typename Predicate >
     void remove_if(Predicate predicate);
@@ -72,10 +74,10 @@ namespace kushekbaev
 
   template< typename T >
   FwdList< T >::FwdList():
-    fake_(new Node< T >(T())),
+    fake_(static_cast< Node< T >* >(std::malloc(sizeof(Node< T >)))),
     size_(0)
   {
-    fake_ -> next_ = fake_;
+    fake_->next_ = fake_;
   }
 
   template< typename T >
@@ -84,37 +86,39 @@ namespace kushekbaev
   {
     while (count--)
     {
-      push_back(value);
+      push_front(value);
     }
   }
 
   template< typename T >
   FwdList< T >::FwdList(std::initializer_list< T > init):
+    FwdList(init.begin(), init.end())
+  {}
+
+  template< typename T >
+  template< typename InputIterator, typename >
+  FwdList< T >::FwdList(InputIterator first, InputIterator last):
     FwdList()
   {
-    for (const T& value: init)
+    for (auto it = first; it != last; ++it)
     {
-      push_back(value);
+      push_front(*it);
     }
+    reverse();
   }
 
   template< typename T >
   FwdList< T >::FwdList(const FwdList& other):
-    FwdList()
-  {
-    for (Iterator< T > it = other.cbegin(); it != other.cend(); ++it)
-    {
-      push_back(*it);
-    }
-  }
+    FwdList(other.cbegin(), other.cend())
+  {}
 
   template< typename T >
-  FwdList< T >::FwdList(FwdList&& other) noexcept:
+  FwdList< T >::FwdList(FwdList&& other):
     fake_(other.fake_),
     size_(other.size_)
   {
-    other.fake_ = new Node< T >();
-    other.fake_ -> next_ = other.fake_;
+    other.fake_ = static_cast< Node< T > * >(std::malloc(sizeof(Node< T >)));
+    other.fake_->next_ = other.fake_;
     other.size_ = 0;
   }
 
@@ -122,11 +126,11 @@ namespace kushekbaev
   FwdList< T >::~FwdList()
   {
     clear();
-    delete fake_;
+    std::free(fake_);
   }
 
   template< typename T >
-  typename FwdList< T >::FwdList& FwdList< T >::operator=(const FwdList& other) noexcept
+  bool FwdList< T >::operator==(const FwdList& other) noexcept
   {
     if (size() != other.size())
     {
@@ -147,7 +151,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  typename FwdList< T >::FwdList& FwdList< T >::operator=(FwdList&& other) noexcept
+  bool FwdList< T >::operator!=(FwdList&& other) noexcept
   {
     return !(*this == other);
   }
@@ -155,7 +159,7 @@ namespace kushekbaev
   template< typename T >
   Iterator< T > FwdList< T >::begin() const noexcept
   {
-    return Iterator< T >(fake_ -> next_);
+    return Iterator< T >(fake_->next_);
   }
 
   template< typename T >
@@ -167,7 +171,7 @@ namespace kushekbaev
   template< typename T >
   Iterator< T > FwdList< T >::cbegin() const noexcept
   {
-    return Iterator< T >(fake_ -> next_);
+    return Iterator< T >(fake_->next_);
   }
 
   template< typename T >
@@ -192,7 +196,7 @@ namespace kushekbaev
   T& FwdList< T >::front() const noexcept
   {
     assert(!empty());
-    return fake_ -> next_ -> data_;
+    return fake_->next_->data_;
   }
 
   template< typename T >
@@ -200,11 +204,11 @@ namespace kushekbaev
   {
     assert(!empty());
     Node< T >* current = fake_;
-    while (current -> next_ != fake_)
+    while (current->next_ != fake_)
     {
-      current = current -> next_;
+      current = current->next_;
     }
-    return current -> data_;
+    return current->data_;
   }
 
   template< typename T >
@@ -222,32 +226,22 @@ namespace kushekbaev
   template< typename T >
   void FwdList< T >::assign(size_t size, const T& value)
   {
+    while (!empty())
+    {
+      pop_front();
+    }
     for (size_t i = 0; i < size; ++i)
     {
       push_front(value);
     }
+    reverse();
   }
 
   template< typename T >
   void FwdList< T >::push_front(const T& value)
   {
-    Node< T >* newNode = new Node< T >(value);
-    newNode -> next_ = fake_ -> next_;
-    fake_ -> next_ = newNode;
-    ++size_;
-  }
-
-  template< typename T >
-  void FwdList< T >::push_back(const T& value)
-  {
-    Node< T >* newNode = new Node< T >(value);
-    Node< T >* current = fake_;
-    while (current -> next_ != fake_)
-    {
-      current = current -> next_;
-    }
-    current -> next_ = newNode;
-    newNode -> next_ = fake_;
+    Node< T >* newNode = new Node< T >(value, fake_->next_);
+    fake_->next_ = newNode;
     ++size_;
   }
 
@@ -255,23 +249,9 @@ namespace kushekbaev
   void FwdList< T >::pop_front() noexcept
   {
     assert(!empty());
-    Node< T >* todelete = fake_ -> next_;
-    fake_ -> next_ = todelete -> next_;
+    Node< T >* todelete = fake_->next_;
+    fake_->next_ = todelete->next_;
     delete todelete;
-    --size_;
-  }
-
-  template < typename T >
-  void FwdList< T >::pop_back() noexcept
-  {
-    assert(!empty());
-    Node< T >* todelete = fake_;
-    while (todelete -> next_ -> next_ != fake_)
-    {
-      todelete = todelete -> next_;
-    }
-    delete todelete -> next_;
-    todelete -> next_ = fake_;
     --size_;
   }
 
@@ -296,8 +276,8 @@ namespace kushekbaev
   {
     Node< T >* newNode = new Node< T >(value);
     Node< T >* posNode = position.node_;
-    newNode -> next_ = posNode -> next_;
-    posNode -> next_ = newNode;
+    newNode->next_ = posNode->next_;
+    posNode->next_ = newNode;
     ++size_;
     return Iterator< T >(newNode);
   }
@@ -342,13 +322,13 @@ namespace kushekbaev
   Iterator< T > FwdList< T >::erase_after(Iterator< T > position)
   {
     assert(!empty());
-    Node< T >* todelete = position.node_ -> next;
+    Node< T >* todelete = position.node_->next;
     if (todelete == fake_)
     {
       return end();
     }
-    Node< T >* next = todelete -> next_;
-    position.node_ -> next_ = next;
+    Node< T >* next = todelete->next_;
+    position.node_->next_ = next;
     delete todelete;
     --size_;
     return Iterator< T >(next);
@@ -358,42 +338,41 @@ namespace kushekbaev
   Iterator< T > FwdList< T >::erase_after(Iterator< T > position, Iterator< T > last)
   {
     assert(!empty());
-    Node< T >* todelete = position.node_ -> next;
-    if (todelete == fake_)
+    while (position.node_->next_ != last.node_ && position.node_->next_ != fake_)
     {
-      return end();
+      erase_after(position);
     }
-    todelete = position.node_ -> next_;
-    Node< T >* tmp = nullptr;
-    while (todelete != last.node_ && todelete != fake_)
-    {
-      tmp = todelete -> next;
-      delete todelete;
-      todelete = tmp;
-      --size_;
-    }
-    position.node_ -> next = last.node_;
     return Iterator< T >(last.node_);
+  }
+
+  template< typename T >
+  void FwdList< T >::reverse() noexcept
+  {
+    if (empty() || size() == 1)
+    {
+      return;
+    }
+    Node< T >* current = fake_->next_;
+    Node< T >* prev = fake_;
+    Node< T >* next = nullptr;
+    while (current != fake_)
+    {
+      next = current->next_;
+      current->next_ = prev;
+      prev = current;
+      current = next;
+    }
+    fake_->next_ = prev;
   }
 
   template< typename T >
   void FwdList< T >::remove(const T& value)
   {
-    Node< T >* current = fake_;
-    while (current -> next_ != fake_)
-    {
-      if (current -> next_ -> data_ == value)
+    remove_if([&value] (const T& elem)
       {
-        Node< T >* todelete = current -> next_;
-        current -> next_ = current -> next_ -> next_;
-        delete todelete;
-        --size_;
+        return elem == value;
       }
-      else
-      {
-        current = current -> next_;
-      }
-    }
+    );
   }
 
   template< typename T >
@@ -401,18 +380,18 @@ namespace kushekbaev
   void FwdList< T >::remove_if(Predicate predicate)
   {
     Node< T >* current = fake_;
-    while (current -> next_ != fake_)
+    while (current->next_ != fake_)
     {
-      if (predicate(current -> next_ -> data_))
+      if (predicate(current->next_->data_))
       {
-        Node< T >* todelete = current -> next_;
-        current -> next_ = current -> next_ -> next_;
+        Node< T >* todelete = current->next_;
+        current->next_ = current->next_->next_;
         delete todelete;
         --size_;
       }
       else
       {
-        current = current -> next_;
+        current = current->next_;
       }
     }
   }
@@ -420,8 +399,19 @@ namespace kushekbaev
   template< typename T >
   void FwdList< T >::splice_after(Iterator< T > position, FwdList& other)
   {
-    insert_after(position, other.cbegin(), other.cend());
-    other.clear();
+    assert(position != end());
+    auto otherFirst = other.begin().node_;
+    assert(otherFirst != nullptr);
+    auto otherLast = otherFirst;
+    while (otherLast->next_ != other.fake_)
+    {
+      otherLast = otherLast->next_;
+    }
+    otherLast->next_ = position.node_->next_;
+    position.node_->next_ = otherFirst;
+    size_ += other.size_;
+    other.size_ = 0;
+    other.fake_->next_ = other.fake_;
   }
 
   template< typename T >
@@ -433,10 +423,25 @@ namespace kushekbaev
   template< typename T >
   void FwdList< T >::splice_after(Iterator< T > position, FwdList& other, Iterator< T > it)
   {
-    ++it;
-    auto value = *it;
-    insert_after(position, value);
-    other.erase_after(it);
+    assert(position != end());
+    assert(it != other.end());
+    auto itPrev = other.begin().node_;
+    while (itPrev->next_ != it.node_)
+    {
+      itPrev = itPrev->next_;
+    }
+    if (itPrev != nullptr)
+    {
+      itPrev->next_ = it.node_->next_;
+    }
+    else
+    {
+      other.begin().node_ = it.node_->next_;
+    }
+    it.node_->next_ = position.node_->next_;
+    position.node_->next_ = it.node_;
+    ++size_;
+    --other.size_;
   }
 
   template< typename T >
@@ -448,9 +453,24 @@ namespace kushekbaev
   template< typename T >
   void FwdList< T >::splice_after(Iterator< T > position, FwdList& other, Iterator< T > first, Iterator< T > last)
   {
-    auto tmp = first;
-    insert_after(position, ++tmp, last);
-    other.erase_after(first, last);
+    assert(position != end());
+    assert(last != other.end());
+    if (first == last)
+    {
+      splice_after(position, other, first);
+    }
+    size_t deltaSize = 0;
+    auto lastPrev = first.node_;
+    while (lastPrev->next_ != last)
+    {
+      lastPrev = lastPrev->next_;
+      ++deltaSize;
+    }
+    lastPrev->next = position.node_->next_;
+    position.node_->next_ = first.node_->next_;
+    first.node_->next = last;
+    size_ += deltaSize;
+    other.size_ -= deltaSize;
   }
 
   template< typename T >

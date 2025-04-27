@@ -7,7 +7,7 @@
 
 namespace kushekbaev
 {
-  template <typename T>
+  template< typename T >
   struct FwdList;
 
   template< typename T >
@@ -15,20 +15,18 @@ namespace kushekbaev
   {
     using this_t = ConstIterator< T >;
     ConstIterator() noexcept;
-    explicit ConstIterator(Node< T >* node) noexcept;
-    ~ConstIterator() = default;
 
-    this_t& operator=(const this_t&) = default;
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
 
-    T& operator*() const noexcept;
-    T* operator->() const noexcept;
+    const T& operator*() const noexcept;
+    const T* operator->() const noexcept;
 
     bool operator!=(const this_t&) const noexcept;
     bool operator==(const this_t&) const noexcept;
 
     private:
+      explicit ConstIterator(Node< T >* node) noexcept;
       Node< T >* node_;
       friend struct FwdList< T >;
   };
@@ -47,7 +45,7 @@ namespace kushekbaev
   ConstIterator< T >& ConstIterator< T >::operator++() noexcept
   {
     assert(node_ != nullptr);
-    node_ = node_ -> next_;
+    node_ = node_->next_;
     return *this;
   }
 
@@ -61,17 +59,17 @@ namespace kushekbaev
   }
 
   template< typename T >
-  T& ConstIterator< T >::operator*() const noexcept
+  const T& ConstIterator< T >::operator*() const noexcept
   {
     assert(node_ != nullptr);
-    return node_ -> data_;
+    return node_->data_;
   }
 
   template< typename T >
-  T* ConstIterator< T >::operator->() const noexcept
+  const T* ConstIterator< T >::operator->() const noexcept
   {
     assert(node_ != nullptr);
-    return std::addressof(node_ -> data_);
+    return std::addressof(node_->data_);
   }
 
   template< typename T >

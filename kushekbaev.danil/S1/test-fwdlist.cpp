@@ -135,25 +135,11 @@ BOOST_AUTO_TEST_CASE(pushfront)
   BOOST_TEST(printList(list) == "0123");
 }
 
-BOOST_AUTO_TEST_CASE(pushback)
-{
-  list_t list({ 1, 2, 3 });
-  list.push_back(4);
-  BOOST_TEST(printList(list) == "1234");
-}
-
 BOOST_AUTO_TEST_CASE(popfront)
 {
   list_t list({ 0, 1, 2, 3 });
   list.pop_front();
   BOOST_TEST(printList(list) == "123");
-}
-
-BOOST_AUTO_TEST_CASE(popback)
-{
-  list_t list({ 0, 1, 2, 3 });
-  list.pop_back();
-  BOOST_TEST(printList(list) == "012");
 }
 
 BOOST_AUTO_TEST_CASE(clear)
@@ -184,9 +170,9 @@ BOOST_AUTO_TEST_CASE(insertAfterValue)
 BOOST_AUTO_TEST_CASE(inserAfterSizeValue)
 {
   list_t list;
-  auto it = list.insert_after(list.cbefore_begin(), 3, 7);
+  list.insert_after(list.cbefore_begin(), 3, 7);
   BOOST_TEST(printList(list) == "777");
-  it = list.insert_after(list.cbefore_begin(), 7, 3);
+  list.insert_after(list.cbefore_begin(), 7, 3);
   BOOST_TEST(printList(list) == "3333333777");
 }
 
@@ -194,14 +180,14 @@ BOOST_AUTO_TEST_CASE(insertAfterFirstLast)
 {
   list_t list1;
   list_t list2({ 1, 2, 3 });
-  auto it = list1.insert_after(list1.cend(), list2.cbegin(), list2.cend());
+  list1.insert_after(list1.cend(), list2.cbegin(), list2.cend());
   BOOST_TEST(printList(list1) == "123");
 }
 
 BOOST_AUTO_TEST_CASE(insertAfterInitializerList)
 {
   list_t list;
-  auto it = list.insert_after(list.cbegin(), { 1, 2, 3, 4, 1984 });
+  list.insert_after(list.cbegin(), { 1, 2, 3, 4, 1984 });
   BOOST_TEST(printList(list) == "12341984");
 }
 
@@ -243,8 +229,9 @@ BOOST_AUTO_TEST_CASE(spliceAfter)
 {
   list_t list1({ 1, 2, 3 });
   list_t list2({ 4, 5, 6 });
-  auto it = list1.begin();
-  list1.splice_after(it, list2);
+  list1.splice_after(list1.begin(), list2);
+  BOOST_TEST(list2.empty());
+  BOOST_TEST(printList(list1) == "145623");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
