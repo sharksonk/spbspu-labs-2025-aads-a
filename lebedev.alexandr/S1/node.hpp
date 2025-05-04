@@ -15,12 +15,6 @@ namespace lebedev
       next(nullptr),
       prev(nullptr)
     {}
-
-    explicit Node(T&& value):
-      data(std::move(value)),
-      next(nullptr),
-      prev(nullptr)
-    {}
   };
 }
 #endif
