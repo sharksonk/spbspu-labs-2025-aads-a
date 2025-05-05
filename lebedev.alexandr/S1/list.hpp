@@ -229,7 +229,7 @@ namespace lebedev
     {
       return;
     }
-    Node< T > tmp = head_;
+    Node< T >* tmp = head_;
     head_ = head_->next;
     if (head_)
     {
