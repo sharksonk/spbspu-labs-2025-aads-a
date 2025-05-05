@@ -87,7 +87,7 @@ namespace lebedev
   template< class T >
   bool constIterator< T >::operator!=(const this_t& it) const
   {
-    return !(*this == it)
+    return !(*this == it);
   }
 }
 #endif

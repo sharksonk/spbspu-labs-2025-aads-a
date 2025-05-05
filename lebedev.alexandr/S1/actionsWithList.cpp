@@ -1,59 +1,62 @@
 #include "actionsWithList.hpp"
 #include <ostream>
 
-void lebedev::printList(const std::list< std::string >& list, std::ostream& output)
+void lebedev::printList(const lebedev::List< std::string >& list, std::ostream& output)
 {
   if (list.empty())
   {
     return;
   }
-  auto current = list.begin();
+  auto current = list.constBegin();
   output << *current;
   ++current;
 
-  for (; current != list.end(); current++)
+  for (; current != list.constEnd(); current++)
   {
     output << ' ' << *current;
   }
   output << '\n';
 }
 
-void lebedev::printList(const std::list< int >& list, std::ostream& output)
+void lebedev::printList(const lebedev::List< int >& list, std::ostream& output)
 {
   if (list.empty())
   {
     return;
   }
-  auto current = list.begin();
+  auto current = list.constBegin();
   output << *current;
   ++current;
 
-  for (; current != list.end(); ++current)
+  for (; current != list.constEnd(); ++current)
   {
     output << ' ' << *current;
   }
   output << '\n';
 }
 
-std::list< std::list< int > > lebedev::createReorderedList(const std::list< std::pair< std::string, std::list< int > > >& List)
+lebedev::List< lebedev::List< int > > lebedev::createReorderedList(const lebedev::List< std::pair< std::string, lebedev::List< int > > >& List)
 {
-  std::list< std::list< int > > reordered;
+  lebedev::List< lebedev::List< int > > reordered;
   size_t maxSize = 0;
-  for (const auto& seq: List)
+  for (auto seq = List.constBegin(); seq != List.constEnd(); seq++)
   {
-    maxSize = std::max(maxSize, seq.second.size());
+    if ((*seq).second.size() > maxSize)
+    {
+      maxSize = (*seq).second.size();
+    }
   }
   for (size_t i = 0; i < maxSize; i++)
   {
-    std::list< int > seq;
+    lebedev::List< int > seq;
     reordered.push_back(seq);
   }
-  for (const auto& pair : List)
+  for (auto pair = List.constBegin(); pair != List.constEnd(); pair++)
   {
     auto it = reordered.begin();
-    for (const auto& i : pair.second)
+    for (auto i = (*pair).second.constBegin(); i != (*pair).second.constEnd(); i++)
     {
-      (*it).push_back(i);
+      (*it).push_back(*i);
       if (it != reordered.end())
       {
         ++it;
@@ -63,20 +66,20 @@ std::list< std::list< int > > lebedev::createReorderedList(const std::list< std:
   return reordered;
 }
 
-std::pair< std::list< int >, bool > lebedev::createListOfSum(const std::list< std::list< int > >& list)
+std::pair< lebedev::List< int >, bool > lebedev::createListOfSum(const lebedev::List< lebedev::List< int > >& list)
 {
   bool isOverflow = false;
-  std::list< int > listOfSum;
-  for (const auto& seq : list)
+  lebedev::List< int > listOfSum;
+  for (auto seq = list.constBegin(); seq != list.constEnd(); seq++)
   {
     int res = 0;
-    for (const auto& current : seq)
+    for (auto current = seq->constBegin(); current != seq->constEnd(); current++)
     {
-      if ((res + current) < res)
+      if ((res + (*current)) < res)
       {
         isOverflow = true;
       }
-      res += current;
+      res += (*current);
     }
     listOfSum.push_back(res);
   }

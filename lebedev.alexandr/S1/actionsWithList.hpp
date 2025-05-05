@@ -1,14 +1,14 @@
 #ifndef ACTIONSWITHLIST_HPP
 #define ACTIONSWITHLIST_HPP
-#include <list>
 #include <sstream>
 #include <string>
+#include "list.hpp"
 
 namespace lebedev
 {
-  void printList(const std::list< std::string >& list, std::ostream& output);
-  void printList(const std::list< int >& list, std::ostream& output);
-  std::list< std::list< int > > createReorderedList(const std::list< std::pair< std::string, std::list< int > > >& List);
-  std::pair< std::list< int >, bool > createListOfSum(const std::list< std::list< int > >& list);
+  void printList(const List< std::string >& list, std::ostream& output);
+  void printList(const List< int >& list, std::ostream& output);
+  List< List< int > > createReorderedList(const List< std::pair< std::string, List< int > > >& List);
+  std::pair< List< int >, bool > createListOfSum(const List< List< int > >& list);
 }
 #endif

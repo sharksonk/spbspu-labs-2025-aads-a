@@ -1,16 +1,16 @@
-#include <list>
 #include <iostream>
 #include <string>
 #include "actionsWithList.hpp"
+#include "list.hpp"
 
 int main()
 {
-  std::list< std::pair< std::string, std::list< int > > > sequences;
+  lebedev::List< std::pair< std::string, lebedev::List< int > > > sequences;
   std::string name;
 
   while (std::cin >> name)
   {
-    std::list< int > numbers;
+    lebedev::List< int > numbers;
     int num = 0;
     while (std::cin >> num)
     {
@@ -29,18 +29,18 @@ int main()
     std::cout << "0\n";
     return 0;
   }
-  std::list< std::string > names;
+  lebedev::List< std::string > names;
   for (auto seq : sequences)
   {
     names.push_back(seq.first);
   }
   lebedev::printList(names, std::cout);
-  std::list< std::list< int > > reorderedList = lebedev::createReorderedList(sequences);
+  lebedev::List< lebedev::List< int > > reorderedList = lebedev::createReorderedList(sequences);
   for (const auto& seq : reorderedList)
   {
     lebedev::printList(seq, std::cout);
   }
-  std::pair< std::list< int >, bool > listOfSum = lebedev::createListOfSum(reorderedList);
+  std::pair< lebedev::List< int >, bool > listOfSum = lebedev::createListOfSum(reorderedList);
   if (listOfSum.second)
   {
     std::cerr << "Is Overflow";

@@ -45,7 +45,7 @@ namespace lebedev
   {}
 
   template< class T >
-  List< T >::List(size_t count, const T& value = T()): List()
+  List< T >::List(size_t count, const T& value): List()
   {
     for (size_t i = 0; i < count; i++)
     {
@@ -56,9 +56,9 @@ namespace lebedev
   template< class T >
   List< T >::List(const List& other): List()
   {
-    for (const auto& it : other)
+    for (constIterator< T > it = other.constBegin(); it != other.constEnd(); it++)
     {
-      push_back(it);
+      push_back(*it);
     }
   }
 
