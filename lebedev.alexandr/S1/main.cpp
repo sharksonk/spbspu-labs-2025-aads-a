@@ -30,7 +30,7 @@ int main()
     names.push_back(seq.first);
   }
   lebedev::printList(names, std::cout);
-  
+
   bool allEmpty = true;
   for (auto seq : sequences)
   {
@@ -45,6 +45,7 @@ int main()
     std::cout << "0\n";
     return 0;
   }
+
   lebedev::List< lebedev::List< size_t > > reorderedList = lebedev::createReorderedList(sequences);
   for (const auto& seq : reorderedList)
   {
