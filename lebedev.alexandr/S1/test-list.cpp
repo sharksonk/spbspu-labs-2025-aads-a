@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(DefaultConstructorTest)
   BOOST_TEST(list.size() == 0);
 }
 
-BOOST_AUTO_TEST_CASE(FillConstructorTest) 
+BOOST_AUTO_TEST_CASE(FillConstructorTest)
 {
   List<int> list(5, 10);
   BOOST_TEST(list.size() == 5);
