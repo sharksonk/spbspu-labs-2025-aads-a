@@ -35,8 +35,8 @@ void lebedev::printList(const lebedev::List< int >& list, std::ostream& output)
   output << '\n';
 }
 
-using namespace lebedev;
-List< List< int > > createReorderedList(const List< std::pair< std::string, List< int > > >& List)
+using listPair = lebedev::List< std::pair< std::string, lebedev::List< int > > >;
+lebedev::List< lebedev::List< int > > lebedev::createReorderedList(const listPair& List)
 {
   lebedev::List< lebedev::List< int > > reordered;
   size_t maxSize = 0;
