@@ -1,4 +1,5 @@
 #include "actionsWithList.hpp"
+#include <limits>
 #include <ostream>
 
 void lebedev::printList(const lebedev::List< std::string >& list, std::ostream& output)
@@ -18,7 +19,7 @@ void lebedev::printList(const lebedev::List< std::string >& list, std::ostream& 
   output << '\n';
 }
 
-void lebedev::printList(const lebedev::List< int >& list, std::ostream& output)
+void lebedev::printList(const lebedev::List< size_t >& list, std::ostream& output)
 {
   if (list.empty())
   {
@@ -35,10 +36,10 @@ void lebedev::printList(const lebedev::List< int >& list, std::ostream& output)
   output << '\n';
 }
 
-using listPair = lebedev::List< std::pair< std::string, lebedev::List< int > > >;
-lebedev::List< lebedev::List< int > > lebedev::createReorderedList(const listPair& List)
+using listPair = lebedev::List< std::pair< std::string, lebedev::List< size_t > > >;
+lebedev::List< lebedev::List< size_t > > lebedev::createReorderedList(const listPair& List)
 {
-  lebedev::List< lebedev::List< int > > reordered;
+  lebedev::List< lebedev::List< size_t > > reordered;
   size_t maxSize = 0;
   for (auto seq = List.constBegin(); seq != List.constEnd(); seq++)
   {
@@ -49,7 +50,7 @@ lebedev::List< lebedev::List< int > > lebedev::createReorderedList(const listPai
   }
   for (size_t i = 0; i < maxSize; i++)
   {
-    lebedev::List< int > seq;
+    lebedev::List< size_t > seq;
     reordered.push_back(seq);
   }
   for (auto pair = List.constBegin(); pair != List.constEnd(); pair++)
@@ -67,16 +68,17 @@ lebedev::List< lebedev::List< int > > lebedev::createReorderedList(const listPai
   return reordered;
 }
 
-std::pair< lebedev::List< int >, bool > lebedev::createListOfSum(const lebedev::List< lebedev::List< int > >& list)
+std::pair< lebedev::List< size_t >, bool > lebedev::createListOfSum(const lebedev::List< lebedev::List< size_t > >& list)
 {
   bool isOverflow = false;
-  lebedev::List< int > listOfSum;
+  lebedev::List< size_t > listOfSum;
   for (auto seq = list.constBegin(); seq != list.constEnd(); seq++)
   {
-    int res = 0;
+    size_t res = 0;
     for (auto current = seq->constBegin(); current != seq->constEnd(); current++)
     {
-      if ((res + (*current)) < res)
+      const size_t cur = *current;
+      if (res > std::numeric_limits< int >::max() - cur)
       {
         isOverflow = true;
       }
