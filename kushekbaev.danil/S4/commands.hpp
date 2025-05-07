@@ -82,10 +82,16 @@ namespace kushekbaev
   template<typename Key, typename T>
   void print(std::ostream& out, const std::string& name, const dataset_t< Key, T >& dataset)
   {
-    if (dataset.empty()) throw std::logic_error("<EMPTY>");
+    if (dataset.empty()) 
+    {
+      throw std::logic_error("<EMPTY>");
+    }
 
     auto it = dataset.find(name);
-    if (it == dataset.end()) throw std::logic_error("<NOT FOUND>");
+    if (it == dataset.end())
+    {
+      throw std::logic_error("<INVALID COMMAND>");
+    }
 
     out << name;
     for (typename dict_t< Key, T >::const_iterator dict_it = it->second.begin(); dict_it != it->second.end(); ++dict_it)
