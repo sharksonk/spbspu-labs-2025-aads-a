@@ -15,16 +15,16 @@ namespace kushekbaev
 {
   template<typename Key, typename T>
   void executeCommand(std::istream& in, std::ostream& out, dataset_t< Key, T >& dataset);
-  
+
   template<typename Key, typename T>
   void print(std::ostream& out, const std::string& name, const dataset_t< Key, T >& dataset);
-  
+
   template<typename Key, typename T>
   void complement(dict_t< Key, T >& result, const dict_t< Key, T >& ds1, const dict_t< Key, T >& ds2);
-  
+
   template<typename Key, typename T>
   void intersect(dict_t< Key, T >& result, const dict_t< Key, T >& ds1, const dict_t< Key, T >& ds2);
-  
+
   template<typename Key, typename T>
   void unification(dict_t< Key, T >& result, const dict_t< Key, T >& ds1, const dict_t< Key, T >& ds2);
 
@@ -53,15 +53,15 @@ namespace kushekbaev
       const auto& dict1 = dataset.at(name1);
       const auto& dict2 = dataset.at(name2);
 
-      if (command == "complement") 
+      if (command == "complement")
       {
         complement(resultDict, dict1, dict2);
       }
-      else if (command == "intersect") 
+      else if (command == "intersect")
       {
         intersect(resultDict, dict1, dict2);
       }
-      else if (command == "union") 
+      else if (command == "union")
       {
         unification(resultDict, dict1, dict2);
       }
