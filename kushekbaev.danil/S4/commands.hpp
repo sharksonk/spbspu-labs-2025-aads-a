@@ -82,7 +82,7 @@ namespace kushekbaev
   template<typename Key, typename T>
   void print(std::ostream& out, const std::string& name, const dataset_t< Key, T >& dataset)
   {
-    if (dataset.empty()) 
+    if (dataset.empty())
     {
       throw std::logic_error("<EMPTY>");
     }
