@@ -11,7 +11,6 @@ struct Node
   Node* right;
   Node* parent;
   size_t height;
-
   Node(const Key& k, const Value& v, Node* p);
 };
 
