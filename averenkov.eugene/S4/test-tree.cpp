@@ -19,6 +19,7 @@ BOOST_AUTO_TEST_CASE(DefaultConstructor)
   BOOST_TEST(tree.empty());
 }
 
+
 BOOST_AUTO_TEST_CASE(CopyConstructor)
 {
   StringTree tree1;
@@ -118,3 +119,4 @@ BOOST_AUTO_TEST_CASE(Find)
   bool noend = (tree.find(1) != tree.end());
   BOOST_TEST(noend);
 }
+
