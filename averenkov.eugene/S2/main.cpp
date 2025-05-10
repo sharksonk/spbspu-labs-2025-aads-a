@@ -11,7 +11,7 @@
 
 using namespace averenkov;
 
-bool isOverflow(long long a, long, long b)
+bool isOverflow(long long a, long long b)
 {
   if (a == 0 || b == 0)
   {

@@ -21,7 +21,7 @@ namespace averenkov
     const T& back() const noexcept;
     T& back() noexcept;
 
-    void push(T rhs);
+    void push(T rhs) noexcept;
     T drop();
 
   private:
