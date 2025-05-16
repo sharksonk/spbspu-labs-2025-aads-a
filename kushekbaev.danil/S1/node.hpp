@@ -24,12 +24,6 @@ namespace kushekbaev
     data_(data),
     next_(nullptr)
   {}
-
-  template< typename T >
-  Node< T >::Node():
-    data_(T()),
-    next_(nullptr)
-  {}
 }
 
 #endif

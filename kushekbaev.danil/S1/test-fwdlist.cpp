@@ -53,6 +53,18 @@ BOOST_AUTO_TEST_CASE(moveConstructor)
   BOOST_TEST(list1.empty());
 }
 
+BOOST_AUTO_TEST_CASE(initlistConstructor)
+{
+  list_t list1{ 1, 2, 3, 4 };
+  BOOST_TEST(printList(list1) == "1234");
+}
+
+BOOST_AUTO_TEST_CASE(iteratorConstructor)
+{
+  list_t list1{ 1, 2, 4, 3 };
+  list_t list2(list1.begin(), list1.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(iterators)
@@ -121,11 +133,19 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(modifiers)
 
-BOOST_AUTO_TEST_CASE(assign)
+BOOST_AUTO_TEST_CASE(assignFill)
 {
   list_t list;
   list.assign(3, 20);
   BOOST_TEST(printList(list) == "202020");
+}
+
+BOOST_AUTO_TEST_CASE(assignRange)
+{
+  list_t list1{1, 3, 3, 7};
+  list_t list2;
+  list2.assign(list1.begin(), list1.end());
+  BOOST_TEST(printList(list2) == "1337");
 }
 
 BOOST_AUTO_TEST_CASE(pushfront)
@@ -235,3 +255,17 @@ BOOST_AUTO_TEST_CASE(spliceAfter)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(operators)
+{
+  list_t list1({ 1, 2, 3 });
+  list_t list2({ 2, 3, 4 });
+  list_t list3({ 1, 2, 3 });
+  list_t list4({ 1, 2, 3, 4});
+  BOOST_TEST(list1 < list2);
+  BOOST_TEST(list1 == list3);
+  BOOST_TEST(list4 >= list1);
+  BOOST_TEST(list1 != list2);
+  BOOST_TEST(list3 <= list1);
+  BOOST_TEST(list4 > list3);
+}
