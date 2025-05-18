@@ -42,8 +42,10 @@ namespace kushekbaev
     Iterator< T > before_begin() const noexcept;
     Iterator< T > cbefore_begin() const noexcept;
 
-    T& front() const noexcept;
-    T& back() const noexcept;
+    T& front() noexcept;
+    const T& front() const noexcept;
+    T& back() noexcept;
+    const T& back() const noexcept;
 
     size_t size() const noexcept;
     bool empty() const noexcept;
@@ -152,7 +154,7 @@ namespace kushekbaev
     clear();
     fake_ = other.fake_;
     size_ = other.size_;
-    delete other.fake_;
+    other.fake_ = nullptr;
     other.size_ = 0;
     return *this;
   }
@@ -265,14 +267,26 @@ namespace kushekbaev
   }
 
   template< typename T >
-  T& FwdList< T >::front() const noexcept
+  T& FwdList< T >::front() noexcept
+  {
+    return const_cast< T& >(static_cast< const FwdList& >(*this).front());
+  }
+
+  template< typename T >
+  const T& FwdList< T >::front() const noexcept
   {
     assert(!empty());
     return fake_->next_->data_;
   }
 
   template< typename T >
-  T& FwdList< T >::back() const noexcept
+  T& FwdList< T >::back() noexcept
+  {
+    return const_cast< T& >(static_cast< const FwdList& >(*this).back());
+  }
+
+  template< typename T >
+  const T& FwdList< T >::back() const noexcept
   {
     assert(!empty());
     Node< T >* current = fake_;
