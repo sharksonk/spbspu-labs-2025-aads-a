@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
 #include "BiTree.hpp"
 
@@ -25,16 +24,40 @@ void loadDictionaries(str filename, DictionaryStorage& storage)
       continue;
     }
 
-    std::istringstream iss(line);
-    std::string dictName;
-    iss >> dictName;
-
-    Dictionary dict;
-    int key;
-    std::string value;
-    while (iss >> key >> value)
+    size_t space_pos = line.find(' ');
+    if (space_pos == std::string::npos)
     {
-      dict.push(key, value);
+      continue;
+    }
+
+    std::string dictName = line.substr(0, space_pos);
+    Dictionary dict;
+    size_t pos = space_pos + 1;
+    while (pos < line.length())
+    {
+      size_t next_space = line.find(' ', pos);
+      if (next_space == std::string::npos)
+      {
+        break;
+      }
+      std::string key_str = line.substr(pos, next_space - pos);
+      pos = next_space + 1;
+      next_space = line.find(' ', pos);
+      if (next_space == std::string::npos)
+      {
+        next_space = line.length();
+      }
+      std::string value = line.substr(pos, next_space - pos);
+      pos = next_space + 1;
+      try
+      {
+        int key = std::stoi(key_str);
+        dict.push(key, value);
+      }
+      catch (...)
+      {
+        continue;
+      }
     }
 
     storage.push(dictName, dict);
@@ -145,64 +168,63 @@ int main(int argc, char* argv[])
   std::string line;
   while (std::getline(std::cin, line))
   {
-    std::istringstream iss(line);
-    std::string command;
-    iss >> command;
+    if (line.empty())
+    {
+      continue;
+    }
+
+    size_t space_pos = line.find(' ');
+    std::string command = line.substr(0, space_pos);
 
     if (command == "print")
     {
-      std::string dictName;
-      if (iss >> dictName)
+      if (space_pos == std::string::npos)
       {
-        auto dict = dictionaries.find(dictName);
-        if (dict != dictionaries.end())
-        {
-          printDictionary(dict->second, dictName);
-        }
-        else
-        {
-          std::cout << "<INVALID COMMAND>\n";
-        }
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+      std::string dictName = line.substr(space_pos + 1);
+      auto dict = dictionaries.find(dictName);
+      if (dict != dictionaries.end())
+      {
+        printDictionary(dict->second, dictName);
       }
       else
       {
         std::cout << "<INVALID COMMAND>\n";
       }
     }
-    else if (command == "complement")
+    else if (command == "complement" || command == "intersect" || command == "union")
     {
-      std::string newName, name1, name2;
-      if (iss >> newName >> name1 >> name2)
+      size_t pos1 = space_pos + 1;
+      size_t pos2 = line.find(' ', pos1);
+      size_t pos3 = line.find(' ', pos2 + 1);
+      if (pos1 == std::string::npos || pos2 == std::string::npos || pos3 == std::string::npos)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+      std::string newName = line.substr(pos1, pos2 - pos1);
+      std::string name1 = line.substr(pos2 + 1, pos3 - pos2 - 1);
+      std::string name2 = line.substr(pos3 + 1);
+      auto dict1 = dictonaries.find(name1);
+      auto dict2 = dictonaries.find(name2);
+      if (dict1 == dictonaries.end() || dict2 == dictonaries.end())
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+      if (command == "complement")
       {
         complement(dictionaries, newName, name1, name2);
       }
-      else
-      {
-        std::cout << "<INVALID COMMAND>\n";
-      }
-    }
-    else if (command == "intersect")
-    {
-      std::string newName, name1, name2;
-      if (iss >> newName >> name1 >> name2)
+      else if (command == "intersect")
       {
         intersect(dictionaries, newName, name1, name2);
       }
       else
       {
-        std::cout << "<INVALID COMMAND>\n";
-      }
-    }
-    else if (command == "union")
-    {
-      std::string newName, name1, name2;
-      if (iss >> newName >> name1 >> name2)
-      {
         unionDicts(dictionaries, newName, name1, name2);
-      }
-      else
-      {
-        std::cout << "<INVALID COMMAND>\n";
       }
     }
     else
