@@ -85,13 +85,6 @@ void complement(DictionaryStorage& storage, str newName, str name1, str name2)
 {
   auto dict1 = storage.find(name1);
   auto dict2 = storage.find(name2);
-
-  if (dict1 == storage.end() || dict2 == storage.end())
-  {
-    std::cout << "<INVALID COMMAND>\n";
-    return;
-  }
-
   Dictionary result;
   for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
   {
@@ -108,13 +101,6 @@ void intersect(DictionaryStorage& storage, str newName, str name1, str name2)
 {
   auto dict1 = storage.find(name1);
   auto dict2 = storage.find(name2);
-
-  if (dict1 == storage.end() || dict2 == storage.end())
-  {
-    std::cout << "<INVALID COMMAND>\n";
-    return;
-  }
-
   Dictionary result;
   for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
   {
@@ -131,13 +117,6 @@ void unionDicts(DictionaryStorage& storage, str newName, str name1, str name2)
 {
   auto dict1 = storage.find(name1);
   auto dict2 = storage.find(name2);
-
-  if (dict1 == storage.end() || dict2 == storage.end())
-  {
-    std::cout << "<INVALID COMMAND>\n";
-    return;
-  }
-
   Dictionary result;
   for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
   {
