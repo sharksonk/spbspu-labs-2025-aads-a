@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   std::string value;
   while (file >> key >> value)
   {
-    bst.insert(key, value);
+    bst.push(key, value);
   }
 
   if (bst.empty())
@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    if (!proc.values.empty())
+    if (!proc.values_.empty())
     {
-      proc.values.pop_back();
+      proc.values_.pop_back();
     }
-    std::cout << proc.sum_ << " " << proc.values << "\n";
+    std::cout << proc.sum_ << " " << proc.values_ << "\n";
   }
   catch (const std::overflow_error& e)
   {

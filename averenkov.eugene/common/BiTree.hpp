@@ -925,7 +925,7 @@ namespace averenkov
         current = current->left;
       }
       current = stack.top();
-      stack.pop();
+      stack.drop();
       f(current->data);
       current = current->right;
     }
@@ -946,7 +946,7 @@ namespace averenkov
         current = current->right;
       }
       current = stack.top();
-      stack.pop();
+      stack.drop();
       f(current->data);
       current = current->left;
     }
