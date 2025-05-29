@@ -18,10 +18,8 @@ namespace averenkov
 
     const T& front() const noexcept;
     T& front() noexcept;
-    const T& back() const noexcept;
-    T& back() noexcept;
 
-    void push(T rhs) noexcept;
+    void push(const T& rhs) noexcept;
     T drop();
 
   private:
@@ -73,19 +71,7 @@ namespace averenkov
   }
 
   template< class T >
-  const T& Queue< T >::back() const noexcept
-  {
-    return arr_.back();
-  }
-
-  template< class T >
-  T& Queue< T >::back() noexcept
-  {
-    return arr_.back();
-  }
-
-  template< class T >
-  void Queue< T >::push(T rhs) noexcept
+  void Queue< T >::push(const T& rhs) noexcept
   {
     arr_.push_back(rhs);
   }

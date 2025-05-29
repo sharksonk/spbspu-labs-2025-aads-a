@@ -46,17 +46,13 @@ bool isOperator(char c)
   return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
 }
 
-int precedence(char op)
+bool precedenceFirst(char first, char second)
 {
-  if (op == '+' || op == '-')
+  if ((first == '+' || first == '-') && (second == '*' || second == '/' || second == '%'))
   {
-    return 1;
+    return false;
   }
-  if (op == '*' || op == '/' || op == '%')
-  {
-    return 2;
-  }
-  return 0;
+  return true;
 }
 
 
@@ -113,7 +109,7 @@ std::string infixToPostfix(const std::string& infix)
       }
       else if (isOperator(ch))
       {
-        while (!stack.empty() && precedence(stack.top()) >= precedence(ch))
+        while (!stack.empty() && precedenceFirst(stack.top(), ch))
         {
           postfix += stack.drop();
           postfix += ' ';
