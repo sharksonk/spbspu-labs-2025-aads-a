@@ -6,18 +6,18 @@ namespace averenkov
 {
   struct KeySum
   {
-    void operator()(const std::pair< const int, std::string >& key_value);
-    int sum_ = 0;
+    void operator()(const std::pair< const long long, std::string >& key_value);
+    long long sum_ = 0;
     std::string values_;
   };
 
-  void KeySum::operator()(const std::pair< const int, std::string >& key_value)
+  void KeySum::operator()(const std::pair< const long long, std::string >& key_value)
   {
-    if (sum_ > 0 && key_value.first > std::numeric_limits< int >::max() - sum_)
+    if (sum_ > 0 && key_value.first > std::numeric_limits< long long >::max() - sum_)
     {
       throw std::overflow_error("overflow");
     }
-    if (sum_ < 0 && key_value.first < std::numeric_limits< int >::min() - sum_)
+    if (sum_ < 0 && key_value.first < std::numeric_limits< long long >::min() - sum_)
     {
       throw std::overflow_error("overflow");
     }

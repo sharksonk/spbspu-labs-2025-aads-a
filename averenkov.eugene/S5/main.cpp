@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
   std::string mode(argv[1]);
   std::string filename(argv[2]);
 
-  averenkov::Tree< int, std::string > bst;
+  averenkov::Tree< long long, std::string > bst;
 
   std::ifstream file(filename);
   if (!file)
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  int key;
+  long long key;
   std::string value;
   while (file >> key >> value)
   {
@@ -63,9 +63,9 @@ int main(int argc, char* argv[])
     }
     std::cout << proc.sum_ << " " << proc.values_ << "\n";
   }
-  catch (const std::overflow_error& e)
+  catch (...)
   {
-    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "Error\n";
     return 1;
   }
 
