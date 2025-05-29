@@ -4,15 +4,16 @@
 #include <limits>
 #include "list.hpp"
 
-using namespace averenkov;
-using mainList = List< std::pair< std::string, List< unsigned long long > > >;
+using mainList = averenkov::List< std::pair< std::string, averenkov::List< unsigned long long > > >;
+using listUll = averenkov::List< unsigned long long >;
+using listOfListUll = averenkov::List< listUll >;
 mainList readInput()
 {
   mainList list;
   std::string name;
   while (std::cin >> name)
   {
-    List< unsigned long long > numbersList;
+    listUll numbersList;
     unsigned long long number = 0;
     while (std::cin >> number)
     {
@@ -34,9 +35,9 @@ void printNames(const mainList& list)
   std::cout << "\n";
 }
 
-List< List< unsigned long long > > createResult(const mainList& list)
+listOfListUll createResult(const mainList& list)
 {
-  List< List< unsigned long long > > result;
+  listOfListUll result;
   size_t maxLen = 0;
   for (auto it = list.begin(); it != list.end(); it++)
   {
@@ -47,7 +48,7 @@ List< List< unsigned long long > > createResult(const mainList& list)
   }
   for (size_t i = 0; i < maxLen; i++)
   {
-    List< unsigned long long > sublist;
+    listUll sublist;
     for (auto it = list.begin(); it != list.end(); it++)
     {
       if (i < it->second.size())
@@ -65,7 +66,7 @@ List< List< unsigned long long > > createResult(const mainList& list)
   return result;
 }
 
-void printResult(const List< List< unsigned long long > >& result)
+void printResult(const listOfListUll& result)
 {
   for (auto it = result.begin(); it != result.end(); it++)
   {
@@ -78,9 +79,9 @@ void printResult(const List< List< unsigned long long > >& result)
   }
 }
 
-void calcPrintSum(const List< List< unsigned long long > >& result)
+void calcPrintSum(const listOfListUll& result)
 {
-  List< unsigned long long > sums {};
+  listUll sums {};
   for (auto it = result.begin(); it != result.end(); it++)
   {
     unsigned long long sum = 0;

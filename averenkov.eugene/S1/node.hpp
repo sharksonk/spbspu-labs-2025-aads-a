@@ -6,8 +6,8 @@ namespace averenkov
   template< class T>
   struct Node
   {
-    T data_;
-    Node* next_;
+    T data;
+    Node* next;
   };
 }
 
