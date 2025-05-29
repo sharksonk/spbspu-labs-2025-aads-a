@@ -20,7 +20,7 @@ namespace averenkov
     const T& top() const noexcept;
     T& top() noexcept;
 
-    void push(T rhs);
+    void push(const T& rhs);
     T drop();
 
   private:
@@ -73,7 +73,7 @@ namespace averenkov
   }
 
   template< class T >
-  void Stack< T >::push(T rhs)
+  void Stack< T >::push(const T& rhs)
   {
     arr_.push_back(rhs);
   }
