@@ -2,7 +2,6 @@
 #include <fstream>
 #include <BiTree.hpp>
 #include "key_sum.hpp"
-
 int main(int argc, char* argv[])
 {
   if (argc != 3)
