@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "BiTree.hpp"
+#include <BiTree.hpp>
 
 using Dictionary = averenkov::Tree< int, std::string >;
 using DictionaryStorage = averenkov::Tree< std::string, Dictionary >;
@@ -207,9 +207,9 @@ int main(int argc, char* argv[])
       std::string newName = line.substr(pos1, pos2 - pos1);
       std::string name1 = line.substr(pos2 + 1, pos3 - pos2 - 1);
       std::string name2 = line.substr(pos3 + 1);
-      auto dict1 = dictonaries.find(name1);
-      auto dict2 = dictonaries.find(name2);
-      if (dict1 == dictonaries.end() || dict2 == dictonaries.end())
+      auto dict1 = dictionaries.find(name1);
+      auto dict2 = dictionaries.find(name2);
+      if (dict1 == dictionaries.end() || dict2 == dictionaries.end())
       {
         std::cout << "<INVALID COMMAND>\n";
         continue;
