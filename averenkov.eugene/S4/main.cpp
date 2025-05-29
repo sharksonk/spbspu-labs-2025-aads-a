@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 {
   if (argc != 2)
   {
-    std::cerr << "Usage: " << argv[0] << " filename\n";
+    std::cerr << "Error\n";
     return 1;
   }
 
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
   {
     if (line.empty())
     {
-      continue;
+      return 1;
     }
 
     size_t space_pos = line.find(' ');
@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
       if (space_pos == std::string::npos)
       {
         std::cout << "<INVALID COMMAND>\n";
-        continue;
+        return 1;
       }
       std::string dictName = line.substr(space_pos + 1);
       auto dict = dictionaries.find(dictName);
@@ -171,6 +171,7 @@ int main(int argc, char* argv[])
       else
       {
         std::cout << "<INVALID COMMAND>\n";
+        return 1;
       }
     }
     else if (command == "complement" || command == "intersect" || command == "union")
@@ -181,7 +182,7 @@ int main(int argc, char* argv[])
       if (pos1 == std::string::npos || pos2 == std::string::npos || pos3 == std::string::npos)
       {
         std::cout << "<INVALID COMMAND>\n";
-        continue;
+        return 1;
       }
       std::string newName = line.substr(pos1, pos2 - pos1);
       std::string name1 = line.substr(pos2 + 1, pos3 - pos2 - 1);
@@ -191,7 +192,7 @@ int main(int argc, char* argv[])
       if (dict1 == dictionaries.end() || dict2 == dictionaries.end())
       {
         std::cout << "<INVALID COMMAND>\n";
-        continue;
+        return 1;
       }
       if (command == "complement")
       {
