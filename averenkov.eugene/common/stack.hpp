@@ -9,11 +9,6 @@ namespace averenkov
   {
 
   public:
-    Stack() = default;
-    ~Stack() = default;
-    Stack(const Stack &rhs);
-    Stack(Stack &&rhs) noexcept;
-    Stack &operator=(const Stack &rhs);
     bool empty() const noexcept;
     size_t size() const noexcept;
 
@@ -21,32 +16,12 @@ namespace averenkov
     T& top() noexcept;
 
     void push(const T& rhs);
-    T drop();
+    void pop();
 
   private:
     Array< T > arr_;
 
   };
-
-  template< class T >
-  Stack< T >::Stack(const Stack& rhs):
-    arr_(rhs.arr_)
-  {}
-
-  template< class T >
-  Stack< T >::Stack(Stack&& rhs) noexcept:
-    arr_(std::move(rhs.arr_))
-  {}
-
-  template< class T >
-  Stack< T >& Stack< T >::operator=(const Stack& rhs)
-  {
-    if (this != std::addressof(rhs))
-    {
-      arr_ = rhs.arr_;
-    }
-    return *this;
-  }
 
   template< class T >
   bool Stack< T >::empty() const noexcept
@@ -79,15 +54,9 @@ namespace averenkov
   }
 
   template< class T >
-  T Stack< T >::drop()
+  void Stack< T >::pop()
   {
-    if (arr_.empty())
-    {
-      throw std::underflow_error("empty");
-    }
-    T temp = top();
     arr_.pop_back();
-    return temp;
   }
 };
 

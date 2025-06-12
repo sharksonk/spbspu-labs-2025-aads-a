@@ -1,15 +1,11 @@
 #include <iostream>
 #include <climits>
 #include <fstream>
-#include <sstream>
 #include <string>
 #include <cctype>
 #include <stdexcept>
 #include "stack.hpp"
 #include "queue.hpp"
-
-
-using namespace averenkov;
 
 bool isOverflow(long long a, long long b)
 {
@@ -55,213 +51,218 @@ bool precedenceFirst(char first, char second)
   return true;
 }
 
-
-std::string infixToPostfix(const std::string& infix)
+std::string readToken(const std::string& str, size_t& pos)
 {
-  Stack< char > stack;
-  std::string postfix;
-  std::string number;
-  bool isNegative = false;
-
-  for (size_t i = 0; i < infix.size(); ++i)
+  while (pos < str.size() && std::isspace(str[pos]))
   {
-    char ch = infix[i];
-
-    if (std::isspace(ch)) continue;
-
-    if (std::isdigit(ch))
-    {
-      number += ch;
-    }
-    else if (ch == '-' && (i == 0 || infix[i - 1] == '('))
-    {
-      isNegative = true;
-    }
-    else
-    {
-      if (!number.empty())
-      {
-        if (isNegative)
-        {
-          postfix += '-';
-          isNegative = false;
-        }
-        postfix += number + " ";
-        number.clear();
-      }
-
-      if (ch == '(')
-      {
-        stack.push(ch);
-      }
-      else if (ch == ')')
-      {
-        while (!stack.empty() && stack.top() != '(')
-        {
-          postfix += stack.drop();
-          postfix += ' ';
-        }
-        if (stack.empty())
-        {
-          throw std::runtime_error("parentheses error");
-        }
-        stack.drop();
-      }
-      else if (isOperator(ch))
-      {
-        while (!stack.empty() && precedenceFirst(stack.top(), ch))
-        {
-          postfix += stack.drop();
-          postfix += ' ';
-        }
-        stack.push(ch);
-      }
-      else
-      {
-        throw std::runtime_error("error character in expression");
-      }
-    }
+    pos++;
   }
-
-  if (!number.empty())
+  if (pos >= str.size())
   {
-    if (isNegative)
-    {
-      postfix += '-';
-    }
-    postfix += number + " ";
+    return "";
   }
-
-  while (!stack.empty())
+  if (isOperator(str[pos]) || str[pos] == '(' || str[pos] == ')')
   {
-    if (stack.top() == '(')
-    {
-      throw std::runtime_error("parentheses error");
-    }
-    postfix += stack.drop();
-    postfix += ' ';
+    return std::string(1, str[pos++]);
   }
-
-  if (!postfix.empty() && postfix.back() == ' ')
+  std::string num;
+  bool negative = false;
+  if (str[pos] == '-' && (pos == 0 || str[pos-1] == '('))
   {
-    postfix.pop_back();
+    negative = true;
+    num += '-';
+    pos++;
   }
-
-  return postfix;
+  while (pos < str.size() && std::isdigit(str[pos]))
+  {
+    num += str[pos++];
+  }
+  if (num.empty() || (negative && num.size() == 1))
+  {
+    throw std::runtime_error("Error");
+  }
+  return num;
 }
 
-long long evaluatePostfix(const std::string& postfix)
+averenkov::Queue< std::string > infixToPostfix(const std::string& infix)
 {
-  Stack< long long > stack;
-  std::istringstream iss(postfix);
-  std::string token;
-
-  while (iss >> token)
+  averenkov::Stack< char > opStack;
+  averenkov::Queue< std::string > outputQueue;
+  size_t pos = 0;
+  while (pos < infix.size())
   {
-    if (std::isdigit(token[0]))
+    std::string token = readToken(infix, pos);
+    if (token.empty())
     {
-      stack.push(std::stoll(token));
+      continue;
+    }
+    if (std::isdigit(token[0]) || (token[0] == '-' && token.size() > 1))
+    {
+      outputQueue.push(token);
+    }
+    else if (token == "(")
+    {
+      opStack.push('(');
+    }
+    else if (token == ")")
+    {
+      while (!opStack.empty() && opStack.top() != '(')
+      {
+        outputQueue.push(std::string(1, opStack.top()));
+        opStack.pop();
+      }
+      if (opStack.empty())
+      {
+        throw std::runtime_error("Error");
+      }
+      opStack.pop();
     }
     else if (isOperator(token[0]))
     {
-      try
+      while (!opStack.empty() && opStack.top() != '(' && precedenceFirst(opStack.top(), token[0]))
       {
-        long long b = stack.drop();
-        long long a = stack.drop();
-        long long result;
-
-        switch (token[0])
-        {
-          case '+':
-            if (a > 0 && b > 0 && a > LLONG_MAX - b)
-            {
-              throw std::runtime_error("overflow error");
-            }
-            result = a + b;
-            break;
-          case '-':
-            if (b > 0 && a < LLONG_MIN + b)
-            {
-              throw std::runtime_error("overflow error");
-            }
-            result = a - b;
-            break;
-          case '*':
-            if (isOverflow(a, b))
-            {
-              throw std::runtime_error("overflow error");
-            }
-            result = a * b;
-            break;
-          case '/':
-            if (b == 0)
-            {
-              throw std::runtime_error("division zero");
-            }
-            result = a / b;
-            break;
-          case '%':
-            if (b == 0)
-            {
-              throw std::runtime_error("modul zero");
-            }
-            result = (a % b + b) % b;
-            break;
-          default:
-            throw std::runtime_error("invalid operator");
-        }
-
-        stack.push(result);
+        outputQueue.push(std::string(1, opStack.top()));
+        opStack.pop();
       }
-      catch (const std::underflow_error& e)
-      {
-        throw std::runtime_error("expression error");
-      }
+      opStack.push(token[0]);
     }
     else
     {
-      throw std::runtime_error("invalid token");
+      throw std::runtime_error("Error");
     }
   }
-
-  return stack.drop();
+  while (!opStack.empty())
+  {
+    if (opStack.top() == '(')
+    {
+      throw std::runtime_error("Error");
+    }
+    outputQueue.push(std::string(1, opStack.top()));
+    opStack.pop();
+  }
+  return outputQueue;
 }
 
+long long evaluatePostfix(averenkov::Queue< std::string >& postfixQueue)
+{
+  averenkov::Stack< long long > evalStack;
+  while (!postfixQueue.empty())
+  {
+    std::string token = postfixQueue.front();
+    postfixQueue.pop();
+    if (std::isdigit(token[0]) || (token[0] == '-' && token.size() > 1))
+    {
+      long long num = 0;
+      bool negative = false;
+      size_t i = 0;
+      if (token[0] == '-')
+      {
+        negative = true;
+        i = 1;
+      }
+      for (; i < token.size(); ++i)
+      {
+        num = num * 10 + (token[i] - '0');
+      }
+      evalStack.push(negative ? -num : num);
+    }
+    else if (isOperator(token[0]))
+    {
+      if (evalStack.size() < 2)
+      {
+        throw std::runtime_error("Error");
+      }
+      long long b = evalStack.top();
+      evalStack.pop();
+      long long a = evalStack.top();
+      evalStack.pop();
+      long long result;
+      switch (token[0])
+      {
+        case '+':
+          if (a > 0 && b > 0 && a > LLONG_MAX - b)
+          {
+            throw std::runtime_error("Overflow error");
+          }
+          result = a + b;
+          break;
+        case '-':
+          if (b > 0 && a < LLONG_MIN + b)
+          {
+            throw std::runtime_error("Overflow error");
+          }
+          result = a - b;
+          break;
+        case '*':
+          if (isOverflow(a, b))
+          {
+            throw std::runtime_error("Overflow error");
+          }
+          result = a * b;
+          break;
+        case '/':
+          if (b == 0)
+          {
+            throw std::runtime_error("Division by zero");
+          }
+          result = a / b;
+          break;
+        case '%':
+          if (b == 0)
+          {
+            throw std::runtime_error("Error");
+          }
+          result = (a % b + b) % b;
+          break;
+        default:
+          throw std::runtime_error("Error");
+      }
+      evalStack.push(result);
+    }
+    else
+    {
+      throw std::runtime_error("Invalid token");
+    }
+  }
+  if (evalStack.size() != 1)
+  {
+    throw std::runtime_error("Expression error");
+  }
+  auto temp = evalStack.top();
+  evalStack.pop();
+  return temp;
+}
 
 void processExpressions(std::istream& input)
 {
-  Stack< long long > results;
+  averenkov::Stack< long long > results;
   std::string line;
-  std::string token;
-
-  while (input >> token)
+  while (std::getline(input, line))
   {
-    if (token == "(" || token == ")" || isOperator(token[0]) || std::isdigit(token[0]))
+    if (line.empty())
     {
-      line += token + " ";
+      continue;
     }
-    else
+    try
     {
-      throw std::runtime_error("invalid token");
+      averenkov::Queue< std::string > postfixQueue = infixToPostfix(line);
+      long long result = evaluatePostfix(postfixQueue);
+      results.push(result);
     }
-
-    if (input.peek() == '\n' || input.peek() == EOF)
+    catch (const std::exception& e)
     {
-      if (!line.empty())
-      {
-        std::string postfix = infixToPostfix(line);
-        long long result = evaluatePostfix(postfix);
-        results.push(result);
-        line.clear();
-      }
+      throw std::runtime_error("Error in expression");
     }
   }
-
-  std::cout << results.drop();
-
-  while (!results.empty())
+  if (!results.empty())
   {
-    std::cout << " " << results.drop();
+    std::cout << results.top();
+    results.pop();
+    while (!results.empty())
+    {
+      std::cout << " " << results.top();
+      results.pop();
+    }
   }
   std::cout << "\n";
 }
@@ -291,16 +292,9 @@ int main(int argc, char* argv[])
       processExpressions(std::cin);
     }
   }
-
-  catch (const std::underflow_error& e)
+  catch (...)
   {
-    std::cout << "\n";
-    return 0;
-  }
-
-  catch (const std::exception& e)
-  {
-    std::cerr << e.what() << "\n";
+    std::cerr << "Error\n";
     return 1;
   }
   return 0;
