@@ -100,8 +100,16 @@ namespace kushekbaev
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
-    T tmp = std::move(top());
-    sequence_.pop_back();
+    T tmp = 0;
+    try
+    {
+      tmp = std::move(top());
+      sequence_.pop_back();
+    }
+    catch (...)
+    {
+      throw std::runtime_error("Error in drop");
+    }
     return tmp;
   }
 
