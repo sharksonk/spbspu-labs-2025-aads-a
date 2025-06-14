@@ -160,7 +160,7 @@ namespace averenkov
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(const Tree& other)
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
       clear();
       setRoot(copy_tree(other.getRoot(), fake_root));
@@ -172,7 +172,7 @@ namespace averenkov
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(Tree&& other) noexcept
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
       clear();
       delete fake_root;
@@ -341,13 +341,10 @@ namespace averenkov
     }
   }
 
-
-
-
   template < class Key, class Value, class Compare >
   void Tree< Key, Value, Compare >::swap(Tree< Key, Value, Compare >& other) noexcept
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
       std::swap(fake_root, other.fake_root);
       std::swap(comp, other.comp);
