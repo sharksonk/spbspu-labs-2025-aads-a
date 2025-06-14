@@ -6,10 +6,12 @@
 
 namespace averenkov
 {
-  using Dictionary = Tree<int, std::string>;
-  using DictionaryStorage = Tree<std::string, Dictionary>;
-  using DicFunc = std::function<void(DictionaryStorage&, const std::string&)>;
-  using CommandTree = Tree<std::string, DicFunc>;
+  using Dictionary = Tree< int, std::string >;
+  using DictionaryStorage = Tree< std::string, Dictionary >;
+  using DicFunc = std::function< void(DictionaryStorage&, const std::string&) >;
+  using DicIter = Iterator< std::string, Dictionary, std::less< std::string > >;
+  using DicPair = std::pair< DicIter, DicIter >;
+  using CommandTree = Tree< std::string, DicFunc >;
 
   void loadDictionaries(const std::string& filename, DictionaryStorage& storage)
   {
@@ -89,7 +91,7 @@ namespace averenkov
     std::cout << "\n";
   }
 
-  void complement(DictionaryStorage& storage, const std::string& args)
+  DicPair parse(DictionaryStorage& storage, const std::string& args)
   {
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
@@ -99,10 +101,21 @@ namespace averenkov
     std::string name2 = args.substr(space2 + 1);
     auto dict1 = storage.find(name1);
     auto dict2 = storage.find(name2);
-    Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    if (dict1 == storage.end() || dict2 == storage.end())
     {
-      if (dict2->second.find(it->first) == dict2->second.end())
+      throw;
+    }
+    return { dict1, dict2 };
+  }
+
+  void complement(DictionaryStorage& storage, const std::string& args)
+  {
+    std::string newName = args.substr(0, args.find(' ', 0) + 1);
+    auto Dicts = parse(storage, args);
+    Dictionary result;
+    for (auto it = Dicts.first->second.begin(); it != Dicts.first->second.end(); ++it)
+    {
+      if (Dicts.second->second.find(it->first) == Dicts.second->second.end())
       {
         result.push(it->first, it->second);
       }
@@ -112,18 +125,12 @@ namespace averenkov
 
   void intersect(DictionaryStorage& storage, const std::string& args)
   {
-    size_t pos = 0;
-    size_t space1 = args.find(' ', pos);
-    size_t space2 = args.find(' ', space1 + 1);
-    std::string newName = args.substr(pos, space1);
-    std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
-    std::string name2 = args.substr(space2 + 1);
-    auto dict1 = storage.find(name1);
-    auto dict2 = storage.find(name2);
+    std::string newName = args.substr(0, args.find(' ', 0) + 1);
+    auto Dicts = parse(storage, args);
     Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    for (auto it = Dicts.first->second.begin(); it != Dicts.first->second.end(); ++it)
     {
-      if (dict2->second.find(it->first) != dict2->second.end())
+      if (Dicts.second->second.find(it->first) != Dicts.second->second.end())
       {
         result.push(it->first, it->second);
       }
@@ -133,20 +140,14 @@ namespace averenkov
 
   void unionDicts(DictionaryStorage& storage, const std::string& args)
   {
-    size_t pos = 0;
-    size_t space1 = args.find(' ', pos);
-    size_t space2 = args.find(' ', space1 + 1);
-    std::string newName = args.substr(pos, space1);
-    std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
-    std::string name2 = args.substr(space2 + 1);
-    auto dict1 = storage.find(name1);
-    auto dict2 = storage.find(name2);
+    std::string newName = args.substr(0, args.find(' ', 0) + 1);
+    auto Dicts = parse(storage, args);
     Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    for (auto it = Dicts.first->second.begin(); it != Dicts.first->second.end(); ++it)
     {
       result.push(it->first, it->second);
     }
-    for (auto it = dict2->second.begin(); it != dict2->second.end(); ++it)
+    for (auto it = Dicts.second->second.begin(); it != Dicts.second->second.end(); ++it)
     {
       if (result.find(it->first) == result.end())
       {
