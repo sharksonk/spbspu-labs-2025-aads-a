@@ -2,6 +2,9 @@
 #include "calculationProcess.hpp"
 #include "stack.hpp"
 
+constexpr long long int MIN = std::numeric_limits< long long int >::min();
+constexpr long long int MAX = std::numeric_limits< long long int >::max();
+
 namespace
 {
   bool isNumber(const std::string& symbol)
@@ -19,7 +22,7 @@ namespace
 
   bool isOperator(const std::string& symbol)
   {
-    return (symbol == "+" || symbol == "-" || symbol == "/" || symbol == "%" || symbol == "*" || symbol == "**");
+    return symbol == "+" || symbol == "-" || symbol == "/" || symbol == "%" || symbol == "*" || symbol == "**";
   }
 
   int calculatePriority(const std::string& operation)
@@ -39,65 +42,65 @@ namespace
     return 0;
   }
 
-  long long int calculateOperation(const std::string& operation, long long int operand1, long long int operand2)
+  long long int addition(long long int operand1, long long int operand2)
   {
-    const long long int min = std::numeric_limits< long long int >::min();
-    const long long int max = std::numeric_limits< long long int >::max();
-    if (operation == "+")
+    if ((operand2 > 0) && (operand1 > (MAX - operand2)))
     {
-      if ((operand2 > 0) && (operand1 > (max - operand2)))
-      {
-        throw std::runtime_error("Addition overflow!");
-      }
-      if ((operand2 < 0) && (operand1 < (min - operand2)))
-      {
-        throw std::runtime_error("Addition underflow!");
-      }
-      return operand1 + operand2;
+      throw std::runtime_error("Addition overflow!");
     }
-    else if (operation == "-")
+    if ((operand2 < 0) && (operand1 < (MIN - operand2)))
     {
-      if ((operand2 > 0) && (operand1 < (min + operand2)))
-      {
-        throw std::runtime_error("Subtraction underflow!");
-      }
-      if ((operand2 < 0) && (operand1 > (max + operand2)))
-      {
-        throw std::runtime_error("Subtraction overflow!");
-      }
-      return operand1 - operand2;
+      throw std::runtime_error("Addition underflow!");
     }
-    else if (operation == "/")
+    return operand1 + operand2;
+  }
+
+  long long int substraction(long long int operand1, long long int operand2)
+  {
+    if ((operand2 > 0) && (operand1 < (MIN + operand2)))
     {
-      if (operand2 == 0)
-      {
-        throw std::runtime_error("Division by zero!");
-      }
-      if ((operand1 == min) && (operand2 == -1))
-      {
-        throw std::runtime_error("Division overflow!");
-      }
-      return operand1 / operand2;
+      throw std::runtime_error("Subtraction underflow!");
     }
-    else if (operation == "%")
+    if ((operand2 < 0) && (operand1 > (MAX + operand2)))
     {
-      if (operand2 == 0)
-      {
-        throw std::runtime_error("Division by zero!");
-      }
-      return (operand1 % operand2 + operand2) % operand2;
+      throw std::runtime_error("Subtraction overflow!");
     }
-    else if (operation == "*")
+    return operand1 - operand2;
+  }
+
+  long long int division(long long int operand1, long long int operand2)
+  {
+    if (operand2 == 0)
     {
-      if (operand1 > 0)
+      throw std::runtime_error("Division by zero!");
+    }
+    if ((operand1 == MIN) && (operand2 == -1))
+    {
+      throw std::runtime_error("Division overflow!");
+    }
+    return operand1 / operand2;
+  }
+
+  long long int modulation(long long int operand1, long long int operand2)
+  {
+    if (operand2 == 0)
+    {
+      throw std::runtime_error("Division by zero!");
+    }
+    return (operand1 % operand2 + operand2) % operand2;
+  }
+
+  long long int multiplication(long long int operand1, long long int operand2)
+  {
+    if (operand1 > 0)
       {
         if (operand2 > 0)
         {
-          if (operand1 > max / operand2)
+          if (operand1 > MAX / operand2)
           {
             throw std::runtime_error("Multiplication overflow!");
           }
-          else if (operand2 < min / operand1)
+          else if (operand2 < MIN / operand1)
           {
             throw std::runtime_error("Multiplication underflow!");
           }
@@ -107,21 +110,22 @@ namespace
       {
         if (operand2 > 0)
         {
-          if (operand1 < min / operand2)
+          if (operand1 < MIN / operand2)
           {
             throw std::runtime_error("Multiplication underflow!");
           }
-          else if (operand2 != 0 && operand1 > max / operand2)
+          else if (operand2 != 0 && operand1 > MAX / operand2)
           {
             throw std::runtime_error("Multiplication overflow!");
           }
         }
       }
       return operand1 * operand2;
-    }
-    else if (operation == "**")
-    {
-      if (operand1 == 0)
+  }
+
+  long long int power(long long int operand1, long long int operand2)
+  {
+    if (operand1 == 0)
       {
         if (operand2 <= 0)
         {
@@ -140,22 +144,52 @@ namespace
       {
         return 1;
       }
-      if (operand1 == -1)
-      {
-        return (operand2 % 2 == 0) ? 1 : -1;
-      }
       bool isNegative = (operand1 < 0) && (operand2 % 2 != 0);
-      operand1 = std::abs(operand1);
+      if (operand1 != std::abs(MIN + 1))
+      {
+        operand1 = std::abs(operand1);
+      }
+      else
+      {
+        throw std::runtime_error("Power overflow!");
+      }
       long long int result = 1;
       for (long long int i = 0; i < operand2; ++i)
       {
-        if (result > max / operand1)
+        if (result > MAX / operand1)
         {
           throw std::runtime_error("Power overflow!");
         }
         result *= operand1;
       }
       return isNegative ? -result : result;
+  }
+
+  long long int calculateOperation(const std::string& operation, long long int operand1, long long int operand2)
+  {
+    if (operation == "+")
+    {
+      return addition(operand1, operand2);
+    }
+    else if (operation == "-")
+    {
+      return substraction(operand1, operand2);
+    }
+    else if (operation == "/")
+    {
+      return division(operand1, operand2);
+    }
+    else if (operation == "%")
+    {
+      return modulation(operand1, operand2);
+    }
+    else if (operation == "*")
+    {
+      return multiplication(operand1, operand2);
+    }
+    else if (operation == "**")
+    {
+      return power(operand1, operand2);
     }
     else
     {
