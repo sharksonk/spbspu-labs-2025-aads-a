@@ -5,6 +5,8 @@
 
 using Dictionary = averenkov::Tree< int, std::string >;
 using DictionaryStorage = averenkov::Tree< std::string, Dictionary >;
+using DicFunc = std::function< void(DictionaryStorage&, const std::string&) >;
+using CommandTree = averenkov::Tree< std::string, DicFunc >;
 using str = const std::string&;
 
 void loadDictionaries(str filename, DictionaryStorage& storage)
@@ -133,6 +135,14 @@ void unionDicts(DictionaryStorage& storage, str newName, str name1, str name2)
   storage.push(newName, result);
 }
 
+void commandsInit(CommandTree& commands)
+{
+  commands["print"] = std::bind(printDictionary, std::placeholders::_1, std::placeholders::_2);
+  commands["complement"] = std::bind(complement, std::placeholders::_1, std::placeholders::_2);
+  commands["intersect"] = std::bind(intersect, std::placeholders::_1, std::placeholders::_2);
+  commands["union"] = std::bind(unionDicts, std::placeholders::_1, std::placeholders::_2);
+}
+
 int main(int argc, char* argv[])
 {
   if (argc != 2)
@@ -154,7 +164,9 @@ int main(int argc, char* argv[])
 
     size_t space_pos = line.find(' ');
     std::string command = line.substr(0, space_pos);
-
+//    CommandTree commands;
+  //  commandsInit(commands);
+    //commands
     if (command == "print")
     {
       if (space_pos == std::string::npos)
