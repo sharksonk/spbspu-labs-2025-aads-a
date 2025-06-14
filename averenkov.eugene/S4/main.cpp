@@ -4,8 +4,8 @@
 #include <string>
 #include "BiTree.hpp"
 
-using Dictionary = Tree< int, std::string >;
-using DictionaryStorage = Tree< std::string, Dictionary >;
+using Dictionary = averenkov::Tree< int, std::string >;
+using DictionaryStorage = averenkov::Tree< std::string, Dictionary >;
 
 using str = const std::string&;
 
