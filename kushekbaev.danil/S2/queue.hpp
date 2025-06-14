@@ -1,21 +1,22 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include "array.hpp"
 #include <stdexcept>
+#include <deque>
 
 namespace kushekbaev
 {
-  template< typename T >
+  template < typename T, typename Sequence = std::deque< T > >
   class Queue
   {
     public:
       Queue() = default;
-      Queue(const Queue& other);
+      Queue(const Queue& other) noexcept;
       Queue(Queue&& other) noexcept;
       ~Queue() = default;
 
-      Queue& operator=(const Queue& other);
+      Queue& operator=(const Queue& other) noexcept;
+      Queue& operator=(Queue&& other) noexcept;
 
       T& front() noexcept;
       T& back() noexcept;
@@ -30,91 +31,101 @@ namespace kushekbaev
       void pop();
 
     private:
-      Array< T > array_;
+      Sequence sequence_;
   };
 
-  template< typename T >
-  Queue< T >::Queue(const Queue& other):
-    array_(other.array_)
+  template < typename T, typename Sequence >
+  Queue< T, Sequence >::Queue(const Queue& other) noexcept:
+    sequence_(other.sequence_)
   {}
 
-  template< typename T >
-  Queue< T >::Queue(Queue&& other) noexcept:
-    array_(std::move(other.array_))
+  template < typename T, typename Sequence >
+  Queue< T, Sequence >::Queue(Queue&& other) noexcept:
+    sequence_(std::move(other.sequence_))
   {}
 
-  template< typename T >
-  Queue< T >& Queue< T >::operator=(const Queue& other)
+  template < typename T, typename Sequence >
+  Queue< T, Sequence >& Queue< T, Sequence >::operator=(const Queue& other) noexcept
   {
     if (this != &other)
     {
-      array_ = other.array_;
+      sequence_ = other.sequence_;
     }
     return *this;
   }
 
-  template< typename T >
-  T& Queue< T >::front() noexcept
+  template< typename T, typename Sequence >
+  Queue< T, Sequence >& Queue< T, Sequence >::operator=(Queue&& other) noexcept
   {
-    return array_.front();
-  }
-
-  template< typename T >
-  T& Queue< T >::back() noexcept
-  {
-    return array_.back();
-  }
-
-  template< typename T >
-  const T& Queue< T >::front() const noexcept
-  {
-    return array_.front();
-  }
-
-  template< typename T >
-  const T& Queue< T >::back() const noexcept
-  {
-    return array_.back();
-  }
-
-  template< typename T >
-  bool Queue< T >::empty() const noexcept
-  {
-    return array_.empty();
-  }
-
-  template< typename T >
-  size_t Queue< T >::size() const noexcept
-  {
-    return array_.size();
-  }
-
-  template< typename T >
-  void Queue< T >::push(const T& value)
-  {
-    array_.push_back(value);
-  }
-
-  template< typename T >
-  T Queue< T >::drop()
-  {
-    if (array_.empty())
+    if (this != &other)
     {
-      throw std::out_of_range("The array in the queue is empty!");
+      sequence_ = std::move(other.sequence_);
     }
-    T tmp = array_.front();
-    array_.pop_front();
+    return *this;
+  }
+
+  template < typename T, typename Sequence >
+  T& Queue< T, Sequence >::front() noexcept
+  {
+    return sequence_.front();
+  }
+
+  template < typename T, typename Sequence >
+  T& Queue< T, Sequence >::back() noexcept
+  {
+    return sequence_.back();
+  }
+
+  template < typename T, typename Sequence >
+  const T& Queue< T, Sequence >::front() const noexcept
+  {
+    return sequence_.front();
+  }
+
+  template < typename T, typename Sequence >
+  const T& Queue< T, Sequence >::back() const noexcept
+  {
+    return sequence_.back();
+  }
+
+  template < typename T, typename Sequence >
+  bool Queue< T, Sequence >::empty() const noexcept
+  {
+    return sequence_.empty();
+  }
+
+  template < typename T, typename Sequence >
+  size_t Queue< T, Sequence >::size() const noexcept
+  {
+    return sequence_.size();
+  }
+
+  template < typename T, typename Sequence >
+  void Queue< T, Sequence >::push(const T& value)
+  {
+    sequence_.push_back(value);
+  }
+
+  template < typename T, typename Sequence >
+  T Queue< T, Sequence >::drop()
+  {
+    if (sequence_.empty())
+    {
+      throw std::out_of_range("The vector in the queue is empty!");
+    }
+    T tmp = std::move(sequence_.front());
+    sequence_.pop_front();
     return tmp;
   }
 
-  template< typename T >
-  void Queue< T >::pop()
+  template < typename T, typename Sequence >
+  void Queue< T, Sequence >::pop()
   {
-    if (array_.empty())
+    if (sequence_.empty())
     {
-      throw std::out_of_range("The array in the queue is empty!");
+      throw std::out_of_range("The vector in the queue is empty!");
     }
-    array_.pop_front();
+    sequence_.pop_front();
   }
 }
 
