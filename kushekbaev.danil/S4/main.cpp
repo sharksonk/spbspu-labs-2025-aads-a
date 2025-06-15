@@ -42,25 +42,15 @@ int main(int argc, char* argv[])
   }
   std::ifstream in(argv[1]);
   dataset_t dataset = readInputFromFile(in);
-  std::map< std::string, std::function< void() > > commands;
-  commands["print"] = std::bind(kushekbaev::print, std::ref(std::cout), std::ref(std::cin), std::cref(dataset));
-  commands["complement"] = std::bind(kushekbaev::complement, std::ref(std::cin), std::ref(dataset));
-  commands["intersect"] = std::bind(kushekbaev::intersect, std::ref(std::cin), std::ref(dataset));
-  commands["union"] = std::bind(kushekbaev::unification, std::ref(std::cin), std::ref(dataset));
-  std::string command;
-  while (!(std::cin >> command).eof())
+  while (!std::cin.eof())
   {
     try
     {
-      commands.at(command)();
-    }
-    catch (const std::logic_error&)
-    {
-      std::cerr << "<INVALID COMMAND>";
+      kushekbaev::executeCommand(std::cin, std::cout, dataset);
     }
     catch (const std::exception& e)
     {
-      std::cerr << e.what() << "\n";
+      std::cout << e.what() << "\n";
     }
     std::cin.clear();
     std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
