@@ -16,17 +16,17 @@ namespace kushekbaev
 
   void print(std::ostream& out, std::istream& in, const dataset_t& dataset);
 
-  void complement(std::istream& in, const dataset_t& dataset);
+  void complement(std::istream& in, dataset_t& dataset);
 
-  void intersect(std::istream& in, const dataset_t& dataset);
+  void intersect(std::istream& in, dataset_t& dataset);
 
-  void unification(std::istream& in, const dataset_t& dataset);
+  void unification(std::istream& in, dataset_t& dataset);
 
   struct PrintCommand
   {
     std::ostream& out;
     std::istream& in;
-    const dataset_t& dataset;
+    dataset_t& dataset;
 
     void operator()() const
     {
@@ -37,7 +37,7 @@ namespace kushekbaev
   struct ComplementCommand
   {
     std::istream& in;
-    const dataset_t& dataset;
+    dataset_t& dataset;
 
     void operator()() const
     {
@@ -48,7 +48,7 @@ namespace kushekbaev
   struct IntersectCommand
   {
     std::istream& in;
-    const dataset_t& dataset;
+    dataset_t& dataset;
 
     void operator()() const
     {
@@ -59,7 +59,7 @@ namespace kushekbaev
   struct UnionCommand
   {
     std::istream& in;
-    const dataset_t& dataset;
+    dataset_t& dataset;
 
     void operator()() const
     {
