@@ -5,16 +5,16 @@ using dict_t = std::map< std::string, dataset_t >;
 
 void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
+  if (dictionary.empty())
+  {
+    throw std::out_of_range("<EMPTY>");
+  }
   std::string name;
   in >> name;
   auto it = dictionary.find(name);
   if (it == dictionary.end())
   {
     throw std::out_of_range("<INVALID COMMAND>");
-  }
-  if (dictionary.empty())
-  {
-    throw std::out_of_range("<EMPTY>");
   }
   out << name;
   const auto& dataset = it->second;

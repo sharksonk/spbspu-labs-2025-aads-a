@@ -56,10 +56,6 @@ int main(int argc, char* argv[])
     {
       commands.at(command)();
     }
-    catch (const std::out_of_range&)
-    {
-      std::cout << "<INVALID COMMAND>";
-    }
     catch (const std::exception& e)
     {
       std::cout << e.what() << "\n";
