@@ -59,12 +59,12 @@ int main(int argc, char* argv[])
     catch (const std::out_of_range&)
     {
       std::cout << "<INVALID COMMAND>";
-      return 0;
+      return 1;
     }
     catch (const std::runtime_error&)
     {
       std::cout << "<EMPTY>";
-      return 1;
+      return 0;
     }
     catch (const std::exception& e)
     {
