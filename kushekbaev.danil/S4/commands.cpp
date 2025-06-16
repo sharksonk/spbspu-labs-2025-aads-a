@@ -8,24 +8,22 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   if (dictionary.empty())
   {
     out << "<EMPTY>";
+    return;
   }
-  else
+  std::string name;
+  in >> name;
+  auto it = dictionary.find(name);
+  if (it == dictionary.end())
   {
-    std::string name;
-    in >> name;
-    auto it = dictionary.find(name);
-    if (it == dictionary.end())
-    {
-      throw std::out_of_range("<INVALID COMMAND>");
-    }
-    out << name;
-    const auto& dataset = it->second;
-    for (auto jt = dataset.begin(); jt != dataset.end(); ++jt)
-    {
-      out << " " << jt->first << " " << jt->second;
-    }
-    out << "\n";
+    throw std::out_of_range("<INVALID COMMAND>");
   }
+  out << name;
+  const auto& dataset = it->second;
+  for (auto jt = dataset.begin(); jt != dataset.end(); ++jt)
+  {
+    out << " " << jt->first << " " << jt->second;
+  }
+  out << "\n";
 }
 
 void kushekbaev::complement(std::istream& in, dict_t& dictionary)
