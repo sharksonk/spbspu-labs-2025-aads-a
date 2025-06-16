@@ -17,13 +17,13 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   {
     throw std::out_of_range("<INVALID COMMAND>");
   }
-  out << name;
   const auto& dataset = it->second;
   if (dataset.empty())
   {
     out << "<EMPTY>";
     return;
   }
+  out << name;
   for (auto jt = dataset.begin(); jt != dataset.end(); ++jt)
   {
     out << " " << jt->first << " " << jt->second;
