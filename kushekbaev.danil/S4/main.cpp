@@ -66,11 +66,6 @@ int main(int argc, char* argv[])
       std::cout << "<EMPTY>";
       return 0;
     }
-    catch (const std::exception& e)
-    {
-      std::cout << e.what() << "\n";
-      return 1;
-    }
     std::cin.clear();
     std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
   }
