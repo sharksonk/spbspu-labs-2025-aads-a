@@ -1,97 +1,109 @@
 #include "commands.hpp"
 
-using dict_t = std::map< size_t, std::string >;
-using dataset_t = std::map< std::string, dict_t >;
+using dataset_t = std::map< size_t, std::string >;
+using dict_t = std::map< std::string, dataset_t >;
 
-void kushekbaev::executeCommand(std::istream& in, std::ostream& out, dataset_t& dataset)
-{
-  std::map< std::string, std::function< void() > > commands;
-  commands["print"] = PrintCommand{ out, in, dataset };
-  commands["complement"] = ComplementCommand{ in, dataset };
-  commands["intersect"] = IntersectCommand{ in, dataset };
-  commands["union"] = UnionCommand{ in, dataset };
-  std::string command;
-  in >> command;
-  commands.at(command)();
-}
-
-void kushekbaev::print(std::ostream& out, std::istream& in, const dataset_t& dataset)
+void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
   std::string name;
   in >> name;
-  if (dataset.empty())
+  auto it = dictionary.find(name);
+  if (it == dictionary.end())
   {
-    throw std::logic_error("<EMPTY>");
+    throw std::out_of_range("<INVALID COMMAND>");
   }
-  auto it = dataset.find(name);
-  if (it == dataset.end())
+  if (dictionary.empty())
   {
-    throw std::logic_error("<INVALID COMMAND>");
+    throw std::out_of_range("<EMPTY>");
   }
   out << name;
-  for (const auto& element: it->second)
+  const auto& dataset = it->second;
+  for (auto jt = dataset.begin(); jt != dataset.end(); ++jt)
   {
-    out << " " << element.first << " " << element.second;
+    out << " " << jt->first << " " << jt->second;
   }
   out << "\n";
 }
 
-void kushekbaev::complement(std::istream& in, dataset_t& dataset)
+void kushekbaev::complement(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  auto it1 = dataset.find(name1);
-  auto it2 = dataset.find(name2);
-  if (it1 == dataset.end() || it2 == dataset.end())
+  dataset_t dataset;
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
+  for (auto it = it1.begin(); it != it1.end(); ++it)
   {
-    throw std::logic_error("<INVALID COMMAND>");
-  }
-  dict_t resultDict;
-  for (const auto& element: it2->second)
-  {
-    if (it1->second.find(element.first) == it1->second.end())
+    if (it2.find(it->first) == it2.end())
     {
-      resultDict[element.first] = element.second;
+      dataset.insert({ it->first, it->second });
     }
   }
-  dataset[newName] = resultDict;
-}
-
-void kushekbaev::intersect(std::istream& in, dataset_t& dataset)
-{
-  std::string newName, name1, name2;
-  in >> newName >> name1 >> name2;
-  auto it1 = dataset.find(name1);
-  auto it2 = dataset.find(name2);
-  if (it1 == dataset.end() || it2 == dataset.end())
+  for (auto it = it2.begin(); it != it2.end(); ++it)
   {
-    throw std::logic_error("<INVALID COMMAND>");
-  }
-  dict_t resultDict;
-  for (const auto& element: it1->second)
-  {
-    if (it2->second.find(element.first) != it2->second.end())
+    if (it1.find(it->first) == it1.end())
     {
-      resultDict[element.first] = element.second;
+      dataset.insert({ it->first, it->second });
     }
   }
-  dataset[newName] = resultDict;
+  try
+  {
+    dictionary.at(newName) = dataset;
+  }
+  catch (const std::out_of_range&)
+  {
+    dictionary.insert(std::make_pair(newName, dataset));
+  }
 }
 
-void kushekbaev::unification(std::istream& in, dataset_t& dataset)
+void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  auto it1 = dataset.find(name1);
-  auto it2 = dataset.find(name2);
-  if (it1 == dataset.end() || it2 == dataset.end())
+  dataset_t dataset;
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
+  for (auto it = it1.begin(); it != it1.end(); ++it)
   {
-    throw std::logic_error("<INVALID COMMAND>");
+    if (it2.find(it->first) != it2.end())
+    {
+      dataset.insert({ it->first, it->second });
+    }
   }
-  dict_t resultDict = it1->second;
-  for (const auto& element: it2->second)
+  try
   {
-    resultDict[element.first] = element.second;
+    dictionary.at(newName) = dataset;
   }
-  dataset[newName] = resultDict;
+  catch (const std::out_of_range&)
+  {
+    dictionary.insert(std::make_pair(newName, dataset));
+  }
+}
+
+void kushekbaev::unification(std::istream& in, dict_t& dictionary)
+{
+  std::string newName, name1, name2;
+  in >> newName >> name1 >> name2;
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
+  dataset_t dataset;
+  for (auto it = it1.begin(); it != it1.end(); ++it)
+  {
+    dataset.insert({ it->first, it->second });
+  }
+  for (auto it = it2.begin(); it != it2.end(); ++it)
+  {
+    if (dataset.find(it->first) == dataset.end())
+    {
+      dataset.insert({ it->first, it->second });
+    }
+  }
+  try
+  {
+    dictionary.at(newName) = dataset;
+  }
+  catch (const std::out_of_range&)
+  {
+    dictionary.insert(std::make_pair(newName, dataset));
+  }
 }

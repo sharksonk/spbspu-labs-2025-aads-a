@@ -1,35 +1,36 @@
 #include <fstream>
 #include <limits>
 #include <stdexcept>
+#include <functional>
 #include "commands.hpp"
 
-using dict_t = std::map< size_t, std::string >;
-using dataset_t = std::map< std::string, dict_t >;
+using dataset_t = std::map< size_t, std::string >; //ЭТО СТРОКА!!
+using dict_t = std::map< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
 
 namespace
 {
-  dataset_t readInputFromFile(std::ifstream& in)
+  dict_t readInputFromFile(std::ifstream& in)
   {
     if (!in.is_open())
     {
       throw std::runtime_error("File couldn't be open!");
     }
-    std::string name;
-    dataset_t dataset;
-    while (std::getline(in, name))
+    dict_t inputdata;
+    while (!in.eof())
     {
-      size_t key;
+      std::string name;
+      size_t key = 0;
       std::string value;
-      dict_t dictionary;
-      while (in >> key >> value)
+      dataset_t tmp;
+      char c = 0;
+      while (in.get(c) && c != '\n')
       {
-        dictionary[key] = value;
+        in >> key >> value;
+        tmp.insert(std::make_pair(key, value));
       }
-      dataset[name] = dictionary;
-      in.clear();
-      in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+      inputdata.insert(std::make_pair(name, std::move(tmp)));
     }
-    return dataset;
+    return inputdata;
   }
 }
 
@@ -39,18 +40,29 @@ int main(int argc, char* argv[])
   {
     std::cerr << "<WRONG NUMBER OF ARGUMENTS>";
     return 1;
-  }
+  } 
   std::ifstream in(argv[1]);
-  dataset_t dataset = readInputFromFile(in);
-  while (!std::cin.eof())
+  dict_t dictionary = readInputFromFile(in);
+  std::map< std::string, std::function< void() > > commands;
+  commands["print"] = std::bind(kushekbaev::print, std::ref(std::cout), std::ref(in), std::cref(dictionary));
+  commands["complement"] = std::bind(kushekbaev::complement, std::ref(in), std::ref(dictionary));
+  commands["intersect"] = std::bind(kushekbaev::intersect, std::ref(in), std::ref(dictionary));
+  commands["union"] = std::bind(kushekbaev::unification, std::ref(in), std::ref(dictionary));
+  std::string command;
+  while (!(std::cin >> command).eof())
   {
     try
     {
-      kushekbaev::executeCommand(std::cin, std::cout, dataset);
+      commands.at(command)();
+    }
+    catch (const std::out_of_range&)
+    {
+      std::cout << "<INVALID COMMAND>";
     }
     catch (const std::exception& e)
     {
       std::cout << e.what() << "\n";
+      return 1;
     }
     std::cin.clear();
     std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
