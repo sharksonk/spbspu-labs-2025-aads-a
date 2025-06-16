@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   {
     std::cerr << "<WRONG NUMBER OF ARGUMENTS>";
     return 1;
-  } 
+  }
   std::ifstream in(argv[1]);
   dict_t dictionary = readInputFromFile(in);
   std::map< std::string, std::function< void() > > commands;
