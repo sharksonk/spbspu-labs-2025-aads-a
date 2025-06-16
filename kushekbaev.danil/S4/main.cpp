@@ -19,6 +19,7 @@ namespace
     while (!in.eof())
     {
       std::string name;
+      in >> name;
       size_t key = 0;
       std::string value;
       dataset_t tmp;
@@ -44,10 +45,10 @@ int main(int argc, char* argv[])
   std::ifstream in(argv[1]);
   dict_t dictionary = readInputFromFile(in);
   std::map< std::string, std::function< void() > > commands;
-  commands["print"] = std::bind(kushekbaev::print, std::ref(std::cout), std::ref(in), std::cref(dictionary));
-  commands["complement"] = std::bind(kushekbaev::complement, std::ref(in), std::ref(dictionary));
-  commands["intersect"] = std::bind(kushekbaev::intersect, std::ref(in), std::ref(dictionary));
-  commands["union"] = std::bind(kushekbaev::unification, std::ref(in), std::ref(dictionary));
+  commands["print"] = std::bind(kushekbaev::print, std::ref(std::cout), std::ref(std::cin), std::cref(dictionary));
+  commands["complement"] = std::bind(kushekbaev::complement, std::ref(std::cin), std::ref(dictionary));
+  commands["intersect"] = std::bind(kushekbaev::intersect, std::ref(std::cin), std::ref(dictionary));
+  commands["union"] = std::bind(kushekbaev::unification, std::ref(std::cin), std::ref(dictionary));
   std::string command;
   while (!(std::cin >> command).eof())
   {
