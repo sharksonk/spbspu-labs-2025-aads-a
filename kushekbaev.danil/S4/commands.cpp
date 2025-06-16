@@ -7,7 +7,8 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
 {
   if (dictionary.empty())
   {
-    throw std::runtime_error("<EMPTY>");
+    out << "<EMPTY>";
+    return;
   }
   std::string name;
   in >> name;
