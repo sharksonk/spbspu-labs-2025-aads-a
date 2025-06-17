@@ -260,6 +260,7 @@ namespace averenkov
     clear(node->left);
     clear(node->right);
     delete node;
+    node = nullptr;
   }
 
   template < class Key, class Value, class Compare >
