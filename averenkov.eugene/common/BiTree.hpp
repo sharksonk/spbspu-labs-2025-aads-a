@@ -120,8 +120,8 @@ namespace averenkov
 
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >::Tree(Tree&& other) noexcept:
-    fake_root_(std::exchange(other.fake_root_, nullptr)),
-    comp_(std::move(other.comp_)),
+    fake_root_(std::exchange(other.fake_root_, new NodeType(Key(), Value(), nullptr))),
+    comp_(other.comp_),
     size_(std::exchange(other.size_, 0))
   {
   }
@@ -166,7 +166,7 @@ namespace averenkov
     {
       auto temp(other);
       clear();
-      setRoot(temp.getRoot());
+      swap(temp);
     }
     return *this;
   }
@@ -178,7 +178,7 @@ namespace averenkov
     {
       auto temp(std::move(other));
       clear();
-      setRoot(temp.getRoot());
+      swap(temp);
     }
     return *this;
   }
@@ -245,7 +245,6 @@ namespace averenkov
     if (getRoot() && getRoot() != fake_root_)
     {
       clear(getRoot());
-      setRoot(fake_root_);
     }
     size_ = 0;
   }
