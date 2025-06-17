@@ -70,6 +70,10 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
+  if (dictionary.count(name1) == 0 || dictionary.count(name2) == 0)
+  {
+    throw std::out_of_range("<INVALID COMMAND>");
+  }
   dataset_t dataset;
   const dataset_t it1 = dictionary.at(name1);
   const dataset_t it2 = dictionary.at(name2);
@@ -94,6 +98,10 @@ void kushekbaev::unification(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
+  if (dictionary.count(name1) == 0 || dictionary.count(name2) == 0)
+  {
+    throw std::out_of_range("<INVALID COMMAND>");
+  }
   const dataset_t it1 = dictionary.at(name1);
   const dataset_t it2 = dictionary.at(name2);
   dataset_t dataset;
