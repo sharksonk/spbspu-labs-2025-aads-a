@@ -1,9 +1,9 @@
 #ifndef TREE_ITERATOR_HPP
 #define TREE_ITERATOR_HPP
 
-#include "node.hpp"
 #include <iterator>
 #include <cassert>
+#include "node.hpp"
 
 namespace averenkov
 {
@@ -16,7 +16,6 @@ namespace averenkov
     friend class Tree< Key, Value, Compare >;
   public:
     Iterator();
-    explicit Iterator(Node< Key, Value >* node);
 
     std::pair< const Key, Value >& operator*() const;
     std::pair< const Key, Value >* operator->() const;
@@ -32,6 +31,7 @@ namespace averenkov
 
   private:
     Node< Key, Value >* current;
+    explicit Iterator(Node< Key, Value >* node);
   };
 
   template < class Key, class Value, class Compare >

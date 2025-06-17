@@ -17,7 +17,6 @@ namespace averenkov
     friend class Tree< Key, Value, Compare >;
   public:
     ConstIterator();
-    explicit ConstIterator(const Node< Key, Value >* node);
     ConstIterator(const Iterator< Key, Value, Compare >& other);
 
     const std::pair< const Key, Value >& operator*() const;
@@ -34,6 +33,8 @@ namespace averenkov
 
   private:
     const Node< Key, Value >* current;
+    explicit ConstIterator(const Node< Key, Value >* node);
+
   };
 
   template < class Key, class Value, class Compare >
