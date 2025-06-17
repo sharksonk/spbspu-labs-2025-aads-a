@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 #include <string>
 #include <functional>
 #include <BiTree.hpp>
@@ -77,12 +78,10 @@ namespace averenkov
   void printDictionary(DictionaryStorage& storage, const std::string& dictName)
   {
     auto dict = storage.find(dictName);
-    if (dict == storage.end() || dict->second.empty())
+    if (dict->second.empty())
     {
-      std::cout << "<EMPTY>\n";
-      return;
+      throw std::out_of_range("<EMPTY>");
     }
-
     std::cout << dictName;
     for (auto it = dict->second.begin(); it != dict->second.end(); ++it)
     {
@@ -103,7 +102,7 @@ namespace averenkov
     auto dict2 = storage.find(name2);
     if (dict1 == storage.end() || dict2 == storage.end())
     {
-      throw;
+      throw std::invalid_argument("<INVALID COMMAND>");
     }
     return { dict1, dict2 };
   }
@@ -199,9 +198,9 @@ int main(int argc, char* argv[])
       {
         cmd->second(dictionaries, args);
       }
-      catch (...)
+      catch (const std::exception& e)
       {
-        std::cout << "<INVALID COMMAND>\n";
+        std::cout << e.what() << "\n";
       }
     }
     else
