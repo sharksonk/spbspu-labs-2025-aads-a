@@ -245,6 +245,7 @@ namespace averenkov
     if (getRoot() && getRoot() != fake_root_)
     {
       clear(getRoot());
+      fake_root_->left = nullptr;
     }
     size_ = 0;
   }
