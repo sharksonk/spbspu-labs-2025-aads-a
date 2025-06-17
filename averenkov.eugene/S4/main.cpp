@@ -207,26 +207,24 @@ int main(int argc, char* argv[])
     std::string args = space_pos == std::string::npos ? "" : line.substr(space_pos + 1);
 
     auto cmd = commands.find(command);
-    if (cmd != commands.end())
+
+    try
     {
-      try
+      if (cmd == commands.end())
       {
-        cmd->second(dictionaries, args);
+        throw std::invalid_argument("<INVALID COMMAND>");
       }
-      catch (const std::out_of_range& e)
-      {
-        std::cout << "<EMPTY>\n";
-        return 0;
-      }
-      catch (const std::invalid_argument& e)
-      {
-        std::cout << "INVALID COMMAND\n";
-        return 0;
-      }
+      cmd->second(dictionaries, args);
     }
-    else
+    catch (const std::out_of_range& e)
+    {
+      std::cout << "<EMPTY>\n";
+      return 0;
+    }
+    catch (const std::invalid_argument& e)
     {
       std::cout << "<INVALID COMMAND>\n";
+      return 0;
     }
   }
 
