@@ -213,10 +213,15 @@ int main(int argc, char* argv[])
       {
         cmd->second(dictionaries, args);
       }
-      catch (const std::exception& e)
+      catch (const std::out_of_range& e)
       {
-        std::cout << e.what() << "\n";
-        return 1;
+        std::cout << "<EMPTY>\n";
+        return 0;
+      }
+      catch (const std::invalid_argument& e)
+      {
+        std::cout << "INVALID COMMAND\n";
+        return 0;
       }
     }
     else
