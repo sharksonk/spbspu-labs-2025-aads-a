@@ -20,7 +20,7 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   const auto& dataset = it->second;
   if (dataset.empty())
   {
-    out << "<EMPTY>";
+    out << "<EMPTY>\n";
     return;
   }
   out << name;
