@@ -3,6 +3,7 @@
 
 #include <functional>
 #include "constiterator.hpp"
+#include "iterator.hpp"
 
 namespace kushekbaev
 {
@@ -11,6 +12,9 @@ namespace kushekbaev
   {
     UBST();
     ~UBST();
+
+    Iterator< Key, Value, Cmp > begin() noexcept;
+    Iterator< Key, Value, Cmp > end() noexcept;
 
     ConstIterator< Key, Value, Cmp > cbegin() const noexcept;
     ConstIterator< Key, Value, Cmp > cend() const noexcept;
@@ -21,7 +25,9 @@ namespace kushekbaev
     void clear() noexcept;
     void swap(UBST& other);
 
-    ConstIterator< Key, Value, Cmp > find(const Key& key) const;
+    Iterator< Key, Value, Cmp > find(const Key& key) noexcept;
+
+    ConstIterator< Key, Value, Cmp > find(const Key& key) const noexcept;
 
     private:
       using node_t = kushekbaev::TreeNode< Key, Value, Cmp >;
@@ -53,8 +59,33 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::begin() noexcept
+  {
+    if (empty())
+    {
+      return end();
+    }
+    node_t* current = root_;
+    while (current->left)
+    {
+      current->left;
+    }
+    return Iterator< Key, Value, Cmp >(current);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::end() noexcept
+  {
+    return Iterator< Key, Value, Cmp >(fakeroot_);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
   ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::cbegin() const noexcept
   {
+    if (empty())
+    {
+      return cend();
+    }
     node_t* current = root_;
     while (current->left)
     {
@@ -116,7 +147,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::find(const Key& key) const
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::find(const Key& key) noexcept
   {
     node_t* current = root_;
     while (current && current != fakeroot_)
@@ -131,7 +162,29 @@ namespace kushekbaev
       }
       else
       {
-        return current;
+        return Iterator< Key, Value, Cmp >(current);
+      }
+    }
+    return end();
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::find(const Key& key) const noexcept
+  {
+    node_t* current = root_;
+    while (current && current != fakeroot_)
+    {
+      if (cmp_(key, current->data.first))
+      {
+        current = current->left;
+      }
+      else if (cmp_(current->data.first, key))
+      {
+        current = current->right;
+      }
+      else
+      {
+        return ConstIterator< Key, Value, Cmp >(current);
       }
     }
     return cend();
