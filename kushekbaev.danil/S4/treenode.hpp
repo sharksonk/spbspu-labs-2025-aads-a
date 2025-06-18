@@ -16,7 +16,7 @@ namespace kushekbaev
     TreeNode< Key, Value, Cmp >* parent;
     TreeNode< Key, Value, Cmp >* left;
     TreeNode< Key, Value, Cmp >* right;
-    size_t height;
+    long long int height;
   };
 
   template< typename Key, typename Value, typename Cmp >
