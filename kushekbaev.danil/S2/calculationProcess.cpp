@@ -93,76 +93,76 @@ namespace
   long long int multiplication(long long int operand1, long long int operand2)
   {
     if (operand1 > 0)
+    {
+      if (operand2 > 0)
       {
-        if (operand2 > 0)
+        if (operand1 > MAX / operand2)
         {
-          if (operand1 > MAX / operand2)
-          {
-            throw std::runtime_error("Multiplication overflow!");
-          }
-          else if (operand2 < MIN / operand1)
-          {
-            throw std::runtime_error("Multiplication underflow!");
-          }
+          throw std::runtime_error("Multiplication overflow!");
+        }
+        else if (operand2 < MIN / operand1)
+        {
+          throw std::runtime_error("Multiplication underflow!");
         }
       }
-      else if (operand1 < 0)
+    }
+    else if (operand1 < 0)
+    {
+      if (operand2 > 0)
       {
-        if (operand2 > 0)
+        if (operand1 < MIN / operand2)
         {
-          if (operand1 < MIN / operand2)
-          {
-            throw std::runtime_error("Multiplication underflow!");
-          }
-          else if (operand2 != 0 && operand1 > MAX / operand2)
-          {
-            throw std::runtime_error("Multiplication overflow!");
-          }
+          throw std::runtime_error("Multiplication underflow!");
+        }
+        else if (operand2 != 0 && operand1 > MAX / operand2)
+        {
+          throw std::runtime_error("Multiplication overflow!");
         }
       }
-      return operand1 * operand2;
+    }
+    return operand1 * operand2;
   }
 
   long long int power(long long int operand1, long long int operand2)
   {
     if (operand1 == 0)
+    {
+      if (operand2 <= 0)
       {
-        if (operand2 <= 0)
-        {
-          throw std::runtime_error("Undefined power!");
-        }
-        else
-        {
-          return 0;
-        }
-      }
-      else if (operand2 < 0)
-      {
-        throw std::runtime_error("Negative power!");
-      }
-      else if (operand2 == 0 || operand1 == 1)
-      {
-        return 1;
-      }
-      bool isNegative = (operand1 < 0) && (operand2 % 2 != 0);
-      if (operand1 != std::abs(MIN + 1))
-      {
-        operand1 = std::abs(operand1);
+        throw std::runtime_error("Undefined power!");
       }
       else
       {
+        return 0;
+      }
+    }
+    else if (operand2 < 0)
+    {
+      throw std::runtime_error("Negative power!");
+    }
+    else if (operand2 == 0 || operand1 == 1)
+    {
+      return 1;
+    }
+    bool isNegative = (operand1 < 0) && (operand2 % 2 != 0);
+    if (operand1 != std::abs(MIN + 1))
+    {
+      operand1 = std::abs(operand1);
+    }
+    else
+    {
+      throw std::runtime_error("Power overflow!");
+    }
+    long long int result = 1;
+    for (long long int i = 0; i < operand2; ++i)
+    {
+      if (result > MAX / operand1)
+      {
         throw std::runtime_error("Power overflow!");
       }
-      long long int result = 1;
-      for (long long int i = 0; i < operand2; ++i)
-      {
-        if (result > MAX / operand1)
-        {
-          throw std::runtime_error("Power overflow!");
-        }
-        result *= operand1;
-      }
-      return isNegative ? -result : result;
+      result *= operand1;
+    }
+    return isNegative ? -result : result;
   }
 
   long long int calculateOperation(const std::string& operation, long long int operand1, long long int operand2)
