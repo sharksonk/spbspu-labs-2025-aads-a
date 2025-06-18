@@ -6,22 +6,22 @@
 
 namespace kushekbaev
 {
-  template< typename Key, typename Value >
+  template< typename Key, typename Value, typename Cmp >
   struct TreeNode
   {
     template< typename... Args >
     explicit TreeNode(Args&&... args) noexcept;
 
     std::pair< Key, Value > data;
-    TreeNode< Key, Value >* parent;
-    TreeNode< Key, Value >* left;
-    TreeNode< Key, Value >* right;
+    TreeNode< Key, Value, Cmp >* parent;
+    TreeNode< Key, Value, Cmp >* left;
+    TreeNode< Key, Value, Cmp >* right;
     size_t height;
   };
 
-  template< typename Key, typename Value >
+  template< typename Key, typename Value, typename Cmp >
   template< typename... Args >
-  TreeNode< Key, Value >::TreeNode(Args&&... args) noexcept:
+  TreeNode< Key, Value, Cmp >::TreeNode(Args&&... args) noexcept:
     data{std::pair< Key, Value >(std::forward< Args >(args)...)},
     parent(nullptr),
     right(nullptr),

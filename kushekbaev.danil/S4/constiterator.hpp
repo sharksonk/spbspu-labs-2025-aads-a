@@ -6,13 +6,13 @@
 
 namespace kushekbaev
 {
-  template< typename Key, typename Value >
+  template< typename Key, typename Value, typename Cmp >
   struct UBST;
 
-  template< typename Key, typename Value >
+  template< typename Key, typename Value, typename Cmp >
   struct ConstIterator
   {
-    using this_t = ConstIterator< Key, Value >;
+    using this_t = ConstIterator< Key, Value, Cmp >;
 
     ConstIterator() noexcept;
     ConstIterator(const this_t&) = default;
@@ -30,23 +30,23 @@ namespace kushekbaev
     bool operator==(const this_t& other) const noexcept;
 
     private:
-      friend struct UBST< Key, Value >;
-      TreeNode< Key, Value >* node_;
-      explicit ConstIterator(TreeNode< Key, Value >* node) noexcept;
+      friend struct UBST< Key, Value, Cmp >;
+      TreeNode< Key, Value, Cmp >* node_;
+      explicit ConstIterator(TreeNode< Key, Value, Cmp >* node) noexcept;
   };
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value >::ConstIterator() noexcept:
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp >::ConstIterator() noexcept:
     node_(nullptr)
   {}
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value >::ConstIterator(TreeNode< Key, Value >* node) noexcept:
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp >::ConstIterator(TreeNode< Key, Value, Cmp >* node) noexcept:
     node_(node)
   {}
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value>& ConstIterator< Key, Value >::operator++() noexcept
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp >& ConstIterator< Key, Value, Cmp >::operator++() noexcept
   {
     if (node_->right)
     {
@@ -68,16 +68,16 @@ namespace kushekbaev
     }
   }
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value > ConstIterator< Key, Value >::operator++(int) noexcept
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp > ConstIterator< Key, Value, Cmp >::operator++(int) noexcept
   {
     this_t tmp(*this);
     ++(*this);
     return tmp;
   }
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value >& ConstIterator< Key, Value >::operator--() noexcept
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp >& ConstIterator< Key, Value, Cmp >::operator--() noexcept
   {
     if (node_->left)
     {
@@ -99,34 +99,34 @@ namespace kushekbaev
     }
   }
 
-  template< typename Key, typename Value>
-  ConstIterator< Key, Value > ConstIterator< Key, Value >::operator--(int) noexcept
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp > ConstIterator< Key, Value, Cmp >::operator--(int) noexcept
   {
     this_t tmp(*this);
     ++(*this);
     return tmp;
   }
 
-  template< typename Key, typename Value>
-  const std::pair< Key, Value >& ConstIterator< Key, Value >::operator*() const noexcept
+  template< typename Key, typename Value, typename Cmp >
+  const std::pair< Key, Value >& ConstIterator< Key, Value, Cmp >::operator*() const noexcept
   {
     return node_->data;
   }
 
-  template< typename Key, typename Value>
-  const std::pair< Key, Value >& ConstIterator< Key, Value >::operator->() const noexcept
+  template< typename Key, typename Value, typename Cmp >
+  const std::pair< Key, Value >& ConstIterator< Key, Value, Cmp >::operator->() const noexcept
   {
     return std::addressof(node_->data);
   }
 
-  template< typename Key, typename Value>
-  bool ConstIterator< Key, Value >::operator!=(const this_t& other) const noexcept
+  template< typename Key, typename Value, typename Cmp >
+  bool ConstIterator< Key, Value, Cmp >::operator!=(const this_t& other) const noexcept
   {
     return node_ != other.node_;
   }
 
-  template< typename Key, typename Value>
-  bool ConstIterator< Key, Value >::operator==(const this_t& other) const noexcept
+  template< typename Key, typename Value, typename Cmp >
+  bool ConstIterator< Key, Value, Cmp >::operator==(const this_t& other) const noexcept
   {
     return !(*this == other);
   }
