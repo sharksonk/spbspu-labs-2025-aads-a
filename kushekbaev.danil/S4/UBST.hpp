@@ -18,8 +18,10 @@ namespace kushekbaev
     UBST(UBST< Key, Value, Cmp >&& other);
     ~UBST();
 
-    UBST<Key, Value, Cmp >& operator=(const UBST< Key, Value, Cmp >& other);
-    UBST<Key, Value, Cmp >& operator=(UBST< Key, Value, Cmp >&& other);
+    UBST< Key, Value, Cmp >& operator=(const UBST< Key, Value, Cmp >& other);
+    UBST< Key, Value, Cmp >& operator=(UBST< Key, Value, Cmp >&& other);
+    bool operator==(const UBST< Key, Value, Cmp >& other) const noexcept;
+    bool operator!=(const UBST< Key, Value, Cmp >& other) const noexcept;
 
     Iterator< Key, Value, Cmp > begin() noexcept;
     Iterator< Key, Value, Cmp > end() noexcept;
@@ -114,6 +116,33 @@ namespace kushekbaev
     UBST< Key, Value, Cmp > tmp(other);
     swap(std::move(tmp));
     return *this;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  bool UBST< Key, Value, Cmp >::operator==(const UBST< Key, Value, Cmp >& other) const noexcept
+  {
+    if (size() != other.size())
+    {
+      return false;
+    }
+    auto it1 = begin();
+    auto it2 = other.begin();
+    while (it1 != end())
+    {
+      if (*it1 != *it2)
+      {
+        return false;
+      }
+      ++it1;
+      ++it2;
+    }
+    return true;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  bool UBST< Key, Value, Cmp >::operator!=(const UBST< Key, Value, Cmp >& other) const noexcept
+  {
+    return !(*this == other);
   }
 
   template< typename Key, typename Value, typename Cmp >
