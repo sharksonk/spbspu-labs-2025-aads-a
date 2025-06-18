@@ -55,7 +55,6 @@ namespace kushekbaev
       {
         node_ = node_->left;
       }
-      return *this;
     }
     else
     {
@@ -64,8 +63,8 @@ namespace kushekbaev
         node_ = node_->parent;
       }
       node_ = node_->parent;
-      return *this;
     }
+    return *this;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -86,7 +85,6 @@ namespace kushekbaev
       {
         node_ = node_->right;
       }
-      return *this;
     }
     else
     {
@@ -95,15 +93,15 @@ namespace kushekbaev
         node_ = node_->parent;
       }
       node_ = node_->parent;
-      return *this;
     }
+    return (*this)
   }
 
   template< typename Key, typename Value, typename Cmp >
   ConstIterator< Key, Value, Cmp > ConstIterator< Key, Value, Cmp >::operator--(int) noexcept
   {
     this_t tmp(*this);
-    ++(*this);
+    --(*this);
     return tmp;
   }
 
