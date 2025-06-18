@@ -13,7 +13,9 @@ namespace kushekbaev
     explicit TreeNode(Args&&... args) noexcept;
 
     std::pair< Key, Value > data;
-    TreeNode< Key, Value >* parent, left, right;
+    TreeNode< Key, Value >* parent;
+    TreeNode< Key, Value >* left;
+    TreeNode< Key, Value >* right;
     size_t height;
   };
 

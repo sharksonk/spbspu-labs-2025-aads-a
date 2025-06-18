@@ -12,27 +12,27 @@ namespace kushekbaev
   template< typename Key, typename Value >
   struct ConstIterator
   {
+    using this_t = ConstIterator< Key, Value >;
+
+    ConstIterator() noexcept;
+    ConstIterator(const this_t&) = default;
+    ~ConstIterator() = default;
+
+    this_t& operator=(const this_t& other) = default;
+    this_t& operator++() noexcept;
+    this_t operator++(int) noexcept;
+    this_t& operator--() noexcept;
+    this_t operator--(int) noexcept;
+
+    const std::pair< Key, Value >& operator*() const noexcept;
+    const std::pair< Key, Value >& operator->() const noexcept;
+    bool operator!=(const this_t& other) const noexcept;
+    bool operator==(const this_t& other) const noexcept;
+
     private:
-      friend typename UBST< Key, Value >;
+      friend struct UBST< Key, Value >;
       TreeNode< Key, Value >* node_;
-      explicit ConstIterator(TreeNode< Key, Value >* node);
-    public:
-      using this_t = ConstIterator< Key, Value >;
-
-      ConstIterator() noexcept;
-      ConstIterator(const this_t&) = default;
-      ~ConstIterator() = default;
-
-      this_t& operator=(const this_t& other) = default;
-      this_t& operator++() noexcept;
-      this_t operator++(int) noexcept;
-      this_t& operator--() noexcept;
-      this_t operator--(int) noexcept;
-
-      const std::pair< Key, Value >& operator*() const noexcept;
-      const std::pair< Key, Value >& operator->() const noexcept;
-      bool operator!=(const this_t& other) const noexcept;
-      bool operator==(const this_t& other) const noexcept;
+      explicit ConstIterator(TreeNode< Key, Value >* node) noexcept;
   };
 
   template< typename Key, typename Value>
