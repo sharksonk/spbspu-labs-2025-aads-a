@@ -3,10 +3,10 @@
 
 #include <string>
 #include <iostream>
-#include <map>
+#include "UBST.hpp"
 
-using dataset_t = std::map< size_t, std::string >;
-using dict_t = std::map< std::string, dataset_t >;
+using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
+using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
 
 namespace kushekbaev
 {

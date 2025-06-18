@@ -94,7 +94,7 @@ namespace kushekbaev
       }
       node_ = node_->parent;
     }
-    return (*this)
+    return (*this);
   }
 
   template< typename Key, typename Value, typename Cmp >
