@@ -38,9 +38,9 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::Vector() noexcept:
-    data_(new T[1]),
+    data_(new T[0]),
     size_(0),
-    capacity_(1)
+    capacity_(0)
   {}
 
   template< typename T >
@@ -127,6 +127,11 @@ namespace kushekbaev
   template< typename T >
   T& Vector< T >::back() noexcept
   {
+    if (size_ == 0)
+    {
+      static T dummy;
+      return dummy;
+    }
     return data_[size_ - 1];
   }
 
@@ -139,7 +144,11 @@ namespace kushekbaev
   template< typename T >
   const T& Vector< T >::back() const noexcept
   {
-    return data_[size_ - 1];
+    if (size_ == 0)
+    {
+      static T dummy;
+      return dummy;
+    }
   }
 
   template< typename T >
@@ -171,6 +180,7 @@ namespace kushekbaev
   {
     if (!empty())
     {
+      data_[size_ - 1].~T();
       --size_;
     }
   }

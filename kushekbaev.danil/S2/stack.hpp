@@ -2,6 +2,7 @@
 #define STACK_HPP
 
 #include <cstddef>
+#include <deque>
 #include "vector.hpp"
 
 namespace kushekbaev

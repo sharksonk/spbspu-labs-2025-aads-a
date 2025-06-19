@@ -3,109 +3,135 @@
 
 using namespace kushekbaev;
 
-BOOST_AUTO_TEST_SUITE(VectorConstructors)
+BOOST_AUTO_TEST_SUITE(Constructors)
 
-BOOST_AUTO_TEST_CASE(VectorDefaultConstructor)
+BOOST_AUTO_TEST_CASE(DefaultConstructor)
 {
-  Vector< int > Vector;
-  BOOST_TEST(Vector.empty());
+    Vector<int> v;
+    BOOST_TEST(v.empty());
+    BOOST_TEST(v.size() == 0);
 }
 
-BOOST_AUTO_TEST_CASE(VectorCopyConstructor)
+BOOST_AUTO_TEST_CASE(CopyConstructor)
 {
-  Vector< int > Vector;
-  Vector.push_back(10);
-  Vector.push_back(20);
-  Vector< int > Vectorcopy(Vector);
-  BOOST_TEST(Vector.front() == Vectorcopy.front());
-  BOOST_TEST(Vector.back() == Vectorcopy.back());
-  BOOST_TEST(Vector.size() == Vectorcopy.size());
-  BOOST_TEST(Vectorcopy.front() == 10);
-  BOOST_TEST(Vectorcopy.back() == 20);
-  BOOST_TEST(Vectorcopy.size() == 2);
+    Vector<int> original;
+    original.push_back(10);
+    original.push_back(20);
+    Vector<int> copy(original);
+    BOOST_TEST(original.size() == 2);
+    BOOST_TEST(copy.size() == 2);
+    BOOST_TEST(copy.front() == 10);
+    BOOST_TEST(copy.back() == 20);
+    copy.pop_back();
+    BOOST_TEST(original.size() == 2);
+    BOOST_TEST(copy.size() == 1);
 }
 
-BOOST_AUTO_TEST_CASE(VectorMoveConstructor)
+BOOST_AUTO_TEST_CASE(MoveConstructor)
 {
-  Vector< int > Vector;
-  Vector.push_back(10);
-  Vector.push_back(20);
-  Vector< int > Vectorcopy(std::move(Vector));
-  BOOST_TEST(Vector.size() == 0);
-  BOOST_TEST(Vectorcopy.front() == 10);
-  BOOST_TEST(Vectorcopy.back() == 20);
-  BOOST_TEST(Vectorcopy.size() == 2);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_CASE(VectorAssignment)
-{
-  Vector< int > Vector1;
-  Vector1.push_back(10);
-  Vector< int > Vector2;
-  Vector2 = Vector1;
-  BOOST_TEST(Vector2.front() == 10);
-}
-
-BOOST_AUTO_TEST_SUITE(VectorElementAccess)
-
-BOOST_AUTO_TEST_CASE(VectorFront)
-{
-  Vector< int > Vector;
-  Vector.push_back(10);
-  BOOST_TEST(Vector.front() == 10);
-  Vector.push_back(20);
-  BOOST_TEST(Vector.front() == 10);
-}
-
-BOOST_AUTO_TEST_CASE(VectorBack)
-{
-  Vector< int > Vector;
-  Vector.push_back(10);
-  BOOST_TEST(Vector.back() == 10);
-  Vector.push_back(20);
-  BOOST_TEST(Vector.back() == 20);
+    Vector<int> original;
+    original.push_back(10);
+    original.push_back(20);
+    Vector<int> moved(std::move(original));
+    BOOST_TEST(moved.size() == 2);
+    BOOST_TEST(moved.front() == 10);
+    BOOST_TEST(moved.back() == 20);
+    BOOST_TEST(original.size() == 0);
+    BOOST_TEST(original.empty());
+    moved.push_back(30);
+    BOOST_TEST(moved.size() == 3);
+    BOOST_TEST(moved.back() == 30);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(VectorCapacity)
-
-BOOST_AUTO_TEST_CASE(VectorEmpty)
+BOOST_AUTO_TEST_CASE(AssignmentOperator)
 {
-  Vector< int > Vector;
-  BOOST_TEST(Vector.empty());
-  Vector.push_back(10);
-  BOOST_TEST(!Vector.empty());
-  Vector.pop_back();
-  BOOST_TEST(Vector.empty());
+    Vector<int> v1;
+    v1.push_back(10);
+    v1.push_back(20);
+    Vector<int> v2;
+    v2 = v1;
+    BOOST_TEST(v2.size() == 2);
+    BOOST_TEST(v2.front() == 10);
+    BOOST_TEST(v2.back() == 20);
+    Vector<int> v3;
+    v3 = std::move(v1);
+    BOOST_TEST(v3.size() == 2);
+    BOOST_TEST(v1.size() == 0);
 }
 
-BOOST_AUTO_TEST_CASE(VectorSize)
+BOOST_AUTO_TEST_SUITE(ElementAccess)
+
+BOOST_AUTO_TEST_CASE(FrontAndBack)
 {
-  Vector< int > Vector;
-  BOOST_TEST(Vector.size() == 0);
-  Vector.push_back(10);
-  Vector.push_back(10);
-  BOOST_TEST(Vector.size() == 2);
-  Vector.pop_back();
-  BOOST_TEST(Vector.size() == 1);
+    Vector<int> v;
+    v.push_back(10);
+    BOOST_TEST(v.front() == 10);
+    BOOST_TEST(v.back() == 10);
+    v.push_back(20);
+    BOOST_TEST(v.front() == 10);
+    BOOST_TEST(v.back() == 20);
+    v.push_back(30);
+    BOOST_TEST(v.front() == 10);
+    BOOST_TEST(v.back() == 30);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_CASE(VectorPushPop)
+BOOST_AUTO_TEST_SUITE(Capacity)
+
+BOOST_AUTO_TEST_CASE(EmptyAndSize)
 {
-  Vector< int > Vector;
-  Vector.push_back(1000);
-  BOOST_TEST(Vector.back() == 1000);
-  Vector.push_back(22222);
-  BOOST_TEST(Vector.back() == 22222);
-  Vector.push_back(1337);
-  BOOST_TEST(Vector.back() == 1337);
-  Vector.pop_back();
-  BOOST_TEST(Vector.back() == 22222);
-  Vector.pop_front();
-  BOOST_TEST(Vector.back() == Vector.front());
+    Vector<int> v;
+    BOOST_TEST(v.empty());
+    BOOST_TEST(v.size() == 0);
+    v.push_back(10);
+    BOOST_TEST(!v.empty());
+    BOOST_TEST(v.size() == 1);
+    v.pop_back();
+    BOOST_TEST(v.empty());
+    BOOST_TEST(v.size() == 0);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(Modifiers)
+
+BOOST_AUTO_TEST_CASE(PushBackAndPop)
+{
+    Vector<int> v;
+    v.push_back(100);
+    BOOST_TEST(v.back() == 100);
+    v.push_back(200);
+    BOOST_TEST(v.back() == 200);
+    v.push_back(300);
+    BOOST_TEST(v.back() == 300);
+    BOOST_TEST(v.size() == 3);
+    v.pop_back();
+    BOOST_TEST(v.back() == 200);
+    BOOST_TEST(v.size() == 2);
+    v.pop_front();
+    BOOST_TEST(v.front() == 200);
+    BOOST_TEST(v.back() == 200);
+    BOOST_TEST(v.size() == 1);
+}
+
+BOOST_AUTO_TEST_CASE(ExtendVectorCapacity)
+{
+    Vector<int> v;
+    const size_t initial_capacity = v.size();
+    for (int i = 0; i < 20; ++i)
+    {
+      v.push_back(i)
+    }
+    BOOST_TEST(v.size() == 20);
+    BOOST_TEST(v.front() == 0);
+    BOOST_TEST(v.back() == 19);
+    for (int i = 0; i < 20; ++i)
+    {
+      BOOST_TEST(v[i] == i);
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

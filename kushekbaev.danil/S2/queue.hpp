@@ -1,6 +1,7 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
+#include <deque>
 #include "vector.hpp"
 
 namespace kushekbaev
