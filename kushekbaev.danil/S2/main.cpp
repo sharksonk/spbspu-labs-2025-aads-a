@@ -25,15 +25,16 @@ namespace
   void inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Queue< std::string > >& Q)
   {
     std::string string;
+    kushekbaev::Queue< std::string > infixQ;
     while (std::getline(input, string))
     {
       if (string.empty())
       {
         continue;
       }
-      kushekbaev::Queue< std::string > infixQ;
+      infixQ.clear();
       splitExpr(string, infixQ);
-      Q.push(infixQ);
+      Q.push(std::move(infixQ));
     }
   }
 

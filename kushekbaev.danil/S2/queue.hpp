@@ -1,12 +1,11 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include <stdexcept>
-#include <deque>
+#include "vector.hpp"
 
 namespace kushekbaev
 {
-  template < typename T, typename Sequence = std::deque< T > >
+  template < typename T, typename Sequence = kushekbaev::Vector< T > >
   class Queue
   {
     public:

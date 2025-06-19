@@ -1,13 +1,12 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-#include <deque>
 #include <cstddef>
-#include <stdexcept>
+#include "vector.hpp"
 
 namespace kushekbaev
 {
-  template< typename T, typename Sequence = std::deque< T > >
+  template< typename T, typename Sequence = kushekbaev::Vector< T > >
   class Stack
   {
     public:
