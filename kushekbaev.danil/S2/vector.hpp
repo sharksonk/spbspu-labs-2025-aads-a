@@ -178,23 +178,28 @@ namespace kushekbaev
   template< typename T >
   void Vector< T >::extend_vector()
   {
-    size_t newCapacity = capacity_ * 2;
+    size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
     T* newData = new T[newCapacity];
+    size_t i = 0;
     try
     {
-      for (size_t i = 0; i < size_; ++i)
+      for (; i < size_; ++i)
       {
         newData[i] = std::move(data_[i]);
       }
-      delete[] data_;
-      data_ = newData;
-      capacity_ = newCapacity;
     }
     catch (...)
     {
+      for (size_t j = 0; j < i; ++j)
+      {
+        newData[j].~T();
+      }
       delete[] newData;
       throw;
     }
+    delete[] data_;
+    data_ = newData;
+    capacity_ = newCapacity;
   }
 }
 

@@ -28,6 +28,7 @@ namespace kushekbaev
       void push(const T& value);
       T drop();
       void pop();
+      void clear();
 
     private:
       Sequence sequence_;
@@ -133,6 +134,15 @@ namespace kushekbaev
       throw std::out_of_range("The vector in the queue is empty!");
     }
     sequence_.pop_front();
+  }
+
+  template < typename T, typename Sequence >
+  void Queue< T, Sequence >::clear()
+  {
+    while (!empty())
+    {
+      pop();
+    }
   }
 }
 
