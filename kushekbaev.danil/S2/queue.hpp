@@ -1,12 +1,11 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include <stdexcept>
-#include <deque>
+#include "vector.hpp"
 
 namespace kushekbaev
 {
-  template < typename T, typename Sequence = std::deque< T > >
+  template< typename T, typename Sequence = kushekbaev::Vector< T > >
   class Queue
   {
     public:
@@ -29,6 +28,7 @@ namespace kushekbaev
       void push(const T& value);
       T drop();
       void pop();
+      void clear();
 
     private:
       Sequence sequence_;
@@ -134,6 +134,15 @@ namespace kushekbaev
       throw std::out_of_range("The vector in the queue is empty!");
     }
     sequence_.pop_front();
+  }
+
+  template < typename T, typename Sequence >
+  void Queue< T, Sequence >::clear()
+  {
+    while (!empty())
+    {
+      pop();
+    }
   }
 }
 

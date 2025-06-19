@@ -2,11 +2,10 @@
 #include "calculationProcess.hpp"
 #include "stack.hpp"
 
-constexpr long long int MIN = std::numeric_limits< long long int >::min();
-constexpr long long int MAX = std::numeric_limits< long long int >::max();
-
 namespace
 {
+  constexpr long long int MIN = std::numeric_limits< long long int >::min();
+  constexpr long long int MAX = std::numeric_limits< long long int >::max();
   bool isNumber(const std::string& symbol)
   {
     try
@@ -42,7 +41,7 @@ namespace
     return 0;
   }
 
-  long long int addition(long long int operand1, long long int operand2)
+  long long int add(long long int operand1, long long int operand2)
   {
     if ((operand2 > 0) && (operand1 > (MAX - operand2)))
     {
@@ -55,7 +54,7 @@ namespace
     return operand1 + operand2;
   }
 
-  long long int substraction(long long int operand1, long long int operand2)
+  long long int substract(long long int operand1, long long int operand2)
   {
     if ((operand2 > 0) && (operand1 < (MIN + operand2)))
     {
@@ -68,7 +67,7 @@ namespace
     return operand1 - operand2;
   }
 
-  long long int division(long long int operand1, long long int operand2)
+  long long int divide(long long int operand1, long long int operand2)
   {
     if (operand2 == 0)
     {
@@ -81,7 +80,7 @@ namespace
     return operand1 / operand2;
   }
 
-  long long int modulation(long long int operand1, long long int operand2)
+  long long int modulate(long long int operand1, long long int operand2)
   {
     if (operand2 == 0)
     {
@@ -90,7 +89,7 @@ namespace
     return (operand1 % operand2 + operand2) % operand2;
   }
 
-  long long int multiplication(long long int operand1, long long int operand2)
+  long long int multiplicate(long long int operand1, long long int operand2)
   {
     if (operand1 > 0)
     {
@@ -123,11 +122,11 @@ namespace
     return operand1 * operand2;
   }
 
-  long long int power(long long int operand1, long long int operand2)
+  long long int power(long long int x, long long int power)
   {
-    if (operand1 == 0)
+    if (x == 0)
     {
-      if (operand2 <= 0)
+      if (power <= 0)
       {
         throw std::runtime_error("Undefined power!");
       }
@@ -136,31 +135,27 @@ namespace
         return 0;
       }
     }
-    else if (operand2 < 0)
-    {
-      throw std::runtime_error("Negative power!");
-    }
-    else if (operand2 == 0 || operand1 == 1)
+    else if (power == 0)
     {
       return 1;
     }
-    bool isNegative = (operand1 < 0) && (operand2 % 2 != 0);
-    if (operand1 != std::abs(MIN + 1))
+    bool isNegative = (x < 0) && (power % 2 != 0);
+    if (x != MIN)
     {
-      operand1 = std::abs(operand1);
+      x = std::abs(x);
     }
     else
     {
       throw std::runtime_error("Power overflow!");
     }
     long long int result = 1;
-    for (long long int i = 0; i < operand2; ++i)
+    for (long long int i = 0; i < power; ++i)
     {
-      if (result > MAX / operand1)
+      if (result > MAX / x)
       {
         throw std::runtime_error("Power overflow!");
       }
-      result *= operand1;
+      result *= x;
     }
     return isNegative ? -result : result;
   }
@@ -169,23 +164,23 @@ namespace
   {
     if (operation == "+")
     {
-      return addition(operand1, operand2);
+      return add(operand1, operand2);
     }
     else if (operation == "-")
     {
-      return substraction(operand1, operand2);
+      return substract(operand1, operand2);
     }
     else if (operation == "/")
     {
-      return division(operand1, operand2);
+      return divide(operand1, operand2);
     }
     else if (operation == "%")
     {
-      return modulation(operand1, operand2);
+      return modulate(operand1, operand2);
     }
     else if (operation == "*")
     {
-      return multiplication(operand1, operand2);
+      return multiplicate(operand1, operand2);
     }
     else if (operation == "**")
     {
