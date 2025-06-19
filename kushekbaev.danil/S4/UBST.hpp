@@ -36,6 +36,7 @@ namespace kushekbaev
     Value& at(const Key& key);
     const Value& at(const Key& key) const;
     Value& operator[](const Key& key);
+    const Value& operator[](const Key& key) const;
 
     void clear() noexcept;
 
@@ -66,6 +67,8 @@ namespace kushekbaev
       Cmp cmp_;
       size_t height(node_t* node) const noexcept;
       void killChildrenOf(node_t* node);
+      template< typename Pair >
+      std::pair< Iterator < Key, Value, Cmp >, bool> insertImpl(Pair&& value);
   };
 
   template< typename Key, typename Value, typename Cmp >
@@ -232,12 +235,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::at(const Key& key)
   {
-    auto current = find(key);
-    if (current == end())
-    {
-      throw std::out_of_range("Key hasn't been found!");
-    }
-    return current->second;
+    return const_cast< Value& >(static_cast< const UBST* >(this)->at(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -254,8 +252,24 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::operator[](const Key& key)
   {
-    auto current = insert(std::make_pair(key, Value()));
-    return current.first->second;
+    auto it = find(key);
+    if (it == end())
+    {
+      auto inserted = emplace(key, Value());
+      return inserted.first->second;
+    }
+    return it->second;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  const Value& UBST< Key, Value, Cmp >::operator[](const Key& key) const
+  {
+    auto it = find(key);
+    if (it == cend())
+    {
+      throw std::out_of_range("Key not found");
+    }
+    return it->second;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -287,15 +301,25 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  std::pair< Iterator< Key, Value, Cmp >, bool > UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
+  template< typename Pair >
+  std::pair< Iterator< Key, Value, Cmp >, bool >
+  UBST< Key, Value, Cmp >::insertImpl(Pair&& value)
   {
-    return emplace(value);
+    return emplace(std::forward<Pair>(value));
   }
 
-  template< typename Key, typename Value, typename Cmp >
-  std::pair< Iterator< Key, Value, Cmp >, bool > insert(std::pair< Key, Value >&& value)
+  template<typename Key, typename Value, typename Cmp>
+  std::pair< Iterator< Key, Value, Cmp >, bool>
+  UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
   {
-    return emplace(std::move(value));
+    return insertImpl(value);
+  }
+
+  template<typename Key, typename Value, typename Cmp>
+  std::pair< Iterator< Key, Value, Cmp >, bool>
+  UBST< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
+  {
+    return insertImpl(std::move(value));
   }
 
   template< typename Key, typename Value, typename Cmp >

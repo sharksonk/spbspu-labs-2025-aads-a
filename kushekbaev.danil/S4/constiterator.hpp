@@ -126,7 +126,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   bool ConstIterator< Key, Value, Cmp >::operator==(const this_t& other) const noexcept
   {
-    return !(*this == other);
+    return !(*this != other);
   }
 }
 

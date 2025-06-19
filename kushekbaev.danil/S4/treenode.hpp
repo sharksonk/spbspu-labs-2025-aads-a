@@ -24,8 +24,8 @@ namespace kushekbaev
   TreeNode< Key, Value, Cmp >::TreeNode(Args&&... args) noexcept:
     data{std::pair< Key, Value >(std::forward< Args >(args)...)},
     parent(nullptr),
-    right(nullptr),
     left(nullptr),
+    right(nullptr),
     height(0)
   {}
 }

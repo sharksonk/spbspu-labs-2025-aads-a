@@ -24,8 +24,8 @@ namespace kushekbaev
     this_t& operator--() noexcept;
     this_t operator--(int) noexcept;
 
-    const std::pair< Key, Value >& operator*() const noexcept;
-    const std::pair< Key, Value >* operator->() const noexcept;
+    std::pair< Key, Value >& operator*() noexcept;
+    std::pair< Key, Value >* operator->() noexcept;
     bool operator!=(const this_t& other) const noexcept;
     bool operator==(const this_t& other) const noexcept;
 
@@ -106,13 +106,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const std::pair< Key, Value >& Iterator< Key, Value, Cmp >::operator*() const noexcept
+  std::pair< Key, Value >& Iterator< Key, Value, Cmp >::operator*() noexcept
   {
     return node_->data;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const std::pair< Key, Value >* Iterator< Key, Value, Cmp >::operator->() const noexcept
+  std::pair< Key, Value >* Iterator< Key, Value, Cmp >::operator->() noexcept
   {
     return std::addressof(node_->data);
   }
@@ -126,7 +126,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   bool Iterator< Key, Value, Cmp >::operator==(const this_t& other) const noexcept
   {
-    return !(*this == other);
+    return !(*this != other);
   }
 }
 
