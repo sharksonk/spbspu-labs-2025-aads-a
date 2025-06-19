@@ -161,7 +161,7 @@ namespace kushekbaev
     }
     for (size_t i = 1; i < size_; ++i)
     {
-      std::move(data_[i]);
+      data_[i] = std::move(data_[i + 1]);
     }
     --size_;
   }
