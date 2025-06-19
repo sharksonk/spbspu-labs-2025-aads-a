@@ -1,12 +1,11 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include <deque>
 #include "vector.hpp"
 
 namespace kushekbaev
 {
-  template < typename T, typename Sequence = kushekbaev::Vector< T > >
+  template < typename T >
   class Queue
   {
     public:
@@ -32,85 +31,85 @@ namespace kushekbaev
       void clear();
 
     private:
-      Sequence sequence_;
+      Vector< T > vector_;
   };
 
-  template < typename T, typename Sequence >
-  Queue< T, Sequence >::Queue(const Queue& other) noexcept:
-    sequence_(other.sequence_)
+  template < typename T >
+  Queue< T >::Queue(const Queue& other) noexcept:
+    vector_(other.vector_)
   {}
 
-  template < typename T, typename Sequence >
-  Queue< T, Sequence >::Queue(Queue&& other) noexcept:
-    sequence_(std::move(other.sequence_))
+  template < typename T >
+  Queue< T >::Queue(Queue&& other) noexcept:
+    vector_(std::move(other.vector_))
   {}
 
-  template < typename T, typename Sequence >
-  Queue< T, Sequence >& Queue< T, Sequence >::operator=(const Queue& other) noexcept
+  template < typename T >
+  Queue< T >& Queue< T >::operator=(const Queue& other) noexcept
   {
     if (this != &other)
     {
-      sequence_ = other.sequence_;
+      vector_ = other.vector_;
     }
     return *this;
   }
 
-  template< typename T, typename Sequence >
-  Queue< T, Sequence >& Queue< T, Sequence >::operator=(Queue&& other) noexcept
+  template< typename T >
+  Queue< T >& Queue< T >::operator=(Queue&& other) noexcept
   {
     if (this != &other)
     {
-      sequence_ = std::move(other.sequence_);
+      vector_ = std::move(other.vector_);
     }
     return *this;
   }
 
-  template < typename T, typename Sequence >
-  T& Queue< T, Sequence >::front() noexcept
+  template < typename T >
+  T& Queue< T >::front() noexcept
   {
-    return sequence_.front();
+    return vector_.front();
   }
 
-  template < typename T, typename Sequence >
-  T& Queue< T, Sequence >::back() noexcept
+  template < typename T >
+  T& Queue< T >::back() noexcept
   {
-    return sequence_.back();
+    return vector_.back();
   }
 
-  template < typename T, typename Sequence >
-  const T& Queue< T, Sequence >::front() const noexcept
+  template < typename T >
+  const T& Queue< T >::front() const noexcept
   {
-    return sequence_.front();
+    return vector_.front();
   }
 
-  template < typename T, typename Sequence >
-  const T& Queue< T, Sequence >::back() const noexcept
+  template < typename T >
+  const T& Queue< T >::back() const noexcept
   {
-    return sequence_.back();
+    return vector_.back();
   }
 
-  template < typename T, typename Sequence >
-  bool Queue< T, Sequence >::empty() const noexcept
+  template < typename T >
+  bool Queue< T >::empty() const noexcept
   {
-    return sequence_.empty();
+    return vector_.empty();
   }
 
-  template < typename T, typename Sequence >
-  size_t Queue< T, Sequence >::size() const noexcept
+  template < typename T >
+  size_t Queue< T >::size() const noexcept
   {
-    return sequence_.size();
+    return vector_.size();
   }
 
-  template < typename T, typename Sequence >
-  void Queue< T, Sequence >::push(const T& value)
+  template < typename T >
+  void Queue< T >::push(const T& value)
   {
-    sequence_.push_back(value);
+    vector_.push_back(value);
   }
 
-  template < typename T, typename Sequence >
-  T Queue< T, Sequence >::drop()
+  template < typename T >
+  T Queue< T >::drop()
   {
-    if (sequence_.empty())
+    if (vector_.empty())
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
@@ -118,7 +117,7 @@ namespace kushekbaev
     try
     {
       tmp = std::move(front());
-      sequence_.pop_back();
+      vector_.pop_back();
     }
     catch (...)
     {
@@ -127,18 +126,18 @@ namespace kushekbaev
     return tmp;
   }
 
-  template < typename T, typename Sequence >
-  void Queue< T, Sequence >::pop()
+  template < typename T >
+  void Queue< T >::pop()
   {
-    if (sequence_.empty())
+    if (vector_.empty())
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
-    sequence_.pop_front();
+    vector_.pop_front();
   }
 
-  template < typename T, typename Sequence >
-  void Queue< T, Sequence >::clear()
+  template < typename T >
+  void Queue< T >::clear()
   {
     while (!empty())
     {

@@ -9,13 +9,12 @@ namespace kushekbaev
   class Vector
   {
     public:
-      Vector() noexcept;
-      Vector(const Vector& other) noexcept;
-      Vector(Vector&& other) noexcept;
+      Vector();
+      Vector(const Vector& other);
+      Vector(Vector&& other);
       ~Vector();
 
       Vector& operator=(const Vector& other);
-      Vector& operator=(Vector&& other);
 
       T& front() noexcept;
       T& back() noexcept;
@@ -33,18 +32,18 @@ namespace kushekbaev
       T* data_;
       size_t size_;
       size_t capacity_;
-      void extend_vector();
+      void resizeArray();
   };
 
   template< typename T >
-  Vector< T >::Vector() noexcept:
+  Vector< T >::Vector():
     data_(new T[1]),
     size_(0),
     capacity_(1)
   {}
 
   template< typename T >
-  Vector< T >::Vector(const Vector& other) noexcept:
+  Vector< T >::Vector(const Vector& other):
     data_(new T[other.capacity_]),
     size_(other.size_),
     capacity_(other.capacity_)
@@ -56,7 +55,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >::Vector(Vector&& other) noexcept:
+  Vector< T >::Vector(Vector&& other):
     data_(other.data_),
     size_(other.size_),
     capacity_(other.capacity_)
@@ -91,22 +90,6 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >& Vector< T >::operator=(Vector&& other)
-  {
-    if (this != &other)
-    {
-      delete[] data_;
-      data_ = other.data_;
-      size_ = other.size_;
-      capacity_ = other.capacity_;
-      other.data_ = nullptr;
-      other.size_ = 0;
-      other.capacity_ = 0;
-    }
-    return *this;
-  }
-
-  template< typename T >
   bool Vector< T >::empty() const noexcept
   {
     return size_ == 0;
@@ -127,11 +110,6 @@ namespace kushekbaev
   template< typename T >
   T& Vector< T >::back() noexcept
   {
-    if (size_ == 0)
-    {
-      static T dummy;
-      return dummy;
-    }
     return data_[size_ - 1];
   }
 
@@ -144,11 +122,7 @@ namespace kushekbaev
   template< typename T >
   const T& Vector< T >::back() const noexcept
   {
-    if (size_ == 0)
-    {
-      static T dummy;
-      return dummy;
-    }
+    return data_[size_ - 1];
   }
 
   template< typename T >
@@ -156,7 +130,7 @@ namespace kushekbaev
   {
     if (size_ == capacity_)
     {
-      extend_vector();
+      resizeArray();
     }
     data_[size_++] = value;
   }
@@ -166,11 +140,11 @@ namespace kushekbaev
   {
     if (empty())
     {
-      throw std::out_of_range("The Vector is empty!");
+      throw std::out_of_range("The array is empty!");
     }
     for (size_t i = 1; i < size_; ++i)
     {
-      data_[i] = std::move(data_[i + 1]);
+      data_[i - 1] = std::move(data_[i]);
     }
     --size_;
   }
@@ -180,20 +154,19 @@ namespace kushekbaev
   {
     if (!empty())
     {
-      data_[size_ - 1].~T();
       --size_;
     }
   }
 
   template< typename T >
-  void Vector< T >::extend_vector()
+  void Vector< T >::resizeArray()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
     T* newData = new T[newCapacity];
     size_t i = 0;
     try
     {
-      for (; i < size_; ++i)
+    for (; i < size_; ++i)
       {
         newData[i] = std::move(data_[i]);
       }

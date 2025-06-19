@@ -2,12 +2,11 @@
 #define STACK_HPP
 
 #include <cstddef>
-#include <deque>
 #include "vector.hpp"
 
 namespace kushekbaev
 {
-  template< typename T, typename Sequence = kushekbaev::Vector< T > >
+  template< typename T >
   class Stack
   {
     public:
@@ -30,73 +29,73 @@ namespace kushekbaev
       void pop();
 
     private:
-      Sequence sequence_;
+      Vector< T > vector_;
   };
 
-  template< typename T, typename Sequence >
-  Stack< T, Sequence >::Stack(const Stack& other) noexcept:
-    sequence_(other.sequence_)
+  template< typename T >
+  Stack< T >::Stack(const Stack& other) noexcept:
+    vector_(other.vector_)
   {}
 
-  template< typename T, typename Sequence >
-  Stack< T, Sequence >::Stack(Stack&& other) noexcept:
-    sequence_(std::move(other.sequence_))
+  template< typename T >
+  Stack< T >::Stack(Stack&& other) noexcept:
+    vector_(std::move(other.vector_))
   {}
 
-  template< typename T, typename Sequence >
-  Stack< T, Sequence >& Stack< T, Sequence >::operator=(const Stack& other) noexcept
+  template< typename T >
+  Stack< T >& Stack< T >::operator=(const Stack& other) noexcept
   {
     if (this != &other)
     {
-      sequence_ = other.sequence_;
+      vector_ = other.vector_;
     }
     return *this;
   }
 
-  template< typename T, typename Sequence >
-  Stack< T, Sequence >& Stack< T, Sequence >::operator=(Stack&& other) noexcept
+  template< typename T >
+  Stack< T >& Stack< T >::operator=(Stack&& other) noexcept
   {
     if (this != &other)
     {
-      sequence_ = std::move(other.sequence_);
+      vector_ = std::move(other.vector_);
     }
     return *this;
   }
 
-  template< typename T, typename Sequence >
-  bool Stack< T, Sequence >::empty() const noexcept
+  template< typename T >
+  bool Stack< T >::empty() const noexcept
   {
-    return sequence_.empty();
+    return vector_.empty();
   }
 
-  template< typename T, typename Sequence >
-  size_t Stack< T, Sequence >::size() const noexcept
+  template< typename T >
+  size_t Stack< T >::size() const noexcept
   {
-    return sequence_.size();
+    return vector_.size();
   }
 
-  template< typename T, typename Sequence >
-  T& Stack< T, Sequence >::top() noexcept
+  template< typename T >
+  T& Stack< T >::top() noexcept
   {
-    return sequence_.back();
+    return vector_.back();
   }
 
-  template< typename T, typename Sequence >
-  const T& Stack< T, Sequence >::top() const noexcept
+  template< typename T >
+  const T& Stack< T >::top() const noexcept
   {
-    return sequence_.back();
+    return vector_.back();
   }
 
-  template< typename T, typename Sequence >
-  void Stack< T, Sequence >::push(const T& value)
+  template< typename T >
+  void Stack< T >::push(const T& value)
   {
-    return sequence_.push_back(value);
+    return vector_.push_back(value);
   }
 
-  template< typename T, typename Sequence >
-  T Stack< T, Sequence >::drop()
+  template< typename T >
+  T Stack< T >::drop()
   {
-    if (sequence_.empty())
+    if (vector_.empty())
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
@@ -104,7 +103,7 @@ namespace kushekbaev
     try
     {
       tmp = std::move(top());
-      sequence_.pop_back();
+      vector_.pop_back();
     }
     catch (...)
     {
@@ -113,14 +112,14 @@ namespace kushekbaev
     return tmp;
   }
 
-  template< typename T, typename Sequence >
-  void Stack< T, Sequence >::pop()
+  template< typename T >
+  void Stack< T >::pop()
   {
-    if (sequence_.empty())
+    if (vector_.empty())
     {
       throw std::out_of_range("The Vector in the queue is empty!");
     }
-    sequence_.pop_back();
+    vector_.pop_back();
   }
 }
 

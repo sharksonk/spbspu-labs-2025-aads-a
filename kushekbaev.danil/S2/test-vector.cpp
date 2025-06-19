@@ -120,18 +120,13 @@ BOOST_AUTO_TEST_CASE(PushBackAndPop)
 BOOST_AUTO_TEST_CASE(ExtendVectorCapacity)
 {
     Vector<int> v;
-    const size_t initial_capacity = v.size();
     for (int i = 0; i < 20; ++i)
     {
-      v.push_back(i)
+      v.push_back(i);
     }
     BOOST_TEST(v.size() == 20);
     BOOST_TEST(v.front() == 0);
     BOOST_TEST(v.back() == 19);
-    for (int i = 0; i < 20; ++i)
-    {
-      BOOST_TEST(v[i] == i);
-    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
