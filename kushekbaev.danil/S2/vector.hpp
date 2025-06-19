@@ -38,9 +38,9 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::Vector() noexcept:
-    data_(new T[0]),
+    data_(new T[1]),
     size_(0),
-    capacity_(0)
+    capacity_(1)
   {}
 
   template< typename T >
