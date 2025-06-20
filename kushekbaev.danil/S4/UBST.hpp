@@ -564,6 +564,8 @@ namespace kushekbaev
   std::pair< Iterator< Key, Value, Cmp >, bool > UBST< Key, Value, Cmp >::emplace(Args&&... args)
   {
     node_t* newNode = new node_t(std::forward< Args >(args)...);
+    newNode->left = nullptr;
+    newNode->right = nullptr;
     const Key& key = newNode->data.first;
     if (root_ == fakeroot_)
     {
@@ -600,6 +602,7 @@ namespace kushekbaev
       delete newNode;
       throw std::logic_error("Parent is nullptr!");
     }
+    newNode->parent = parent;
     if (isLeft)
     {
       parent->left = newNode;
