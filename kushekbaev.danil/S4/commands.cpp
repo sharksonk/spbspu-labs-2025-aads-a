@@ -40,8 +40,8 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
     throw std::out_of_range("<INVALID COMMAND>");
   }
   dataset_t dataset;
-  const dataset_t& it1 = dictionary.at(name1);
-  const dataset_t& it2 = dictionary.at(name2);
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
   for (auto it = it1.cbegin(); it != it1.cend(); ++it)
   {
     if (it2.find(it->first) == it2.cend())
@@ -75,8 +75,8 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
     throw std::out_of_range("<INVALID COMMAND>");
   }
   dataset_t dataset;
-  const dataset_t& it1 = dictionary.at(name1);
-  const dataset_t& it2 = dictionary.at(name2);
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
   for (auto it = it1.cbegin(); it != it1.cend(); ++it)
   {
     if (it2.find(it->first) != it2.cend())
@@ -102,8 +102,8 @@ void kushekbaev::unification(std::istream& in, dict_t& dictionary)
   {
     throw std::out_of_range("<INVALID COMMAND>");
   }
-  const dataset_t& it1 = dictionary.at(name1);
-  const dataset_t& it2 = dictionary.at(name2);
+  const dataset_t it1 = dictionary.at(name1);
+  const dataset_t it2 = dictionary.at(name2);
   dataset_t dataset;
   for (auto it = it1.cbegin(); it != it1.cend(); ++it)
   {

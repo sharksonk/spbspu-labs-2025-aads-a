@@ -115,43 +115,20 @@ namespace kushekbaev
     fakeroot_->height = -1;
     if (!other.empty())
     {
-      Stack<std::pair<node_t*, node_t*>> stack;
-      stack.push({other.root_, fakeroot_});
-      while (!stack.empty()) {
-        auto top = stack.top();
-        node_t* src = top.first;
-        node_t* parent = top.second;
-        stack.pop();
-        node_t* newNode = new node_t(src->data);
-        newNode->parent = parent;
-        newNode->height = src->height;
-        if (parent == fakeroot_)
-        {
-          root_ = newNode;
-          fakeroot_->left = newNode;
-          fakeroot_->right = newNode;
-        }
-        else
-        {
-          if (src == src->parent->left)
-          {
-            parent->left = newNode;
-          }
-          else
-          {
-            parent->right = newNode;
-          }
-        }
-        if (src->right && src->right != other.fakeroot_)
-        {
-          stack.push((std::make_pair(src->right, newNode)));
-        }
-        if (src->left && src->left != other.fakeroot_)
-        {
-          stack.push((std::make_pair(src->right, newNode)));
-        }
-        size_++;
+      root_ = copySubtree(other.root_, fakeroot_);
+      size_ = other.size_;
+      node_t* minNode = root_;
+      while (minNode->left)
+      {
+        minNode = minNode->left;
       }
+      fakeroot_->left = minNode;
+      node_t* maxNode = root_;
+      while (maxNode->right)
+      {
+        maxNode = maxNode->right;
+      }
+      fakeroot_->right = maxNode;
     }
   }
 
