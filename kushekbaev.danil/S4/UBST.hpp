@@ -44,9 +44,13 @@ namespace kushekbaev
 
     std::pair< Iterator< Key, Value, Cmp >, bool > insert(const std::pair< Key, Value >& value);
     std::pair< Iterator< Key, Value, Cmp >, bool > insert(std::pair< Key, Value >&& value);
-
     template< typename InputIterator >
     void insert(InputIterator first, InputIterator last);
+    Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > position);
+    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > position);
+    Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last);
+    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > last);
+    size_t erase(const Key& key);
 
     template< typename... Args >
     std::pair< Iterator< Key, Value, Cmp >, bool > emplace(Args&&... args);
@@ -337,6 +341,152 @@ namespace kushekbaev
       ++first;
     }
     swap(tmp);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(Iterator< Key, Value, Cmp > position)
+  {
+    if (position == end())
+    {
+      return end();
+    }
+    node_t* todelete = position.node_;
+    node_t* parent = todelete->parent;
+    Iterator< Key, Value, Cmp > result = Iterator< Key, Value, Cmp >(parent);
+    if (!(todelete->left) && !(todelete->right))
+    {
+      if (parent->left == todelete)
+      {
+        parent->left = nullptr;
+      }
+      else
+      {
+        parent->right = nullptr;
+      }
+      result = Iterator< Key, Value, Cmp >(parent);
+    }
+    else if (!(todelete->left) || !(todelete->right))
+    {
+      node_t* child = (todelete->left) ? todelete->left : todelete->right;
+      if (parent->left == todelete)
+      {
+        parent->left = child;
+      }
+      else
+      {
+        parent->right = child;
+      }
+      child->parent = parent;
+      result = Iterator< Key, Value, Cmp >(child);
+    }
+    else
+    {
+      node_t* next = todelete->right;
+      while (next->left)
+      {
+        next = next->left;
+      }
+      todelete->data = next->data;
+      return erase(Iterator< Key, Value, Cmp >(next));
+    }
+    if (todelete == root_)
+    {
+      root_ = (parent == fakeroot_) ? parent : fakeroot_;
+      result = begin();
+    }
+
+    delete todelete;
+    --size_;
+    return result;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(ConstIterator< Key, Value, Cmp > position)
+  {
+    if (position == cend())
+    {
+      return end();
+    }
+    node_t* todelete = position.node_;
+    node_t* parent = todelete->parent;
+    Iterator< Key, Value, Cmp > result = Iterator< Key, Value, Cmp >(parent);
+    if (!(todelete->left) && !(todelete->right))
+    {
+      if (parent->left == todelete)
+      {
+        parent->left = nullptr;
+      }
+      else
+      {
+        parent->right = nullptr;
+      }
+      result = Iterator< Key, Value, Cmp >(parent);
+    }
+    else if (!(todelete->left) || !(todelete->right))
+    {
+      node_t* child = (todelete->left) ? todelete->left : todelete->right;
+      if (parent->left == todelete)
+      {
+        parent->left = child;
+      }
+      else
+      {
+        parent->right = child;
+      }
+      child->parent = parent;
+      result = Iterator< Key, Value, Cmp >(child);
+    }
+    else
+    {
+      node_t* next = todelete->right;
+      while (next->left)
+      {
+        next = next->left;
+      }
+      todelete->data = next->data;
+      return erase(Iterator< Key, Value, Cmp >(next));
+    }
+    if (todelete == root_)
+    {
+      root_ = (parent == fakeroot_) ? parent : fakeroot_;
+      result = begin();
+    }
+
+    delete todelete;
+    --size_;
+    return result;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last)
+  {
+    for (auto it = first; it != last;)
+    {
+      it = erase(it);
+    }
+    return last;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(ConstIterator< Key, Value, Cmp >first, ConstIterator< Key, Value, Cmp > last)
+  {
+    for (auto it = first; it != last;)
+    {
+      it = erase(it);
+    }
+    return last;
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  size_t UBST< Key, Value, Cmp >::erase(const Key& key)
+  {
+    Iterator< Key, Value, Cmp > it = find(key);
+    if (it == end())
+    {
+      return 0;
+    }
+    erase(it);
+    return 1;
   }
 
   template< typename Key, typename Value, typename Cmp >
