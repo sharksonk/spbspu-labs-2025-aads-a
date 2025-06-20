@@ -605,8 +605,8 @@ namespace kushekbaev
     {
       return emplace(std::forward< Args >(args)...).first;
     }
-    node_t* tmp(std::forward< Args >(args)...);
-    auto newKey = tmp.data.first;
+    std::pair<Key, Value> newData(std::forward<Args>(args)...);
+    auto newKey = newData.first;
     if (hint != cend())
     {
       auto hintKey = hint->first;
@@ -614,14 +614,14 @@ namespace kushekbaev
       ++hint;
       if (cmp_(hintKey, newKey) && (nextHint == cend()) || (cmp_(newKey, nextHint->first)))
       {
-        node_t* newNode = new node_t(std::move(tmp.data));
+        node_t* newNode = new node_t(std::move(newData));
         node_t* hintNode = hint.node_;
         newNode->parent = hintNode;
         ++size_;
         return Iterator< Key, Value, Cmp >(newNode);
       }
     }
-    return emplace(std::move(tmp.data)).first;
+    return emplace(std::move(newData)).first;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -715,7 +715,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::lower_bound(const Key& key) const
   {
-    ConstIterator< Key, Value, Cmp >(lower_bound(key));
+    return ConstIterator< Key, Value, Cmp >(lower_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
