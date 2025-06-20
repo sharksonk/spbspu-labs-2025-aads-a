@@ -146,7 +146,7 @@ namespace kushekbaev
   UBST< Key, Value, Cmp >::~UBST()
   {
     clear();
-    std::free(fakeroot_);
+    delete[] reinterpret_cast< char* >(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -340,7 +340,7 @@ namespace kushekbaev
   std::pair< Iterator< Key, Value, Cmp >, bool >
   UBST< Key, Value, Cmp >::insertImpl(Pair&& value)
   {
-    return emplace(std::forward<Pair>(value));
+    return emplace(std::forward< Pair >(value));
   }
 
   template<typename Key, typename Value, typename Cmp>
@@ -534,14 +534,16 @@ namespace kushekbaev
       root_ = newNode;
       root_->parent = fakeroot_;
       fakeroot_->left = root_;
-      fakeroot_->left = root_;
+      fakeroot_->right = root_;
       ++size_;
       return{ Iterator< Key, Value, Cmp >(root_), true };
     }
     node_t* current = root_;
+    node_t* parent = nullptr;
     bool isLeft = false;
     while(current && current != fakeroot_)
     {
+      parent = current;
       if (cmp_(key, current->data.first))
       {
         current = current->left;
@@ -557,17 +559,27 @@ namespace kushekbaev
         return{ Iterator< Key, Value, Cmp >(current), false };
       }
     }
-    newNode->parent = current;
+    if (!parent)
+    {
+      delete newNode;
+      throw std::logic_error("Parent is nullptr!");
+    }
     if (isLeft)
     {
-      current->left = newNode;
+      parent->left = newNode;
     }
     else
     {
-      current->right = newNode;
+      parent->right = newNode;
     }
-    newNode->left = nullptr;
-    newNode->right = nullptr;
+    if (cmp_(key, fakeroot_->left->data.first))
+    {
+      fakeroot_->left = newNode;
+    }
+    if (cmp_(fakeroot_->right->data.first, key))
+    {
+      fakeroot_->right = newNode;
+    }
     ++size_;
     return{ Iterator< Key, Value, Cmp >(newNode), true };
   }
