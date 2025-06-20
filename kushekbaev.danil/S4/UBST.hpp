@@ -101,7 +101,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   UBST< Key, Value, Cmp>::UBST(const UBST< Key, Value, Cmp >& other):
     fakeroot_(reinterpret_cast<node_t*>(new char[sizeof(node_t)])),
-    root_(nullptr),
+    root_(fakeroot_),
     size_(0)
   {
     fakeroot_->left = fakeroot_;
