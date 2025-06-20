@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include <algorithm>
 #include <vector.hpp>
 
 using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
@@ -24,11 +25,11 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   {
     sorted.push_back(elem);
   }
-  std::sort(sorted.front(), sorted.back());
+  std::sort(sorted.begin(), sorted.end());
   out << name;
-  for (auto&& key: result)
+  for (const auto& elem: sorted)
   {
-    out << " " << key.first << " " << key.second;
+    out << " " << elem.first << " " << elem.second;
   }
   out << "\n";
 }

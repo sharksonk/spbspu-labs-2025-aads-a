@@ -56,6 +56,13 @@ namespace kushekbaev
       void pop_front();
       void pop_back();
 
+      T* begin() noexcept;
+      T* end() noexcept;
+      const T* begin() const noexcept;
+      const T* end() const noexcept;
+      const T* cbegin() const noexcept;
+      const T* cend() const noexcept;
+
     private:
       T* data_;
       size_t size_;
@@ -199,6 +206,42 @@ namespace kushekbaev
     data_ = newHolder.ptr;
     newHolder.ptr = nullptr;
     capacity_ = newCapacity;
+  }
+
+  template< typename T >
+  T* Vector< T >::begin() noexcept
+  {
+    return data_;
+  }
+
+  template< typename T >
+  T* Vector< T >::end() noexcept
+  {
+    return data_ + size_;
+  }
+
+  template< typename T >
+  const T* Vector< T >::begin() const noexcept
+  {
+    return data_;
+  }
+
+  template< typename T >
+  const T* Vector< T >::end() const noexcept
+  {
+    return data_ + size_;
+  }
+
+  template< typename T >
+  const T* Vector< T >::cbegin() const noexcept
+  {
+    return data_;
+  }
+
+  template< typename T >
+  const T* Vector< T >::cend() const noexcept
+  {
+    return data_ + size_;
   }
 }
 
