@@ -9,44 +9,28 @@ namespace kushekbaev
   class RAII
   {
     public:
-      RAII(size_t cap_);
+      explicit RAII(T* p);
       ~RAII();
-      void move(T* src, size_t i);
-      T* release();
-    private:
-      T* data_;
-      size_t size_;
+      RAII(RAII&& other) noexcept;
+      T* ptr;
   };
 
   template< typename T >
-  RAII< T >::RAII(size_t cap_):
-    data_(static_cast< T* >(operator new(cap_ * sizeof(T)))),
-    size_(0)
+  RAII< T >::RAII(T* p):
+    ptr(p)
   {}
 
   template< typename T >
   RAII< T >::~RAII()
   {
-   for (size_t i = 0; i < size_; ++i) {
-        data_[i].~T();
-    }
-    operator delete(data_);
+    delete[] ptr;
   }
 
   template< typename T >
-  void RAII< T >::move(T* src, size_t j)
+  RAII< T >::RAII(RAII&& other) noexcept:
+    ptr(other.ptr)
   {
-    data_[size_] = std::move(src[j]);
-    ++size_;
-  }
-
-  template< typename T >
-  T* RAII< T >::release()
-  {
-    T* result = data_;
-    data_ = nullptr;
-    size_ = 0;
-    return result;
+    other.ptr = nullptr;
   }
 
   template< typename T >
@@ -76,7 +60,7 @@ namespace kushekbaev
       T* data_;
       size_t size_;
       size_t capacity_;
-      void resize_array();
+      void extend_vector();
   };
 
   template< typename T >
@@ -174,7 +158,7 @@ namespace kushekbaev
   {
     if (size_ == capacity_)
     {
-      resize_array();
+      extend_vector();
     }
     data_[size_++] = value;
   }
@@ -203,20 +187,17 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::resize_array()
+  void Vector< T >::extend_vector()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-    RAII< T > tmp(newCapacity);
+    RAII< T > newHolder(new T[newCapacity]);
     for (size_t i = 0; i < size_; ++i)
     {
-      tmp.move(data_, i);
+      newHolder.ptr[i] = std::move(data_[i]);
     }
-    for (size_t i = 0; i < size_; ++i)
-    {
-      data_[i].~T();
-    }
-    operator delete[](data_);
-    data_ = tmp.release();
+    delete[] data_;
+    data_ = newHolder.ptr;
+    newHolder.ptr = nullptr;
     capacity_ = newCapacity;
   }
 }
