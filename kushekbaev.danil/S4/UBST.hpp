@@ -88,7 +88,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   UBST< Key, Value, Cmp>::UBST():
-    fakeroot_(reinterpret_cast< node_t* >(new char[sizeof(node_t)])),
+    fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
   {
@@ -100,7 +100,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   UBST< Key, Value, Cmp>::UBST(const UBST< Key, Value, Cmp >& other):
-    fakeroot_(reinterpret_cast<node_t*>(new char[sizeof(node_t)])),
+    fakeroot_(reinterpret_cast<node_t*>(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
   {
@@ -151,7 +151,7 @@ namespace kushekbaev
   UBST< Key, Value, Cmp >::~UBST()
   {
     clear();
-    delete[] reinterpret_cast< char* >(fakeroot_);
+    std::free(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
