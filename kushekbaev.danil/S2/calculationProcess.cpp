@@ -155,7 +155,7 @@ namespace
       {
         throw std::runtime_error("Power overflow!");
       }
-      result *= x;
+      result = multiplicate(result, x);
     }
     return isNegative ? -result : result;
   }
