@@ -207,6 +207,9 @@ namespace kushekbaev
     for (size_t i = 0; i < size_; ++i)
     {
       tmp.move(data_, i);
+    }
+    for (size_t i = 0; i < size_; ++i)
+    {
       data_[i].~T();
     }
     delete[] data_;
