@@ -1,22 +1,20 @@
 #ifndef BUCKET_HPP
 #define BUCKET_HPP
+#include <utility>
 
 namespace smirnov
 {
   template< class Key, class Value >
   struct Bucket
   {
-    Key key;
-    Value value;
+    std::pair< Key, Value > data;
     bool occupied = false;
     Bucket():
-      key(),
-      value(),
+      data(),
       occupied(false)
     {}
     Bucket(const Key & k, const Value & v):
-      key(k),
-      value(v),
+      data(k ,v),
       occupied(true)
     {}
   };

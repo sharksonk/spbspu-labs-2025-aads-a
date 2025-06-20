@@ -4,6 +4,7 @@
 #include <functional>
 #include <cstddef>
 #include "bucket.hpp"
+#include "constIteratorHash.hpp"
 
 namespace smirnov
 {
@@ -11,6 +12,7 @@ namespace smirnov
   class HashTable
   {
   public:
+    using const_iterator = ConstIteratorHash< Key, Value, Hash, Equal >;
     HashTable();
     ~HashTable() = default;
     HashTable(const HashTable & rhs) = default;
@@ -21,6 +23,11 @@ namespace smirnov
     size_t size() const noexcept;
     bool empty() const noexcept;
     float load_factor() const noexcept;
+
+    const_iterator begin() const;
+    const_iterator end() const;
+    const_iterator find(const Key & key) const;
+    std::pair< const_iterator, bool > insert(const Key & key, const Value & value);
   private:
     std::vector< Bucket< Key, Value > > buckets_;
     size_t size_;
@@ -30,6 +37,14 @@ namespace smirnov
     size_t probe(size_t hash_value, size_t attempt) const noexcept;
     void rehash(size_t new_capacity);
   };
+
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable():
+    buckets_(8),
+    size_(0),
+    hasher_(),
+    key_equal_()
+  {}
 
   template< class Key, class Value, class Hash, class Equal >
   size_t HashTable< Key, Value, Hash, Equal >::size() const noexcept
@@ -53,13 +68,76 @@ namespace smirnov
     return static_cast< float >(size_) / buckets_.size();
   }
 
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >::HashTable():
-    buckets_(8),
-    size_(0),
-    hasher_(),
-    key_equal_()
-  {}
+  template < class Key, class Value, class Hash, class Equal >
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin() const
+  {
+    return const_iterator(std::addressof(buckets_), 0);
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end() const
+  {
+    return const_iterator(std::addressof(buckets_), buckets_.size());
+  }
+
+  template < class Key, class Value, class Hash, class Equal >
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::find(const Key & key) const
+  {
+    if (empty())
+    {
+      return end();
+    }
+    size_t hash_value = hasher_(key) % buckets_.size();
+    size_t attempt = 0;
+    size_t index = hash_value;
+    while (attempt < buckets_.size())
+    {
+      index = probe(hash_value, attempt);
+      const auto & bucket = buckets_[index];
+      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      {
+        return const_iterator(std::addressof(buckets_), index);
+      }
+      attempt++;
+    }
+    return end();
+  }
+
+  template < class Key, class Value, class Hash, class Equal >
+  std::pair< ConstIteratorHash< Key, Value, Hash, Equal >, bool >
+      HashTable< Key, Value, Hash, Equal >::insert(const Key & key, const Value & value)
+  {
+    if (load_factor() >= max_load_factor)
+    {
+      rehash(buckets_.size() * 2);
+    }
+    size_t hash_value = hasher_(key) % buckets_.size();
+    size_t attempt = 0;
+    size_t index = 0;
+    size_t first_deleted = buckets_.size();
+    while (attempt < buckets_.size())
+    {
+      index = probe(hash_value, attempt);
+      auto & bucket = buckets_[index];
+      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      {
+        return {const_iterator(&buckets_, index), false};
+      }
+      if (!bucket.occupied && first_deleted == buckets_.size())
+      {
+        first_deleted = index;
+      }
+      attempt++;
+    }
+    if (first_deleted != buckets_.size())
+    {
+      index = first_deleted;
+    }
+    buckets_[index].data = {key, value};
+    buckets_[index].occupied = true;
+    size_++;
+    return {const_iterator(&buckets_, index), true};
+  }
 
   template< class Key, class Value, class Hash, class Equal >
   size_t HashTable< Key, Value, Hash, Equal >::probe(size_t hash_value, size_t attempt) const noexcept
@@ -70,13 +148,17 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t new_capacity)
   {
-    for (size_t i = 0; i < buckets_.size(); i++)
+    std::vector< Bucket< Key, Value > > old_buckets = std::move(buckets_);
+    buckets_.resize(new_capacity);
+    size_ = 0;
+    for (size_t i = 0; i < old_buckets.size(); ++i)
     {
-      if (!buckets_[i].occupied)
+      const auto & bucket = old_buckets[i];
+      if (bucket.occupied)
       {
-        continue;
+        insert(bucket.data.first, bucket.data.second);
       }
     }
-  }
+  };
 }
 #endif
