@@ -374,7 +374,7 @@ namespace kushekbaev
   template< typename... Args >
   Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(ConstIterator< Key, Value, Cmp > hint, Args&&... args)
   {
-    return emplace_hint(hint, args);
+    return emplace_hint(hint, args...);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -589,7 +589,7 @@ namespace kushekbaev
       ++hint;
       if (cmp_(hintKey, newKey) && (nextHint == cend()) || (cmp_(newKey, nextHint->first)))
       {
-        node_t* newNode = new Node(std::move(tmp.data));
+        node_t* newNode = new node_t(std::move(tmp.data));
         node_t* hintNode = hint.node_;
         newNode->parent = hintNode;
         ++size_;
