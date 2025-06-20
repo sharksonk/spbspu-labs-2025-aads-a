@@ -16,6 +16,9 @@ namespace kushekbaev
     UBST();
     UBST(const UBST< Key, Value, Cmp >& other);
     UBST(UBST< Key, Value, Cmp >&& other);
+    template< typename InputIterator >
+    UBST(InputIterator first, InputIterator last);
+    explicit UBST(std::initializer_list< std::pair< Key, Value > > il);
     ~UBST();
 
     UBST< Key, Value, Cmp >& operator=(const UBST< Key, Value, Cmp >& other);
@@ -114,6 +117,27 @@ namespace kushekbaev
     size_(std::move(other.size_)),
     cmp_(std::move(other.cmp_))
   {}
+
+  template< typename Key, typename Value, typename Cmp >
+  template< typename InputIterator >
+  UBST< Key, Value, Cmp >::UBST(InputIterator first, InputIterator last):
+    UBST()
+  {
+    for (auto it = first; it != last; ++it)
+    {
+      insert(*it);
+    }
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  UBST< Key, Value, Cmp >::UBST(std::initializer_list< std::pair< Key, Value > > il):
+    UBST()
+  {
+    for (auto it = il.begin(); it != il.end(); ++it)
+    {
+      insert(*it);
+    }
+  }
 
   template< typename Key, typename Value, typename Cmp >
   UBST< Key, Value, Cmp >::~UBST()
