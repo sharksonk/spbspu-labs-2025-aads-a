@@ -20,14 +20,17 @@ namespace kushekbaev
 
   template< typename T >
   RAII< T >::RAII(size_t cap_):
-    data_(new T[cap_]),
+    data_(static_cast< T* >(operator new(cap_ * sizeof(T)))),
     size_(0)
   {}
 
   template< typename T >
   RAII< T >::~RAII()
   {
-    delete[] data_;
+   for (size_t i = 0; i < size_; ++i) {
+        data_[i].~T();
+    }
+    operator delete(data_);
   }
 
   template< typename T >
@@ -212,7 +215,7 @@ namespace kushekbaev
     {
       data_[i].~T();
     }
-    delete[] data_;
+    operator delete[](data_);
     data_ = tmp.release();
     capacity_ = newCapacity;
   }
