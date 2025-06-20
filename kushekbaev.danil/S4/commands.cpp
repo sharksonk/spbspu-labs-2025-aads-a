@@ -35,34 +35,30 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  if (dictionary.count(name1) == 0 || dictionary.count(name2) == 0)
+  auto it1 = dictionary.find(name1);
+  auto it2 = dictionary.find(name2);
+  if (it1 == dictionary.end() || it2 == dictionary.end())
   {
     throw std::out_of_range("<INVALID COMMAND>");
   }
-  dataset_t dataset;
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  for (auto it = it1.cbegin(); it != it1.cend(); ++it)
+  dataset_t result;
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    if (it2.find(it->first) == it2.cend())
+    if (ds2.find(it->first) == ds2.cend())
     {
-      dataset.insert(*it);
+      result.insert(*it);
     }
   }
-  for (auto it = it2.cbegin(); it != it2.cend(); ++it)
+  auto target = dictionary.find(newName);
+  if (target != dictionary.end())
   {
-    if (it1.find(it->first) == it1.cend())
-    {
-      dataset.insert(*it);
-    }
+    target->second = result;
   }
-  try
+  else
   {
-    dictionary.at(newName) = dataset;
-  }
-  catch (const std::out_of_range&)
-  {
-    dictionary.insert(std::make_pair(newName, dataset));
+    dictionary.insert({newName, result});
   }
 }
 
@@ -70,27 +66,30 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  if (dictionary.count(name1) == 0 || dictionary.count(name2) == 0)
+  auto it1 = dictionary.find(name1);
+  auto it2 = dictionary.find(name2);
+  if (it1 == dictionary.end() || it2 == dictionary.end())
   {
     throw std::out_of_range("<INVALID COMMAND>");
   }
-  dataset_t dataset;
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  for (auto it = it1.cbegin(); it != it1.cend(); ++it)
+  dataset_t result;
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    if (it2.find(it->first) != it2.cend())
+    if (ds2.find(it->first) != ds2.cend())
     {
-      dataset.insert(*it);
+      result.insert(*it);
     }
   }
-  try
+  auto target = dictionary.find(newName);
+  if (target != dictionary.end())
   {
-    dictionary.at(newName) = dataset;
+    target->second = result;
   }
-  catch (const std::out_of_range&)
+  else
   {
-    dictionary.insert(std::make_pair(newName, dataset));
+    dictionary.insert({newName, result});
   }
 }
 
@@ -98,30 +97,33 @@ void kushekbaev::unification(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  if (dictionary.count(name1) == 0 || dictionary.count(name2) == 0)
+  auto it1 = dictionary.find(name1);
+  auto it2 = dictionary.find(name2);
+  if (it1 == dictionary.end() || it2 == dictionary.end())
   {
     throw std::out_of_range("<INVALID COMMAND>");
   }
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  dataset_t dataset;
-  for (auto it = it1.cbegin(); it != it1.cend(); ++it)
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  dataset_t result;
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    dataset.insert(*it);
+    result.insert(*it);
   }
-  for (auto it = it2.cbegin(); it != it2.cend(); ++it)
+  for (auto it = ds2.cbegin(); it != ds2.cend(); ++it)
   {
-    if (dataset.find(it->first) == dataset.end())
+    if (result.find(it->first) == result.end())
     {
-      dataset.insert(*it);
+      result.insert(*it);
     }
   }
-  try
+  auto target = dictionary.find(newName);
+  if (target != dictionary.end())
   {
-    dictionary.at(newName) = dataset;
+    target->second = result;
   }
-  catch (const std::out_of_range&)
+  else
   {
-    dictionary.insert(std::make_pair(newName, dataset));
+    dictionary.insert({newName, result});
   }
 }
