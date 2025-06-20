@@ -29,8 +29,8 @@ namespace kushekbaev
 
     Iterator< Key, Value, Cmp > begin() noexcept;
     Iterator< Key, Value, Cmp > end() noexcept;
-    Iterator< Key, Value, Cmp > begin() const noexcept;
-    Iterator< Key, Value, Cmp > end() const noexcept;
+    ConstIterator< Key, Value, Cmp > begin() const noexcept;
+    ConstIterator< Key, Value, Cmp > end() const noexcept;
     ConstIterator< Key, Value, Cmp > cbegin() const noexcept;
     ConstIterator< Key, Value, Cmp > cend() const noexcept;
 
@@ -84,6 +84,7 @@ namespace kushekbaev
       void killChildrenOf(node_t* node);
       template< typename Pair >
       std::pair< Iterator < Key, Value, Cmp >, bool> insertImpl(Pair&& value);
+      node_t* copySubtree(node_t* node, node_t* parent);
   };
 
   template< typename Key, typename Value, typename Cmp >
@@ -108,9 +109,22 @@ namespace kushekbaev
     fakeroot_->right = fakeroot_;
     fakeroot_->parent = nullptr;
     fakeroot_->height = -1;
-    for (auto it = other.begin(); it != other.end(); ++it)
+    if (!other.empty())
     {
-      insert(*it);
+      root_ = copySubtree(other.root_, fakeroot_);
+      size_ = other.size_;
+      node_t* minNode = root_;
+      while (minNode->left)
+      {
+        minNode = minNode->left;
+      }
+      fakeroot_->left = minNode;
+      node_t* maxNode = root_;
+      while (maxNode->right)
+      {
+        maxNode = maxNode->right;
+      }
+      fakeroot_->right = maxNode;
     }
   }
 
@@ -219,7 +233,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::begin() const noexcept
+  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::begin() const noexcept
   {
     if (empty())
     {
@@ -230,13 +244,13 @@ namespace kushekbaev
     {
       current = current->left;
     }
-    return Iterator< Key, Value, Cmp >(current);
+    return ConstIterator< Key, Value, Cmp >(current);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::end() const noexcept
+  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::end() const noexcept
   {
-    return Iterator< Key, Value, Cmp >(fakeroot_);
+    return ConstIterator< Key, Value, Cmp >(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -336,7 +350,6 @@ namespace kushekbaev
       if (current->left) stack.push(current->left);
       if (current->right) stack.push(current->right);
       delete current;
-      --size_;
     }
   }
 
@@ -742,6 +755,21 @@ namespace kushekbaev
   ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::upper_bound(const Key& key) const
   {
     return ConstIterator< Key, Value, Cmp >(upper_bound(key));
+  }
+
+  template<typename Key, typename Value, typename Cmp>
+  TreeNode< Key, Value, Cmp >* UBST<Key, Value, Cmp>::copySubtree(node_t* node, node_t* parent)
+  {
+    if (!node || node->height == -1)
+    {
+      return nullptr;
+    }
+    node_t* newNode = new node_t(node->data);
+    newNode->parent = parent;
+    newNode->height = node->height;
+    newNode->left = copySubtree(node->left, newNode);
+    newNode->right = copySubtree(node->right, newNode);
+    return newNode;
   }
 }
 
