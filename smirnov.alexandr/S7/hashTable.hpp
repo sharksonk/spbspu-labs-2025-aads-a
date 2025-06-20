@@ -1,8 +1,6 @@
 #ifndef HASHTABLE_HPP
 #define HASHTABLE_HPP
-#include <vector>
 #include <functional>
-#include <cstddef>
 #include "bucket.hpp"
 #include "constIteratorHash.hpp"
 
@@ -28,6 +26,7 @@ namespace smirnov
     const_iterator end() const;
     const_iterator find(const Key & key) const;
     std::pair< const_iterator, bool > insert(const Key & key, const Value & value);
+    size_t erase(const Key & key);
   private:
     std::vector< Bucket< Key, Value > > buckets_;
     size_t size_;
@@ -121,7 +120,7 @@ namespace smirnov
       auto & bucket = buckets_[index];
       if (bucket.occupied && key_equal_(bucket.data.first, key))
       {
-        return {const_iterator(&buckets_, index), false};
+        return {const_iterator(std::addressof(buckets_), index), false};
       }
       if (!bucket.occupied && first_deleted == buckets_.size())
       {
@@ -136,7 +135,27 @@ namespace smirnov
     buckets_[index].data = {key, value};
     buckets_[index].occupied = true;
     size_++;
-    return {const_iterator(&buckets_, index), true};
+    return {const_iterator(std::addressof(buckets_), index), true};
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  size_t HashTable< Key, Value, Hash, Equal >::erase(const Key & key)
+  {
+    size_t hash_value = hasher_(key) % buckets_.size();
+    size_t attempt = 0;
+    size_t index = 0;
+    while (attempt < buckets_.size())
+    {
+      index = probe(hash_value, attempt);
+      auto & bucket = buckets_[index];
+      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      {
+        bucket.occupied = false;
+        size_--;
+      }
+      ++attempt;
+    }
+    return 0;
   }
 
   template< class Key, class Value, class Hash, class Equal >
