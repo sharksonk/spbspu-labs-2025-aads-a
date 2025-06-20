@@ -6,6 +6,47 @@
 namespace kushekbaev
 {
   template< typename T >
+  class RAII
+  {
+    public:
+      RAII(size_t cap_);
+      ~RAII();
+      void move(T* src, size_t i);
+      T* release();
+    private:
+      T* data_;
+      size_t size_;
+  };
+
+  template< typename T >
+  RAII< T >::RAII(size_t cap_):
+    data_(new T[cap_]),
+    size_(0)
+  {}
+
+  template< typename T >
+  RAII< T >::~RAII()
+  {
+    delete[] data_;
+  }
+
+  template< typename T >
+  void RAII< T >::move(T* src, size_t j)
+  {
+    data_[size_] = std::move(src[j]);
+    ++size_;
+  }
+
+  template< typename T >
+  T* RAII< T >::release()
+  {
+    T* result = data_;
+    data_ = nullptr;
+    size_ = 0;
+    return result;
+  }
+
+  template< typename T >
   class Vector
   {
     public:
@@ -32,7 +73,7 @@ namespace kushekbaev
       T* data_;
       size_t size_;
       size_t capacity_;
-      void resizeArray();
+      void resize_array();
   };
 
   template< typename T >
@@ -130,7 +171,7 @@ namespace kushekbaev
   {
     if (size_ == capacity_)
     {
-      resizeArray();
+      resize_array();
     }
     data_[size_++] = value;
   }
@@ -159,29 +200,17 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::resizeArray()
+  void Vector< T >::resize_array()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-    T* newData = new T[newCapacity];
-    size_t i = 0;
-    try
+    RAII< T > tmp(newCapacity);
+    for (size_t i = 0; i < size_; ++i)
     {
-    for (; i < size_; ++i)
-      {
-        newData[i] = std::move(data_[i]);
-      }
-    }
-    catch (...)
-    {
-      for (size_t j = 0; j < i; ++j)
-      {
-        newData[j].~T();
-      }
-      delete[] newData;
-      throw;
+      tmp.move(data_, i);
+      data_[i].~T();
     }
     delete[] data_;
-    data_ = newData;
+    data_ = tmp.release();
     capacity_ = newCapacity;
   }
 }
