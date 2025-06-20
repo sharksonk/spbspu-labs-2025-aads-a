@@ -12,21 +12,16 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   }
   std::string name;
   in >> name;
-  auto it = dictionary.find(name);
-  if (it == dictionary.cend())
-  {
-    throw std::out_of_range("<INVALID COMMAND>");
-  }
-  const auto& dataset = it->second;
-  if (dataset.empty())
+  dataset_t result = dictionary.at(name);
+  if (result.empty())
   {
     out << "<EMPTY>\n";
     return;
   }
   out << name;
-  for (auto jt = dataset.cbegin(); jt != dataset.cend(); ++jt)
+  for (auto&& key: result)
   {
-    out << " " << jt->first << " " << jt->second;
+    out << " " << key.first << " " << key.second;
   }
   out << "\n";
 }
