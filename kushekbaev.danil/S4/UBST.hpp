@@ -49,14 +49,17 @@ namespace kushekbaev
     std::pair< Iterator< Key, Value, Cmp >, bool > insert(std::pair< Key, Value >&& value);
     template< typename InputIterator >
     void insert(InputIterator first, InputIterator last);
+    template< typename... Args >
+    Iterator< Key, Value, Cmp > insert(ConstIterator< Key, Value, Cmp > hint, Args&&... args);
     Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > position);
     Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > position);
     Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last);
     Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > last);
     size_t erase(const Key& key);
-
     template< typename... Args >
     std::pair< Iterator< Key, Value, Cmp >, bool > emplace(Args&&... args);
+    template< typename... Args >
+    Iterator< Key, Value, Cmp > emplace_hint(ConstIterator< Key, Value, Cmp > hint, Args&&... args);
 
     Iterator< Key, Value, Cmp > find(const Key& key) noexcept;
     ConstIterator< Key, Value, Cmp > find(const Key& key) const noexcept;
@@ -368,6 +371,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
+  template< typename... Args >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(ConstIterator< Key, Value, Cmp > hint, Args&&... args)
+  {
+    return emplace_hint(hint, args);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
   Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(Iterator< Key, Value, Cmp > position)
   {
     if (position == end())
@@ -560,6 +570,33 @@ namespace kushekbaev
     newNode->right = nullptr;
     ++size_;
     return{ Iterator< Key, Value, Cmp >(newNode), true };
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  template< typename... Args >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::emplace_hint(ConstIterator< Key, Value, Cmp > hint, Args&&... args)
+  {
+    if (empty())
+    {
+      return emplace(std::forward< Args >(args)...).first;
+    }
+    node_t* tmp(std::forward< Args >(args)...);
+    auto newKey = tmp.data.first;
+    if (hint != cend())
+    {
+      auto hintKey = hint->first;
+      auto nextHint = hint;
+      ++hint;
+      if (cmp_(hintKey, newKey) && (nextHint == cend()) || (cmp_(newKey, nextHint->first)))
+      {
+        node_t* newNode = new Node(std::move(tmp.data));
+        node_t* hintNode = hint.node_;
+        newNode->parent = hintNode;
+        ++size_;
+        return Iterator< Key, Value, Cmp >(newNode);
+      }
+    }
+    return emplace(std::move(tmp.data)).first;
   }
 
   template< typename Key, typename Value, typename Cmp >
