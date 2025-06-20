@@ -58,11 +58,13 @@ namespace kushekbaev
     }
     else
     {
-      while (node_->parent && node_->parent->right == node_ && node_->parent->height != -1)
+      auto parent = node_->parent;
+      while (parent && parent->right == node_ && node_->parent->height != -1)
       {
-        node_ = node_->parent;
+        node_ = parent;
+        parent = parent->parent;
       }
-      node_ = node_->parent;
+      node_ = parent;
     }
     return *this;
   }
@@ -88,11 +90,13 @@ namespace kushekbaev
     }
     else
     {
+      auto parent = node_->parent;
       while (node_->parent && node_->parent->left == node_ && node_->parent->height != -1)
       {
-        node_ = node_->parent;
+        node_ = parent;
+        parent = parent->parent;
       }
-      node_ = node_->parent;
+      node_ = parent;
     }
     return (*this);
   }

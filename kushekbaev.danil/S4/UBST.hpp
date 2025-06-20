@@ -105,26 +105,53 @@ namespace kushekbaev
     root_(fakeroot_),
     size_(0)
   {
+    if (other.root_ == other.fakeroot_)
+    {
+      return;
+    }
     fakeroot_->left = fakeroot_;
     fakeroot_->right = fakeroot_;
     fakeroot_->parent = nullptr;
     fakeroot_->height = -1;
     if (!other.empty())
     {
-      root_ = copySubtree(other.root_, fakeroot_);
-      size_ = other.size_;
-      node_t* minNode = root_;
-      while (minNode->left)
-      {
-        minNode = minNode->left;
+      Stack<std::pair<node_t*, node_t*>> stack;
+      stack.push({other.root_, fakeroot_});
+      while (!stack.empty()) {
+        auto top = stack.top();
+        node_t* src = top.first;
+        node_t* parent = top.second;
+        stack.pop();
+        node_t* newNode = new node_t(src->data);
+        newNode->parent = parent;
+        newNode->height = src->height;
+        if (parent == fakeroot_)
+        {
+          root_ = newNode;
+          fakeroot_->left = newNode;
+          fakeroot_->right = newNode;
+        }
+        else
+        {
+          if (src == src->parent->left)
+          {
+            parent->left = newNode;
+          }
+          else
+          {
+            parent->right = newNode;
+          }
+        }
+        if (src->right && src->right != other.fakeroot_)
+        {
+          stack.push((std::make_pair(src->right, newNode)));
+        }
+        if (src->left && src->left != other.fakeroot_)
+        {
+          stack.push((std::make_pair(src->right, newNode)));
+        }
+        size_++;
       }
-      fakeroot_->left = minNode;
-      node_t* maxNode = root_;
-      while (maxNode->right)
-      {
-        maxNode = maxNode->right;
-      }
-      fakeroot_->right = maxNode;
     }
   }
 
@@ -347,8 +374,14 @@ namespace kushekbaev
     {
       node_t* current = stack.top();
       stack.pop();
-      if (current->left) stack.push(current->left);
-      if (current->right) stack.push(current->right);
+      if (current->left)
+      {
+        stack.push(current->left);
+      }
+      if (current->right)
+      {
+        stack.push(current->right);
+      }
       delete current;
     }
   }

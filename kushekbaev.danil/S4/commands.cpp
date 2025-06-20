@@ -46,14 +46,14 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
   {
     if (it2.find(it->first) == it2.cend())
     {
-      dataset.insert({ it->first, it->second });
+      dataset.insert(*it);
     }
   }
   for (auto it = it2.cbegin(); it != it2.cend(); ++it)
   {
-    if (it1.find(it->first) == it2.cend())
+    if (it1.find(it->first) == it1.cend())
     {
-      dataset.insert({ it->first, it->second });
+      dataset.insert(*it);
     }
   }
   try
@@ -81,7 +81,7 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
   {
     if (it2.find(it->first) != it2.cend())
     {
-      dataset.insert({ it->first, it->second });
+      dataset.insert(*it);
     }
   }
   try
@@ -107,13 +107,13 @@ void kushekbaev::unification(std::istream& in, dict_t& dictionary)
   dataset_t dataset;
   for (auto it = it1.cbegin(); it != it1.cend(); ++it)
   {
-    dataset.insert({ it->first, it->second });
+    dataset.insert(*it);
   }
   for (auto it = it2.cbegin(); it != it2.cend(); ++it)
   {
     if (dataset.find(it->first) == dataset.end())
     {
-      dataset.insert({ it->first, it->second });
+      dataset.insert(*it);
     }
   }
   try
