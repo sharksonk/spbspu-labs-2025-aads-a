@@ -51,7 +51,7 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
   }
   for (auto it = it2.cbegin(); it != it2.cend(); ++it)
   {
-    if (it1.find(it->first) == it1.cend())
+    if (it1.find(it->first) == it2.cend())
     {
       dataset.insert({ it->first, it->second });
     }
