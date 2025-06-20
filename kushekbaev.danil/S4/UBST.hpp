@@ -58,6 +58,10 @@ namespace kushekbaev
 
     std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > > equal_range(const Key& key);
     std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > > equal_range(const Key& key) const;
+    Iterator< Key, Value, Cmp > lower_bound(const Key& key);
+    ConstIterator< Key, Value, Cmp > lower_bound(const Key& key) const;
+    Iterator< Key, Value, Cmp > upper_bound(const Key& key);
+    ConstIterator< Key, Value, Cmp > upper_bound(const Key& key) const;
 
     private:
       using node_t = kushekbaev::TreeNode< Key, Value, Cmp >;
@@ -443,13 +447,65 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > > UBST< Key, Value, Cmp >::equal_range(const Key& key)
   {
-
+    return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
   std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > > UBST< Key, Value, Cmp >::equal_range(const Key& key) const
   {
+    return std::make_pair(lower_bound(key), upper_bound(key));
+  }
 
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::lower_bound(const Key& key)
+  {
+    node_t* current = root_;
+    node_t* result = fakeroot_;
+    while (current != fakeroot_ && current)
+    {
+      if (cmp_(current->data.first, key))
+      {
+        result = current;
+        current = current->left;
+      }
+      else
+      {
+        current = current->right;
+      }
+    }
+    return Iterator< Key, Value, Cmp >(result);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::lower_bound(const Key& key) const
+  {
+    ConstIterator< Key, Value, Cmp >(lower_bound(key));
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::upper_bound(const Key& key)
+  {
+    node_t* current = root_;
+    node_t* result = fakeroot_;
+    while (current != fakeroot_ && current)
+    {
+      if (cmp_(key, current->data.first))
+      {
+        result = current;
+        current = current->left;
+      }
+      else
+      {
+        current = current->right;
+      }
+    }
+    return Iterator< Key, Value, Cmp >(result);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::upper_bound(const Key& key) const
+  {
+    return ConstIterator< Key, Value, Cmp >(upper_bound(key));
   }
 }
 
