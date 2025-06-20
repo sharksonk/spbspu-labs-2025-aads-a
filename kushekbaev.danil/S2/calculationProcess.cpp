@@ -1,6 +1,6 @@
 #include <limits>
 #include "calculationProcess.hpp"
-#include "stack.hpp"
+#include <stack.hpp>
 
 namespace
 {

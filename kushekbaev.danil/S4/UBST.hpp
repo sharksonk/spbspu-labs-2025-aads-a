@@ -4,6 +4,7 @@
 #include <functional>
 #include "constiterator.hpp"
 #include "iterator.hpp"
+#include <stack.hpp>
 
 namespace kushekbaev
 {
@@ -119,7 +120,11 @@ namespace kushekbaev
     root_(std::move(other.root_)),
     size_(std::move(other.size_)),
     cmp_(std::move(other.cmp_))
-  {}
+  {
+    other.fakeroot_ = nullptr;
+    other.root_ = nullptr;
+    other.size_ = 0;
+  }
 
   template< typename Key, typename Value, typename Cmp >
   template< typename InputIterator >
@@ -318,12 +323,20 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   void UBST< Key, Value, Cmp >::killChildrenOf(node_t* node)
   {
-    if (node)
+    if (!node || node == fakeroot_)
     {
+      return;
+    }
+    Stack< node_t* > stack;
+    stack.push(node);
+    while (!stack.empty())
+    {
+      node_t* current = stack.top();
+      stack.pop();
+      if (current->left) stack.push(current->left);
+      if (current->right) stack.push(current->right);
+      delete current;
       --size_;
-      killChildrenOf(node->left);
-      killChildrenOf(node->right);
-      delete node;
     }
   }
 

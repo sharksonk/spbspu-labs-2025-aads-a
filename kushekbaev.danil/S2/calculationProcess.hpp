@@ -2,7 +2,7 @@
 #define CALCULATIONPROCESS_HPP
 
 #include <string>
-#include "queue.hpp"
+#include <queue.hpp>
 
 namespace kushekbaev
 {

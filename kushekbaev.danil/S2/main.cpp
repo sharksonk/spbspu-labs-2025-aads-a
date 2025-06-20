@@ -2,8 +2,6 @@
 #include <fstream>
 #include <string>
 #include "calculationProcess.hpp"
-#include "queue.hpp"
-#include "stack.hpp"
 
 namespace
 {

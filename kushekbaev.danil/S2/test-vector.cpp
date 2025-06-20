@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "vector.hpp"
+#include <vector.hpp>
 
 using namespace kushekbaev;
 
