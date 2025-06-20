@@ -45,6 +45,19 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
     throw std::out_of_range("<INVALID COMMAND>");
   }
   dataset_t result;
+  if (name1 == name2)
+  {
+    auto target = dictionary.find(newName);
+    if (target != dictionary.end())
+    {
+      target->second = result;
+    }
+    else
+    {
+      dictionary.insert({newName, result});
+    }
+    return;
+  }
   const dataset_t ds1 = dictionary.at(name1);
   const dataset_t ds2 = dictionary.at(name2);
   for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
@@ -80,7 +93,15 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
   const dataset_t ds2 = dictionary.at(name2);
   if (ds1.empty() || ds2.empty())
   {
-    dictionary[newName] = result;
+    auto target = dictionary.find(newName);
+    if (target != dictionary.end())
+    {
+      target->second = result;
+    }
+    else
+    {
+      dictionary.insert({newName, result});
+    }
     return;
   }
   if (name1 == name2)
@@ -89,11 +110,14 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
   }
   else
   {
-    for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
+    const dataset_t& smaller = (ds1.size() < ds2.size()) ? ds1 : ds2;
+    const dataset_t& larger = (ds1.size() < ds2.size()) ? ds2 : ds1;
+
+    for (const auto& elem : smaller)
     {
-      if (ds2.find(it->first) != ds2.cend())
+      if (larger.find(elem.first) != larger.end())
       {
-        result.insert(*it);
+        result.insert(elem);
       }
     }
   }
