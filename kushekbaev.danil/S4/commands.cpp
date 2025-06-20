@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include <vector.hpp>
 
 using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
 using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
@@ -18,6 +19,12 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
     out << "<EMPTY>\n";
     return;
   }
+  kushekbaev::Vector< std::pair < size_t, std::string > > sorted;
+  for (const auto& elem: result)
+  {
+    sorted.push_back(elem);
+  }
+  std::sort(sorted.front(), sorted.back());
   out << name;
   for (auto&& key: result)
   {
@@ -70,11 +77,23 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
   dataset_t result;
   const dataset_t ds1 = dictionary.at(name1);
   const dataset_t ds2 = dictionary.at(name2);
-  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
+  if (ds1.empty() || ds2.empty())
   {
-    if (ds2.find(it->first) != ds2.cend())
+    dictionary[newName] = result;
+    return;
+  }
+  if (name1 == name2)
+  {
+    result = ds1;
+  }
+  else
+  {
+    for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
     {
-      result.insert(*it);
+      if (ds2.find(it->first) != ds2.cend())
+      {
+        result.insert(*it);
+      }
     }
   }
   auto target = dictionary.find(newName);
