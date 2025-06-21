@@ -13,6 +13,10 @@ namespace kushekbaev
   {
     template< typename InputIterator >
     using enableIf = std::enable_if_t< std::is_convertible< decltype(*std::declval< InputIterator >()), Value >::value >;
+    using It = Iterator< Key, Value, Cmp >;
+    using cIt = ConstIterator< Key, Value, Cmp >;
+    using pairIt = std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > >;
+    using paircIt = std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > >;
 
     UBST();
     UBST(const UBST< Key, Value, Cmp >& other);
@@ -27,12 +31,12 @@ namespace kushekbaev
     bool operator==(const UBST< Key, Value, Cmp >& other) const noexcept;
     bool operator!=(const UBST< Key, Value, Cmp >& other) const noexcept;
 
-    Iterator< Key, Value, Cmp > begin() noexcept;
-    Iterator< Key, Value, Cmp > end() noexcept;
-    ConstIterator< Key, Value, Cmp > begin() const noexcept;
-    ConstIterator< Key, Value, Cmp > end() const noexcept;
-    ConstIterator< Key, Value, Cmp > cbegin() const noexcept;
-    ConstIterator< Key, Value, Cmp > cend() const noexcept;
+    It begin() noexcept;
+    It end() noexcept;
+    cIt begin() const noexcept;
+    cIt end() const noexcept;
+    cIt cbegin() const noexcept;
+    cIt cend() const noexcept;
 
     size_t size() const noexcept;
     bool empty() const noexcept;
@@ -46,33 +50,33 @@ namespace kushekbaev
 
     void swap(UBST& other);
 
-    std::pair< Iterator< Key, Value, Cmp >, bool > insert(const std::pair< Key, Value >& value);
-    std::pair< Iterator< Key, Value, Cmp >, bool > insert(std::pair< Key, Value >&& value);
+    std::pair< It, bool > insert(const std::pair< Key, Value >& value);
+    std::pair< It, bool > insert(std::pair< Key, Value >&& value);
     template< typename InputIterator >
     void insert(InputIterator first, InputIterator last);
-    Iterator< Key, Value, Cmp > insert(ConstIterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value);
-    Iterator< Key, Value, Cmp > insert(Iterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value);
-    Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > position);
-    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > position);
-    Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last);
-    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > first, ConstIterator< Key, Value, Cmp > last);
+    It insert(cIt hint, const std::pair< Key, Value >& value);
+    It insert(It hint, const std::pair< Key, Value >& value);
+    It erase(It position);
+    It erase(cIt position);
+    It erase(It first, It last);
+    It erase(cIt first, cIt last);
     size_t erase(const Key& key);
     template< typename... Args >
-    std::pair< Iterator< Key, Value, Cmp >, bool > emplace(Args&&... args);
+    std::pair< It, bool > emplace(Args&&... args);
     template< typename... Args >
-    Iterator< Key, Value, Cmp > emplace_hint(ConstIterator< Key, Value, Cmp > hint, Args&&... args);
+    It emplace_hint(cIt hint, Args&&... args);
 
-    Iterator< Key, Value, Cmp > find(const Key& key) noexcept;
-    ConstIterator< Key, Value, Cmp > find(const Key& key) const noexcept;
+    It find(const Key& key) noexcept;
+    cIt find(const Key& key) const noexcept;
 
     size_t count(const Key& key) const noexcept;
 
-    std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > > equal_range(const Key& key);
-    std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > > equal_range(const Key& key) const;
-    Iterator< Key, Value, Cmp > lower_bound(const Key& key);
-    ConstIterator< Key, Value, Cmp > lower_bound(const Key& key) const;
-    Iterator< Key, Value, Cmp > upper_bound(const Key& key);
-    ConstIterator< Key, Value, Cmp > upper_bound(const Key& key) const;
+    std::pair< It, It > equal_range(const Key& key);
+    std::pair< cIt, cIt > equal_range(const Key& key) const;
+    It lower_bound(const Key& key);
+    cIt lower_bound(const Key& key) const;
+    It upper_bound(const Key& key);
+    cIt upper_bound(const Key& key) const;
 
     private:
       using node_t = kushekbaev::TreeNode< Key, Value, Cmp >;
@@ -214,7 +218,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::begin() noexcept
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::begin() noexcept
   {
     if (empty())
     {
@@ -225,17 +229,17 @@ namespace kushekbaev
     {
       current = current->left;
     }
-    return Iterator< Key, Value, Cmp >(current);
+    return It(current);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::end() noexcept
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::end() noexcept
   {
-    return Iterator< Key, Value, Cmp >(fakeroot_);
+    return It(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::begin() const noexcept
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::begin() const noexcept
   {
     if (empty())
     {
@@ -246,17 +250,17 @@ namespace kushekbaev
     {
       current = current->left;
     }
-    return ConstIterator< Key, Value, Cmp >(current);
+    return cIt(current);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::end() const noexcept
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::end() const noexcept
   {
-    return ConstIterator< Key, Value, Cmp >(fakeroot_);
+    return cIt(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::cbegin() const noexcept
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::cbegin() const noexcept
   {
     if (empty())
     {
@@ -267,13 +271,13 @@ namespace kushekbaev
     {
       current = current->left;
     }
-    return ConstIterator< Key, Value, Cmp >(current);
+    return cIt(current);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::cend() const noexcept
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::cend() const noexcept
   {
-    return ConstIterator< Key, Value, Cmp >(fakeroot_);
+    return cIt(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -367,15 +371,13 @@ namespace kushekbaev
   }
 
   template<typename Key, typename Value, typename Cmp>
-  std::pair< Iterator< Key, Value, Cmp >, bool>
-  UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
+  std::pair< Iterator< Key, Value, Cmp >, bool> UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
   {
     return emplace(value);
   }
 
   template<typename Key, typename Value, typename Cmp>
-  std::pair< Iterator< Key, Value, Cmp >, bool>
-  UBST< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
+  std::pair< Iterator< Key, Value, Cmp >, bool> UBST< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
   {
     return emplace(std::move(value));
   }
@@ -394,19 +396,19 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(ConstIterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::insert(cIt hint, const std::pair< Key, Value >& value)
   {
     return emplace_hint(hint, value);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(Iterator<Key, Value, Cmp> hint, const std::pair<Key, Value>& value)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::insert(It hint, const std::pair<Key, Value>& value)
   {
     return insert(ConstIterator<Key, Value, Cmp>(hint), value);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(Iterator< Key, Value, Cmp > position)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(It position)
   {
     if (position == end())
     {
@@ -414,7 +416,7 @@ namespace kushekbaev
     }
     node_t* todelete = position.node_;
     node_t* parent = todelete->parent;
-    Iterator< Key, Value, Cmp > result = Iterator< Key, Value, Cmp >(parent);
+    It result = It(parent);
     if (!(todelete->left) && !(todelete->right))
     {
       if (parent->left == todelete)
@@ -425,7 +427,7 @@ namespace kushekbaev
       {
         parent->right = nullptr;
       }
-      result = Iterator< Key, Value, Cmp >(parent);
+      result = It(parent);
     }
     else if (!(todelete->left) || !(todelete->right))
     {
@@ -439,7 +441,7 @@ namespace kushekbaev
         parent->right = child;
       }
       child->parent = parent;
-      result = Iterator< Key, Value, Cmp >(child);
+      result = It(child);
     }
     else
     {
@@ -449,7 +451,7 @@ namespace kushekbaev
         next = next->left;
       }
       todelete->data = next->data;
-      return erase(Iterator< Key, Value, Cmp >(next));
+      return erase(It(next));
     }
     if (todelete == root_)
     {
@@ -463,7 +465,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(ConstIterator< Key, Value, Cmp > position)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(cIt position)
   {
     if (position == cend())
     {
@@ -471,7 +473,7 @@ namespace kushekbaev
     }
     node_t* todelete = position.node_;
     node_t* parent = todelete->parent;
-    Iterator< Key, Value, Cmp > result = Iterator< Key, Value, Cmp >(parent);
+    It result = It(parent);
     if (!(todelete->left) && !(todelete->right))
     {
       if (parent->left == todelete)
@@ -482,7 +484,7 @@ namespace kushekbaev
       {
         parent->right = nullptr;
       }
-      result = Iterator< Key, Value, Cmp >(parent);
+      result = It(parent);
     }
     else if (!(todelete->left) || !(todelete->right))
     {
@@ -496,7 +498,7 @@ namespace kushekbaev
         parent->right = child;
       }
       child->parent = parent;
-      result = Iterator< Key, Value, Cmp >(child);
+      result = It(child);
     }
     else
     {
@@ -506,7 +508,7 @@ namespace kushekbaev
         next = next->left;
       }
       todelete->data = next->data;
-      return erase(Iterator< Key, Value, Cmp >(next));
+      return erase(It(next));
     }
     if (todelete == root_)
     {
@@ -520,7 +522,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(It first, It last)
   {
     for (auto it = first; it != last;)
     {
@@ -530,7 +532,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::erase(ConstIterator< Key, Value, Cmp >first, ConstIterator< Key, Value, Cmp > last)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(cIt first, cIt last)
   {
     for (auto it = first; it != last;)
     {
@@ -542,7 +544,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   size_t UBST< Key, Value, Cmp >::erase(const Key& key)
   {
-    Iterator< Key, Value, Cmp > it = find(key);
+    It it = find(key);
     if (it == end())
     {
       return 0;
@@ -566,7 +568,7 @@ namespace kushekbaev
       fakeroot_->left = root_;
       fakeroot_->right = root_;
       ++size_;
-      return{ Iterator< Key, Value, Cmp >(root_), true };
+      return{ It(root_), true };
     }
     node_t* current = root_;
     node_t* parent = nullptr;
@@ -587,7 +589,7 @@ namespace kushekbaev
       else
       {
         delete newNode;
-        return{ Iterator< Key, Value, Cmp >(current), false };
+        return{ It(current), false };
       }
     }
     if (!parent)
@@ -614,12 +616,12 @@ namespace kushekbaev
     }
     newNode->left = newNode->right = nullptr;
     ++size_;
-    return{ Iterator< Key, Value, Cmp >(newNode), true };
+    return{ It(newNode), true };
   }
 
   template< typename Key, typename Value, typename Cmp >
   template< typename... Args >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::emplace_hint(ConstIterator< Key, Value, Cmp > hint, Args&&... args)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::emplace_hint(cIt hint, Args&&... args)
   {
     if (empty())
     {
@@ -638,7 +640,7 @@ namespace kushekbaev
         node_t* hintNode = hint.node_;
         newNode->parent = hintNode;
         ++size_;
-        return Iterator< Key, Value, Cmp >(newNode);
+        return It(newNode);
       }
     }
     return emplace(std::move(newData)).first;
@@ -651,7 +653,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::find(const Key& key) noexcept
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::find(const Key& key) noexcept
   {
     node_t* current = root_;
     while (current && current != fakeroot_)
@@ -666,14 +668,14 @@ namespace kushekbaev
       }
       else
       {
-        return Iterator< Key, Value, Cmp >(current);
+        return It(current);
       }
     }
     return end();
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::find(const Key& key) const noexcept
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::find(const Key& key) const noexcept
   {
     node_t* current = root_;
     while (current && current != fakeroot_)
@@ -688,7 +690,7 @@ namespace kushekbaev
       }
       else
       {
-        return ConstIterator< Key, Value, Cmp >(current);
+        return cIt(current);
       }
     }
     return cend();
@@ -701,19 +703,19 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > > UBST< Key, Value, Cmp >::equal_range(const Key& key)
+  typename UBST< Key, Value, Cmp >::pairIt UBST< Key, Value, Cmp >::equal_range(const Key& key)
   {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > > UBST< Key, Value, Cmp >::equal_range(const Key& key) const
+  typename UBST< Key, Value, Cmp >::paircIt UBST< Key, Value, Cmp >::equal_range(const Key& key) const
   {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::lower_bound(const Key& key)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::lower_bound(const Key& key)
   {
     node_t* current = root_;
     node_t* result = fakeroot_;
@@ -729,17 +731,17 @@ namespace kushekbaev
         current = current->left;
       }
     }
-    return Iterator< Key, Value, Cmp >(result);
+    return It(result);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::lower_bound(const Key& key) const
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::lower_bound(const Key& key) const
   {
-    return ConstIterator< Key, Value, Cmp >(lower_bound(key));
+    return cIt(lower_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::upper_bound(const Key& key)
+  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::upper_bound(const Key& key)
   {
     node_t* current = root_;
     node_t* result = fakeroot_;
@@ -755,13 +757,13 @@ namespace kushekbaev
         current = current->left;
       }
     }
-    return Iterator< Key, Value, Cmp >(result);
+    return It(result);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  ConstIterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::upper_bound(const Key& key) const
+  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::upper_bound(const Key& key) const
   {
-    return ConstIterator< Key, Value, Cmp >(upper_bound(key));
+    return cIt(upper_bound(key));
   }
 
   template<typename Key, typename Value, typename Cmp>
