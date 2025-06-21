@@ -1,32 +1,64 @@
 #include <iostream>
+#include <fstream>
 #include <string>
-#include "hashTable.hpp"
+#include <stdexcept>
+#include "graphCollection.hpp"
+#include "commands.hpp"
 
-int main()
+namespace
 {
-  smirnov::HashTable< int, std::string > table;
-  if (!table.insert(1, "one").second)
+  void loadGraphsFromFile(std::ifstream & inputFile, smirnov::GraphCollection & graphs)
   {
-    std::cout << "Failed to insert key 1\n";
+    std::string graphName;
+    size_t edgeCount;
+    while (inputFile >> graphName >> edgeCount)
+    {
+      smirnov::Graph graph(graphName);
+      for (size_t i = 0; i < edgeCount; ++i)
+      {
+        std::string from, to;
+        unsigned weight;
+        if (!(inputFile >> from >> to >> weight))
+        {
+          throw std::runtime_error("Input file format error");
+        }
+        graph.addEdge(from, to, weight);
+      }
+      if (!graphs.addGraph(graphName))
+      {
+        throw std::runtime_error("Duplicate graph name in input file: " + graphName);
+      }
+      smirnov::Graph * g = graphs.getGraph(graphName);
+      if (g)
+      {
+        *g = graph;
+      }
+    }
   }
-  if (!table.insert(2, "two").second)
+}
+
+int main(int argc, char * argv[])
+{
+  if (argc < 2)
   {
-    std::cout << "Failed to insert key 2\n";
+    std::cerr << "Error: input filename required\n";
+    return 1;
   }
-  auto it = table.find(1);
-  if (it != table.end())
+  std::ifstream inputFile(argv[1]);
+  if (!inputFile.is_open())
   {
-    std::cout << "Found: " << it->first << " => " << it->second << "\n";
+    std::cerr << "Error: cannot open file\n";
+    return 1;
   }
-  auto insert_result = table.insert(1, "new_one");
-  if (!insert_result.second)
+  smirnov::GraphCollection graphs;
+  try
   {
-    std::cout << "Key 1 already exists with value: " << insert_result.first->second << "\n";
+    loadGraphsFromFile(inputFile, graphs);
   }
-  if (table.find(42) == table.end())
+  catch (const std::exception & ex)
   {
-    std::cout << "Key 42 not found (correct behavior)\n";
+    std::cerr << "Error loading graphs: " << ex.what() << "\n";
+    return 1;
   }
-  std::cout << "Size: " << table.size() << "\n";
-  std::cout << "Load factor: " << table.load_factor() << "\n";
+  smirnov::processCommands(graphs, std::cin, std::cout, std::cerr);
 }
