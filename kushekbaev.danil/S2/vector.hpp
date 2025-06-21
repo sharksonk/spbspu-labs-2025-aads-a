@@ -64,7 +64,7 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::Vector(const Vector& other):
-    data_(new T[other.capacity_]),
+    data_(nullptr),
     size_(other.size_),
     capacity_(other.capacity_)
   {
@@ -100,14 +100,15 @@ namespace kushekbaev
     if (this != std::addressof(other))
     {
       RAII newHolder(new T[other.capacity_]);
-      for (size_t i = 0; i < size_; ++i)
+      for (size_t i = 0; i < other.size_; ++i)
       {
-        newHolder.ptr[i] = std::move(data_[i]);
+        newHolder.ptr[i] = other.data_[i];
       }
       delete[] data_;
       data_ = newHolder.ptr;
       newHolder.ptr = nullptr;
       capacity_ = other.capacity_;
+      size_ = other.size_;
     }
     return *this;
   }

@@ -6,6 +6,18 @@ namespace
 {
   constexpr long long int MIN = std::numeric_limits< long long int >::min();
   constexpr long long int MAX = std::numeric_limits< long long int >::max();
+  bool isNumber(const std::string& symbol)
+  {
+    try
+    {
+      std::stoll(symbol);
+    }
+    catch (const std::exception&)
+    {
+      return false;
+    }
+    return true;
+  }
 
   bool isOperator(const std::string& symbol)
   {
@@ -193,15 +205,11 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     {
       stack.push(symbol);
     }
-    try
+    else if (isNumber(symbol))
     {
       postfixQ.push(symbol);
     }
-    catch (std::exception&)
-    {
-      throw std::logic_error("Not a number inputed!");
-    }
-    if (isOperator(symbol))
+    else if (isOperator(symbol))
     {
       int priority = calculatePriority(symbol);
       while (!stack.empty() && priority <= calculatePriority(stack.top()))
@@ -248,14 +256,6 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
   {
     std::string symbol = postfixQ.front();
     postfixQ.pop();
-    try
-    {
-      stack.push(std::stoll(symbol));
-    }
-    catch (std::exception&)
-    {
-      throw std::logic_error("Not a number inputed!");
-    }
     if (isOperator(symbol))
     {
       if (stack.size() < 2)
@@ -268,8 +268,23 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
       stack.pop();
       stack.push(calculateOperation(symbol, operand1, operand2));
     }
+    else
+    {
+      try
+      {
+        stack.push(std::stoll(symbol));
+      }
+      catch (const std::exception&)
+      {
+        throw std::runtime_error("Invalid number in postfix expression");
+      }
+    }
   }
-  long long int result  = stack.top();
+  if (stack.size() != 1)
+  {
+    throw std::runtime_error("Invalid expression: too many operands");
+  }
+  long long int result = stack.top();
   stack.pop();
   return result;
 }
