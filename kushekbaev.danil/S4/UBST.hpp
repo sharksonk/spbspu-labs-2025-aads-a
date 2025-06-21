@@ -293,7 +293,12 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::at(const Key& key)
   {
-    return const_cast< Value& >(static_cast< const UBST* >(this)->at(key));
+    auto current = find(key);
+    if (current == cend())
+    {
+      throw std::out_of_range("Key hasn't been found!");
+    }
+    return current->second;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -310,12 +315,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::operator[](const Key& key)
   {
-    auto it = find(key);
-    if (it == end())
-    {
-      auto inserted = emplace(key, Value());
-      return inserted.first->second;
-    }
+    Iterator< Key, Value, Cmp > node = insert(std::make_pair(key, Value()));
     return it->second;
   }
 
