@@ -3,6 +3,7 @@
 
 #include "declaration.hpp"
 #include <utility>
+#include <queue.hpp>
 
 template< class Key, class T, class Compare >
 maslevtsov::Tree< Key, T, Compare >::Tree():
@@ -120,6 +121,98 @@ template< class Key, class T, class Compare >
 typename maslevtsov::Tree< Key, T, Compare >::const_iterator maslevtsov::Tree< Key, T, Compare >::cend() const noexcept
 {
   return const_iterator(dummy_root_, true);
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_lnr(F f)
+{
+  if (empty()) {
+    throw std::logic_error("nothing to traverse");
+  }
+  for (auto it = begin(); it != end(); ++it) {
+    f(*it);
+  }
+  return f;
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_lnr(F f) const
+{
+  if (empty()) {
+    throw std::logic_error("nothing to traverse");
+  }
+  for (auto it = cbegin(); it != cend(); ++it) {
+    f(*it);
+  }
+  return f;
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_rnl(F f)
+{
+  if (empty()) {
+    throw std::logic_error("nothing to traverse");
+  }
+  auto it = --end();
+  for (; it != begin(); --it) {
+    f(*it);
+  }
+  f(*it);
+  return f;
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_rnl(F f) const
+{
+  if (empty()) {
+    throw std::logic_error("nothing to traverse");
+  }
+  auto it = --cend();
+  for (; it != cbegin(); --it) {
+    f(*it);
+  }
+  f(*it);
+  return f;
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_breadth(F f)
+{
+  return const_cast< const Tree< Key, T, Compare >* >(this)->traverse_breadth(f);
+}
+
+template< class Key, class T, class Compare >
+template< typename F >
+F maslevtsov::Tree< Key, T, Compare >::traverse_breadth(F f) const
+{
+  if (empty()) {
+    throw std::logic_error("nothing to traverse");
+  }
+  Queue< Node* > queue;
+  queue.push(dummy_root_->left);
+  while (!queue.empty()) {
+    Node* current = queue.front();
+    queue.pop();
+    f(current->data1);
+    if (!current->is_two) {
+      f(current->data2);
+    }
+    if (current->left) {
+      queue.push(current->left);
+    }
+    if (current->middle) {
+      queue.push(current->middle);
+    }
+    if (current->right) {
+      queue.push(current->right);
+    }
+  }
+  return f;
 }
 
 template< class Key, class T, class Compare >

@@ -1,6 +1,6 @@
 #include "map_operations.hpp"
 #include <iostream>
-#include "tree/definition.hpp"
+#include <tree/definition.hpp>
 
 void maslevtsov::input_setmap(std::istream& in, setmap_t& map)
 {
