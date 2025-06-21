@@ -47,15 +47,7 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
   dataset_t result;
   if (name1 == name2)
   {
-    auto target = dictionary.find(newName);
-    if (target != dictionary.end())
-    {
-      target->second = result;
-    }
-    else
-    {
-      dictionary.insert({newName, result});
-    }
+    dictionary[newName] = result;
     return;
   }
   const dataset_t ds1 = dictionary.at(name1);
@@ -67,69 +59,34 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
       result.insert(*it);
     }
   }
-  auto target = dictionary.find(newName);
-  if (target != dictionary.end())
-  {
-    target->second = result;
-  }
-  else
-  {
-    dictionary.insert({newName, result});
-  }
+  dictionary[newName] = result;
 }
 
 void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  auto it1 = dictionary.find(name1);
-  auto it2 = dictionary.find(name2);
-  if (it1 == dictionary.end() || it2 == dictionary.end())
+  dataset_t result, ds1, ds2;
+  ds1 = dictionary.at(name1);
+  ds2 = dictionary.at(name2);
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    throw std::out_of_range("<INVALID COMMAND>");
+    if (ds2.find(it->first) != ds2.end())
+    {
+      result.insert(*it);
+    }
   }
-  dataset_t result;
-  const dataset_t ds1 = dictionary.at(name1);
-  const dataset_t ds2 = dictionary.at(name2);
-  if (ds1.empty() || ds2.empty())
+  if (newName == name1)
   {
-    auto target = dictionary.find(newName);
-    if (target != dictionary.end())
-    {
-      target->second = result;
-    }
-    else
-    {
-      dictionary.insert({newName, result});
-    }
+    dictionary[name1] = result;
     return;
   }
-  if (name1 == name2)
+  else if (newName == name2)
   {
-    result = ds1;
+    dictionary[name2] = result;
+    return;
   }
-  else
-  {
-    const dataset_t& smaller = (ds1.size() < ds2.size()) ? ds1 : ds2;
-    const dataset_t& larger = (ds1.size() < ds2.size()) ? ds2 : ds1;
-
-    for (const auto& elem : smaller)
-    {
-      if (larger.find(elem.first) != larger.end())
-      {
-        result.insert(elem);
-      }
-    }
-  }
-  auto target = dictionary.find(newName);
-  if (target != dictionary.end())
-  {
-    target->second = result;
-  }
-  else
-  {
-    dictionary.insert({newName, result});
-  }
+  dictionary[newName] = result;
 }
 
 void kushekbaev::unification(std::istream& in, dict_t& dictionary)
@@ -156,13 +113,5 @@ void kushekbaev::unification(std::istream& in, dict_t& dictionary)
       result.insert(*it);
     }
   }
-  auto target = dictionary.find(newName);
-  if (target != dictionary.end())
-  {
-    target->second = result;
-  }
-  else
-  {
-    dictionary.insert({newName, result});
-  }
+  dictionary[newName] = result;
 }
