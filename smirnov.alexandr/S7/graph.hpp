@@ -8,6 +8,7 @@ namespace smirnov
   class Graph
   {
   public:
+    Graph() = default;
     Graph(const std::string & name);
     const std::string & getName() const noexcept;
     bool addVertex(const std::string & vertex);
