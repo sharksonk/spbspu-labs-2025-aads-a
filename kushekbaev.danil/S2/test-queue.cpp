@@ -86,14 +86,14 @@ BOOST_AUTO_TEST_CASE(queueSize)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_CASE(queuePushPopDrop)
+BOOST_AUTO_TEST_CASE(queuePushPop)
 {
   Queue< int > Q;
   Q.push(10);
   BOOST_TEST(Q.front() == 10);
   Q.push(20);
   BOOST_TEST(Q.back() == 20);
-  BOOST_TEST(Q.drop() == 10);
+  Q.pop();
   Q.pop();
   BOOST_TEST(Q.empty());
 }

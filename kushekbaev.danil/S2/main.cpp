@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "calculationProcess.hpp"
-#include <stack.hpp>
-#include <queue.hpp>
+#include "calculationprocess.hpp"
+#include "queue.hpp"
+#include "stack.hpp"
 
 namespace
 {

@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "calculationProcess.hpp"
+#include "calculationprocess.hpp"
 
 using namespace kushekbaev;
 

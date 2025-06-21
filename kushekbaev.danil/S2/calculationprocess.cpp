@@ -1,6 +1,6 @@
+#include "calculationprocess.hpp"
 #include <limits>
-#include "calculationProcess.hpp"
-#include <stack.hpp>
+#include "stack.hpp"
 
 namespace
 {
@@ -256,11 +256,7 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
   {
     std::string symbol = postfixQ.front();
     postfixQ.pop();
-    if (isNumber(symbol))
-    {
-      stack.push(std::stoll(symbol));
-    }
-    else if (isOperator(symbol))
+    if (isOperator(symbol))
     {
       if (stack.size() < 2)
       {
@@ -272,8 +268,23 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
       stack.pop();
       stack.push(calculateOperation(symbol, operand1, operand2));
     }
+    else
+    {
+      try
+      {
+        stack.push(std::stoll(symbol));
+      }
+      catch (const std::exception&)
+      {
+        throw std::runtime_error("Invalid number in postfix expression");
+      }
+    }
   }
-  long long int result  = stack.top();
+  if (stack.size() != 1)
+  {
+    throw std::runtime_error("Invalid expression: too many operands");
+  }
+  long long int result = stack.top();
   stack.pop();
   return result;
 }
