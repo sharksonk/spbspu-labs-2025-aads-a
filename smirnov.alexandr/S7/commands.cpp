@@ -203,131 +203,97 @@ void smirnov::create(GraphCollection & graphs, std::istream & in, std::ostream &
   }
 }
 
-void smirnov::merge(GraphCollection & graphs, std::istream & in, std::ostream & err)
+void smirnov::merge(GraphCollection& graphs, std::istream& in, std::ostream&, std::ostream& err)
 {
-  std::string newName, name1, name2;
-  if (!(in >> newName >> name1 >> name2))
-  {
-    printError(err);
-    return;
-  }
-  if (graphs.getGraph(newName) != nullptr)
-  {
-    printError(err);
-    return;
-  }
-  const Graph * g1 = graphs.getGraph(name1);
-  const Graph * g2 = graphs.getGraph(name2);
-  if (!g1 || !g2)
-  {
-    printError(err);
-    return;
-  }
-  Graph mergedGraph(newName);
-  std::vector< std::string > vertices1 = g1->getVertices();
-  for (size_t i = 0; i < vertices1.size(); ++i)
-  {
-    mergedGraph.addVertex(vertices1[i]);
-  }
-  for (size_t i = 0; i < vertices1.size(); ++i)
-  {
-    std::vector< std::pair< std::string, unsigned > > edges = g1->getOutboundEdges(vertices1[i]);
-    for (size_t j = 0; j < edges.size(); ++j)
-    {
-      mergedGraph.addEdge(vertices1[i], edges[j].first, edges[j].second);
+    std::string newName, name1, name2;
+    if (!(in >> newName >> name1 >> name2)) {
+        printError(err);
+        return;
     }
-  }
-  std::vector< std::string > vertices2 = g2->getVertices();
-  for (size_t i = 0; i < vertices2.size(); ++i)
-  {
-    if (!mergedGraph.hasVertex(vertices2[i]))
-    {
-      mergedGraph.addVertex(vertices2[i]);
+
+    // Проверяем существование графов
+    const Graph* g1 = graphs.getGraph(name1);
+    const Graph* g2 = graphs.getGraph(name2);
+    if (!g1 || !g2 || graphs.getGraph(newName)) {
+        printError(err);
+        return;
     }
-  }
-  for (size_t i = 0; i < vertices2.size(); ++i)
-  {
-    std::vector< std::pair< std::string, unsigned > > edges = g2->getOutboundEdges(vertices2[i]);
-    for (size_t j = 0; j < edges.size(); ++j)
-    {
-      mergedGraph.addEdge(vertices2[i], edges[j].first, edges[j].second);
+
+    Graph newGraph(newName);
+
+    // Объединяем вершины
+    auto vertices1 = g1->getVertices();
+    auto vertices2 = g2->getVertices();
+    for (const auto& v : vertices1) {
+        newGraph.addVertex(v);
     }
-  }
-  graphs.addGraph(newName);
-  Graph * added = graphs.getGraph(newName);
-  if (added)
-  {
-    *added = mergedGraph;
-  }
+    for (const auto& v : vertices2) {
+        if (!newGraph.hasVertex(v)) {
+            newGraph.addVertex(v);
+        }
+    }
+
+    // Объединяем ребра
+    for (const auto& v : vertices1) {
+        auto edges = g1->getOutboundEdges(v);
+        for (const auto& e : edges) {
+            newGraph.addEdge(v, e.first, e.second);
+        }
+    }
+    for (const auto& v : vertices2) {
+        auto edges = g2->getOutboundEdges(v);
+        for (const auto& e : edges) {
+            newGraph.addEdge(v, e.first, e.second);
+        }
+    }
+
+    graphs.addGraph(newName);
 }
 
-void smirnov::extract(GraphCollection & graphs, std::istream & in, std::ostream & err)
+void smirnov::extract(GraphCollection& graphs, std::istream& in, std::ostream&, std::ostream& err)
 {
-  std::string newName, oldName;
-  size_t count;
-  if (!(in >> newName >> oldName >> count))
-  {
-    printError(err);
-    return;
-  }
-  if (graphs.getGraph(newName) != nullptr)
-  {
-    printError(err);
-    return;
-  }
-  const Graph * oldGraph = graphs.getGraph(oldName);
-  if (!oldGraph)
-  {
-    printError(err);
-    return;
-  }
-  std::vector< std::string > vertices;
-  for (size_t i = 0; i < count; ++i)
-  {
-    std::string v;
-    if (!(in >> v))
-    {
-      printError(err);
-      return;
+    std::string newName, oldName;
+    size_t count;
+    if (!(in >> newName >> oldName >> count)) {
+        printError(err);
+        return;
     }
-    if (!oldGraph->hasVertex(v))
-    {
-      printError(err);
-      return;
+
+    const Graph* oldGraph = graphs.getGraph(oldName);
+    if (!oldGraph || graphs.getGraph(newName)) {
+        printError(err);
+        return;
     }
-    vertices.push_back(v);
-  }
-  Graph newGraph(newName);
-  for (size_t i = 0; i < vertices.size(); ++i)
-  {
-    newGraph.addVertex(vertices[i]);
-  }
-  for (size_t i = 0; i < vertices.size(); ++i)
-  {
-    std::vector< std::pair< std::string, unsigned > > edges = oldGraph->getOutboundEdges(vertices[i]);
-    for (size_t j = 0; j < edges.size(); ++j)
-    {
-      bool found = false;
-      for (size_t k = 0; k < vertices.size(); ++k)
-      {
-        if (vertices[k] == edges[j].first)
-        {
-          found = true;
-          break;
+
+    std::vector<std::string> vertices;
+    for (size_t i = 0; i < count; ++i) {
+        std::string vertex;
+        if (!(in >> vertex)) {
+            printError(err);
+            return;
         }
-      }
-      if (found)
-      {
-        newGraph.addEdge(vertices[i], edges[j].first, edges[j].second);
-      }
+        if (!oldGraph->hasVertex(vertex)) {
+            printError(err);
+            return;
+        }
+        vertices.push_back(vertex);
     }
-  }
-  graphs.addGraph(newName);
-  Graph * added = graphs.getGraph(newName);
-  if (added)
-  {
-    *added = newGraph;
-  }
+
+    Graph newGraph(newName);
+    for (const auto& v : vertices) {
+        newGraph.addVertex(v);
+    }
+
+    for (const auto& from : vertices) {
+        auto edges = oldGraph->getOutboundEdges(from);
+        for (const auto& e : edges) {
+            if (std::find(vertices.begin(), vertices.end(), e.first) != vertices.end()) {
+                newGraph.addEdge(from, e.first, e.second);
+            }
+        }
+    }
+
+    graphs.addGraph(newName);
 }
 
 void smirnov::processCommands(GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
@@ -365,11 +331,11 @@ void smirnov::processCommands(GraphCollection & graphs, std::istream & in, std::
     }
     else if (cmd == "merge")
     {
-      merge(graphs, in, err);
+      merge(graphs, in, out, err);
     }
     else if (cmd == "extract")
     {
-      extract(graphs, in, err);
+      extract(graphs, in, out, err);
     }
     else
     {
