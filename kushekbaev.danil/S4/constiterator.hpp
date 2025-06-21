@@ -2,6 +2,7 @@
 #define CONSTITERATOR_HPP
 
 #include <iterator>
+#include "iterator.hpp"
 #include "treenode.hpp"
 
 namespace kushekbaev
@@ -10,11 +11,20 @@ namespace kushekbaev
   struct UBST;
 
   template< typename Key, typename Value, typename Cmp >
+  struct Iterator;
+
+  template< typename Key, typename Value, typename Cmp >
   struct ConstIterator
   {
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< const Key, Value >;
+    using difference_type = std::ptrdiff_t;
+    using pointer = const value_type*;
+    using reference = const value_type&;
     using this_t = ConstIterator< Key, Value, Cmp >;
 
     ConstIterator() noexcept;
+    ConstIterator(const Iterator< Key, Value, Cmp >& other);
     ConstIterator(const this_t&) = default;
     ~ConstIterator() = default;
 
@@ -31,6 +41,7 @@ namespace kushekbaev
 
     private:
       friend struct UBST< Key, Value, Cmp >;
+      friend struct Iterator< Key, Value, Cmp >;
       TreeNode< Key, Value, Cmp >* node_;
       explicit ConstIterator(TreeNode< Key, Value, Cmp >* node) noexcept;
   };
@@ -38,6 +49,11 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   ConstIterator< Key, Value, Cmp >::ConstIterator() noexcept:
     node_(nullptr)
+  {}
+
+  template< typename Key, typename Value, typename Cmp >
+  ConstIterator< Key, Value, Cmp >::ConstIterator(const Iterator< Key, Value, Cmp >& other):
+    node_(other.node_)
   {}
 
   template< typename Key, typename Value, typename Cmp >

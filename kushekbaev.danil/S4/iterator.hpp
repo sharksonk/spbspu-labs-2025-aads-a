@@ -1,7 +1,7 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
-#include "iterator.hpp"
+#include <iterator>
 #include "treenode.hpp"
 
 namespace kushekbaev
@@ -10,8 +10,16 @@ namespace kushekbaev
   struct UBST;
 
   template< typename Key, typename Value, typename Cmp >
+  struct ConstIterator;
+
+  template< typename Key, typename Value, typename Cmp >
   struct Iterator
   {
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< const Key, Value >;
+    using difference_type = std::ptrdiff_t;
+    using pointer = const value_type*;
+    using reference = const value_type&;
     using this_t = Iterator< Key, Value, Cmp >;
 
     Iterator() noexcept;
@@ -31,6 +39,7 @@ namespace kushekbaev
 
     private:
       friend struct UBST< Key, Value, Cmp >;
+      friend struct ConstIterator< Key, Value, Cmp >;
       TreeNode< Key, Value, Cmp >* node_;
       explicit Iterator(TreeNode< Key, Value, Cmp >* node) noexcept;
   };

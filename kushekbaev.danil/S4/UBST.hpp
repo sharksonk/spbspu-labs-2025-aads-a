@@ -50,12 +50,12 @@ namespace kushekbaev
     std::pair< Iterator< Key, Value, Cmp >, bool > insert(std::pair< Key, Value >&& value);
     template< typename InputIterator >
     void insert(InputIterator first, InputIterator last);
-    template< typename... Args >
-    Iterator< Key, Value, Cmp > insert(ConstIterator< Key, Value, Cmp > hint, Args&&... args);
+    Iterator< Key, Value, Cmp > insert(ConstIterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value);
+    Iterator< Key, Value, Cmp > insert(Iterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value);
     Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > position);
     Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > position);
     Iterator< Key, Value, Cmp > erase(Iterator< Key, Value, Cmp > first, Iterator< Key, Value, Cmp > last);
-    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > last);
+    Iterator< Key, Value, Cmp > erase(ConstIterator< Key, Value, Cmp > first, ConstIterator< Key, Value, Cmp > last);
     size_t erase(const Key& key);
     template< typename... Args >
     std::pair< Iterator< Key, Value, Cmp >, bool > emplace(Args&&... args);
@@ -181,8 +181,8 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   UBST<Key, Value, Cmp >& UBST< Key, Value, Cmp >::operator=(UBST< Key, Value, Cmp >&& other)
   {
-    UBST< Key, Value, Cmp > tmp(other);
-    swap(std::move(tmp));
+    UBST< Key, Value, Cmp > tmp(std::move(other));
+    swap(tmp);
     return *this;
   }
 
@@ -363,6 +363,7 @@ namespace kushekbaev
     std::swap(fakeroot_, other.fakeroot_);
     std::swap(root_, other.root_);
     std::swap(size_, other.size_);
+    std::swap(cmp_, other.cmp_);
   }
 
   template<typename Key, typename Value, typename Cmp>
@@ -393,10 +394,15 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  template< typename... Args >
-  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(ConstIterator< Key, Value, Cmp > hint, Args&&... args)
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(ConstIterator< Key, Value, Cmp > hint, const std::pair< Key, Value >& value)
   {
-    return emplace_hint(hint, args...);
+    return emplace_hint(hint, value);
+  }
+
+  template< typename Key, typename Value, typename Cmp >
+  Iterator< Key, Value, Cmp > UBST< Key, Value, Cmp >::insert(Iterator<Key, Value, Cmp> hint, const std::pair<Key, Value>& value)
+  {
+    return insert(ConstIterator<Key, Value, Cmp>(hint), value);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -626,7 +632,7 @@ namespace kushekbaev
       auto hintKey = hint->first;
       auto nextHint = hint;
       ++hint;
-      if (cmp_(hintKey, newKey) && (nextHint == cend()) || (cmp_(newKey, nextHint->first)))
+      if ((cmp_(hintKey, newKey) && (nextHint == cend())) || (cmp_(newKey, nextHint->first)))
       {
         node_t* newNode = new node_t(std::move(newData));
         node_t* hintNode = hint.node_;
@@ -716,11 +722,11 @@ namespace kushekbaev
       if (cmp_(current->data.first, key))
       {
         result = current;
-        current = current->left;
+        current = current->right;
       }
       else
       {
-        current = current->right;
+        current = current->left;
       }
     }
     return Iterator< Key, Value, Cmp >(result);
@@ -742,11 +748,11 @@ namespace kushekbaev
       if (cmp_(key, current->data.first))
       {
         result = current;
-        current = current->left;
+        current = current->right;
       }
       else
       {
-        current = current->right;
+        current = current->left;
       }
     }
     return Iterator< Key, Value, Cmp >(result);
