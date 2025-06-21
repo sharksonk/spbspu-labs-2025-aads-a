@@ -323,10 +323,6 @@ namespace kushekbaev
   const Value& UBST< Key, Value, Cmp >::operator[](const Key& key) const
   {
     auto it = find(key);
-    if (it == cend())
-    {
-      throw std::out_of_range("Key not found");
-    }
     return it->second;
   }
 
