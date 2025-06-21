@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <vector.hpp>
 
-using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
-using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
+using dataset_t = std::map< size_t, std::string >; //ЭТО СТРОКА!!
+using dict_t = std::map< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
 
 void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
@@ -58,30 +58,19 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
 
 void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
-  std::string newName, lhsName, rhsName;
-  in >> newName >> lhsName >> rhsName;
-  dataset_t newMap, lhsMap, rhsMap;
-  lhsMap = dictionary.at(lhsName);
-  rhsMap = dictionary.at(rhsName);
-  for (auto&& key: lhsMap)
+  std::string newName, name1, name2;
+  in >> newName >> name1 >> name2;
+  const dataset_t& ds1 = dictionary.at(name1);
+  const dataset_t& ds2 = dictionary.at(name2);
+  dataset_t result;
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    if (rhsMap.find(key.first) != rhsMap.end())
+    if (ds2.find(it->first) != ds2.end())
     {
-      newMap.insert(key);
+      result.insert(*it);
     }
   }
-
-  if (newName == lhsName)
-  {
-    dictionary[lhsName] = newMap;
-    return;
-  }
-  else if (newName == rhsName)
-  {
-    dictionary[rhsName] = newMap;
-    return;
-  }
-  dictionary[newName] = newMap;
+  dictionary[newName] = result;
 }
 
 void kushekbaev::unification(std::istream& in, dict_t& dictionary)
