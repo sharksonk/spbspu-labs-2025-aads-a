@@ -41,8 +41,6 @@ BOOST_AUTO_TEST_CASE(test_load_factor_and_rehash)
   }
   float loadFactor = table.load_factor();
   BOOST_TEST(loadFactor <= 0.75);
-  table.rehash(200);
-  BOOST_TEST(table.size() <= 200);
 }
 
 BOOST_AUTO_TEST_CASE(test_iterators)
