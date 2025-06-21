@@ -34,6 +34,19 @@ namespace maslevtsov {
     const_iterator end() const;
     const_iterator cend() const noexcept;
 
+    template< typename F >
+    F traverse_lnr(F f);
+    template< typename F >
+    F traverse_lnr(F f) const;
+    template< typename F >
+    F traverse_rnl(F f);
+    template< typename F >
+    F traverse_rnl(F f) const;
+    template< typename F >
+    F traverse_breadth(F f);
+    template< typename F >
+    F traverse_breadth(F f) const;
+
     bool empty() const noexcept;
     size_type size() const noexcept;
 
