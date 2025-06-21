@@ -14,7 +14,7 @@ namespace smirnov
   void bind(GraphCollection & graphs, std::istream & in, std::ostream & err);
   void cut(GraphCollection & graphs, std::istream & in, std::ostream & err);
   void create(GraphCollection & graphs, std::istream & in, std::ostream & err);
-  void merge(GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err);
+  void merge(GraphCollection & graphs, std::istream & in, std::ostream & err);
   void extract(GraphCollection & graphs, std::istream & in, std::ostream & err);
 }
 #endif
