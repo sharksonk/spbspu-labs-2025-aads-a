@@ -4,6 +4,7 @@
 BOOST_AUTO_TEST_CASE(test_insert_and_find)
 {
   smirnov::HashTable< int, std::string > table;
+
   auto result1 = table.insert(1, "one");
   auto it1 = result1.first;
   bool success1 = result1.second;
@@ -15,7 +16,7 @@ BOOST_AUTO_TEST_CASE(test_insert_and_find)
   BOOST_TEST(!success2);
   BOOST_TEST(it2->second == "one");
   auto it3 = table.find(1);
-  BOOST_TEST(it3 != table.end());
+  BOOST_TEST( !(it3 == table.end()) );
   BOOST_TEST(it3->second == "one");
   auto it4 = table.find(2);
   BOOST_TEST(it4 == table.end());
@@ -39,17 +40,16 @@ BOOST_AUTO_TEST_CASE(test_erase)
 BOOST_AUTO_TEST_CASE(test_load_factor)
 {
   smirnov::HashTable< int, std::string > table;
-  for (int i = 0; i < 100; ++i)
-  {
+  for (int i = 0; i < 100; ++i) {
     table.insert(i, "value");
   }
   float loadFactor = table.load_factor();
-  BOOST_TEST(loadFactor <= 0.75);
+  BOOST_TEST(loadFactor <= 0.75f);
 }
 
 BOOST_AUTO_TEST_CASE(test_iterators)
 {
-  smirnov::HashTable<int, std::string> table;
+  smirnov::HashTable< int, std::string > table;
   table.insert(1, "one");
   table.insert(2, "two");
   table.insert(3, "three");
