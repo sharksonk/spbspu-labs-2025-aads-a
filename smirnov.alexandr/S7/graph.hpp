@@ -11,6 +11,7 @@ namespace smirnov
     Graph() = default;
     Graph(const std::string & name);
     const std::string & getName() const noexcept;
+    bool hasVertex(const std::string & vertex) const;
     bool addVertex(const std::string & vertex);
     bool addEdge(const std::string & from, const std::string & to, unsigned weight);
     bool removeEdge(const std::string & from, const std::string & to, unsigned weight);

@@ -10,6 +10,11 @@ const std::string & smirnov::Graph::getName() const noexcept
   return name_;
 }
 
+bool smirnov::Graph::hasVertex(const std::string & vertex) const
+{
+  return edges_.find(vertex) != edges_.end();
+}
+
 bool smirnov::Graph::addVertex(const std::string & vertex)
 {
   if (edges_.find(vertex) != edges_.end())

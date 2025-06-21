@@ -1,0 +1,379 @@
+#include "commands.hpp"
+#include <limits>
+#include <algorithm>
+
+void smirnov::printError(std::ostream & err)
+{
+  err << "." << "\n";
+}
+
+void smirnov::command_graphs(const GraphCollection & graphs, std::ostream & out)
+{
+  auto names = graphs.listGraphs();
+  if (!names.empty())
+  {
+    out << names[0];
+    for (size_t i = 1; i < names.size(); ++i)
+    {
+      out << "\n" << names[i];
+    }
+  }
+  out << "\n";
+}
+
+void smirnov::vertexes(const GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+{
+  std::string graphName;
+  if (!(in >> graphName))
+  {
+    printError(err);
+    in.clear();
+    in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    return;
+  }
+  const Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  std::vector< std::string > vertices = g->getVertices();
+  if (!vertices.empty())
+  {
+    out << vertices[0];
+    for (size_t i = 1; i < vertices.size(); ++i)
+    {
+        out << "\n" << vertices[i];
+    }
+  }
+  out << "\n";
+}
+
+void smirnov::outbound(const GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+{
+  std::string graphName, vertex;
+  if (!(in >> graphName >> vertex))
+  {
+    printError(err);
+    in.clear();
+    in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    return;
+  }
+  const Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  auto verts = g->getVertices();
+  if (std::find(verts.begin(), verts.end(), vertex) == verts.end())
+  {
+    printError(err);
+    return;
+  }
+  auto edges = g->getOutboundEdges(vertex);
+  if (edges.empty())
+  {
+    out << "\n";
+    return;
+  }
+  auto it = edges.begin();
+  out << it->first << " " << it->second;
+  for (++it; it != edges.end(); ++it)
+  {
+    out << "\n" << it->first << " " << it->second;
+  }
+  out << "\n";
+}
+
+void smirnov::inbound(const GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+{
+  std::string graphName, vertex;
+  if (!(in >> graphName >> vertex))
+  {
+    printError(err);
+    in.clear();
+    in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    return;
+  }
+  const Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  auto verts = g->getVertices();
+  if (std::find(verts.begin(), verts.end(), vertex) == verts.end())
+  {
+    printError(err);
+    return;
+  }
+  auto edges = g->getInboundEdges(vertex);
+  if (edges.empty())
+  {
+    out << "\n";
+    return;
+  }
+  auto it = edges.begin();
+  auto end = edges.end();
+  out << it->first << " " << it->second;
+  for (++it; it != end; ++it)
+  {
+    out << "\n" << it->first << " " << it->second;
+  }
+  out << "\n";
+}
+
+void smirnov::bind(GraphCollection & graphs, std::istream & in, std::ostream & err)
+{
+  std::string graphName, from, to;
+  unsigned weight;
+  if (!(in >> graphName >> from >> to >> weight))
+  {
+    printError(err);
+    in.clear();
+    in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    return;
+  }
+  Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  g->addEdge(from, to, weight);
+}
+
+void smirnov::cut(GraphCollection & graphs, std::istream & in, std::ostream & err)
+{
+  std::string graphName, from, to;
+  unsigned weight;
+  if (!(in >> graphName >> from >> to >> weight))
+  {
+    printError(err);
+    in.clear();
+    in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+    return;
+  }
+  Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  if (!g->removeEdge(from, to, weight))
+  {
+    printError(err);
+  }
+}
+
+void smirnov::create(GraphCollection & graphs, std::istream & in, std::ostream & err)
+{
+  std::string graphName;
+  if (!(in >> graphName))
+  {
+    printError(err);
+    return;
+  }
+  if (!graphs.addGraph(graphName))
+  {
+    printError(err);
+    return;
+  }
+  Graph * g = graphs.getGraph(graphName);
+  if (!g)
+  {
+    printError(err);
+    return;
+  }
+  size_t count;
+  if (!(in >> count))
+  {
+    printError(err);
+    return;
+  }
+  for (size_t i = 0; i < count; ++i)
+  {
+    std::string vertex;
+    if (!(in >> vertex))
+    {
+      printError(err);
+      return;
+    }
+    g->addVertex(vertex);
+  }
+}
+
+void smirnov::merge(GraphCollection & graphs, std::istream & in, std::ostream & err)
+{
+  std::string newName, name1, name2;
+  if (!(in >> newName >> name1 >> name2))
+  {
+    printError(err);
+    return;
+  }
+  if (graphs.getGraph(newName) != nullptr)
+  {
+    printError(err);
+    return;
+  }
+  Graph * g1 = graphs.getGraph(name1);
+  Graph * g2 = graphs.getGraph(name2);
+  if (!g1 || !g2)
+  {
+    printError(err);
+    return;
+  }
+  Graph mergedGraph(newName);
+  std::vector< std::string > vertices1 = g1->getVertices();
+  for (size_t i = 0; i < vertices1.size(); ++i)
+  {
+    mergedGraph.addVertex(vertices1[i]);
+  }
+  for (size_t i = 0; i < vertices1.size(); ++i)
+  {
+    std::vector< std::pair< std::string, unsigned > > edges = g1->getOutboundEdges(vertices1[i]);
+    for (size_t j = 0; j < edges.size(); ++j)
+    {
+      mergedGraph.addEdge(vertices1[i], edges[j].first, edges[j].second);
+    }
+  }
+  std::vector< std::string > vertices2 = g2->getVertices();
+  for (size_t i = 0; i < vertices2.size(); ++i)
+  {
+    if (!mergedGraph.hasVertex(vertices2[i]))
+    {
+      mergedGraph.addVertex(vertices2[i]);
+    }
+  }
+  for (size_t i = 0; i < vertices2.size(); ++i)
+  {
+    std::vector< std::pair< std::string, unsigned > > edges = g2->getOutboundEdges(vertices2[i]);
+    for (size_t j = 0; j < edges.size(); ++j)
+    {
+      mergedGraph.addEdge(vertices2[i], edges[j].first, edges[j].second);
+    }
+  }
+}
+
+void smirnov::extract(GraphCollection & graphs, std::istream & in, std::ostream & err)
+{
+  std::string newName, oldName;
+  size_t count;
+  if (!(in >> newName >> oldName >> count))
+  {
+    printError(err);
+    return;
+  }
+  if (graphs.getGraph(newName) != nullptr)
+  {
+    printError(err);
+    return;
+  }
+  const Graph * oldGraph = graphs.getGraph(oldName);
+  if (!oldGraph)
+  {
+    printError(err);
+    return;
+  }
+  std::vector< std::string > vertices;
+  for (size_t i = 0; i < count; ++i)
+  {
+    std::string vertex;
+    if (!(in >> vertex))
+    {
+      printError(err);
+      return;
+    }
+    if (!oldGraph->hasVertex(vertex))
+    {
+      printError(err);
+      return;
+    }
+    vertices.push_back(vertex);
+  }
+  Graph newGraph(newName);
+  for (size_t i = 0; i < vertices.size(); i++)
+  {
+    newGraph.addVertex(vertices[i]);
+  }
+  for (size_t i = 0; i < vertices.size(); i++)
+  {
+    const std::string & fromVertex = vertices[i];
+    auto outEdges = oldGraph->getOutboundEdges(fromVertex);
+    for (size_t j = 0; j < outEdges.size(); j++)
+    {
+      const std::string & toVertex = outEdges[j].first;
+      unsigned edgeCost = outEdges[j].second;
+      bool vertexExists = false;
+      for (size_t k = 0; k < vertices.size(); k++)
+      {
+        if (vertices[k] == toVertex)
+        {
+          vertexExists = true;
+          break;
+        }
+      }
+      if (vertexExists)
+      {
+        newGraph.addEdge(fromVertex, toVertex, edgeCost);
+      }
+    }
+  }
+  graphs.addGraph(newName);
+  Graph * added = graphs.getGraph(newName);
+  if (added != nullptr)
+  {
+    *added = newGraph;
+  }
+}
+
+void smirnov::processCommands(GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+{
+  std::string cmd;
+  while (in >> cmd)
+  {
+    if (cmd == "graphs")
+    {
+      command_graphs(graphs, out);
+    }
+    else if (cmd == "vertexes")
+    {
+      vertexes(graphs, in, out, err);
+    }
+    else if (cmd == "outbound")
+    {
+      outbound(graphs, in, out, err);
+    }
+    else if (cmd == "inbound")
+    {
+      inbound(graphs, in, out, err);
+    }
+    else if (cmd == "bind")
+    {
+      bind(graphs, in, err);
+    }
+    else if (cmd == "cut")
+    {
+      cut(graphs, in, err);
+    }
+    else if (cmd == "create")
+    {
+      create(graphs, in, err);
+    }
+    else if (cmd == "merge")
+    {
+      merge(graphs, in, err);
+    }
+    else if (cmd == "extract")
+    {
+      extract(graphs, in, err);
+    }
+    else
+    {
+      printError(err);
+      in.clear();
+      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
+}
