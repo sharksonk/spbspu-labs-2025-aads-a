@@ -59,22 +59,10 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
 void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
-  in >> newName >> name1 >> name2;
-  auto it1 = dictionary.find(name1);
-  auto it2 = dictionary.find(name2);
-  if (it1 == dictionary.end() || it2 == dictionary.end())
-  {
-    throw std::out_of_range("<INVALID COMMAND>");
-  }
-  dataset_t result;
-  const dataset_t& ds1 = it1->second;
-  const dataset_t& ds2 = it2->second;
-  if (name1 == name2)
-  {
-      result = ds1;
-  }
-  else
-  {
+    in >> newName >> name1 >> name2;
+    const dataset_t& ds1 = dictionary.at(name1);
+    const dataset_t& ds2 = dictionary.at(name2);
+    dataset_t result;
     for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
     {
       if (ds2.find(it->first) != ds2.end())
@@ -82,18 +70,7 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
         result.insert(*it);
       }
     }
-  }
-  if (newName == name1)
-  {
-    dictionary[name1] = result;
-    return;
-  }
-  else if (newName == name2)
-  {
-    dictionary[name2] = result;
-    return;
-  }
-  dictionary[newName] = result;
+    dictionary[newName] = result;
 }
 
 void kushekbaev::unification(std::istream& in, dict_t& dictionary)
