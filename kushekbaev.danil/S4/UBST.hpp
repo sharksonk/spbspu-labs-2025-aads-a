@@ -82,8 +82,6 @@ namespace kushekbaev
       Cmp cmp_;
       size_t height(node_t* node) const noexcept;
       void killChildrenOf(node_t* node);
-      template< typename Pair >
-      std::pair< Iterator < Key, Value, Cmp >, bool> insertImpl(Pair&& value);
       node_t* copySubtree(node_t* node, node_t* parent);
   };
 
@@ -293,12 +291,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::at(const Key& key)
   {
-    auto current = find(key);
-    if (current == cend())
-    {
-      throw std::out_of_range("Key hasn't been found!");
-    }
-    return current->second;
+    return const_cast< Value& >(static_cast< const UBST* >(this)->at(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -315,7 +308,12 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Value& UBST< Key, Value, Cmp >::operator[](const Key& key)
   {
-    Iterator< Key, Value, Cmp > node = insert(std::make_pair(key, Value()));
+    auto it = find(key);
+    if (it == end())
+    {
+      auto inserted = emplace(key, Value());
+      return inserted.first->second;
+    }
     return it->second;
   }
 
@@ -367,26 +365,18 @@ namespace kushekbaev
     std::swap(size_, other.size_);
   }
 
-  template< typename Key, typename Value, typename Cmp >
-  template< typename Pair >
-  std::pair< Iterator< Key, Value, Cmp >, bool >
-  UBST< Key, Value, Cmp >::insertImpl(Pair&& value)
-  {
-    return emplace(std::forward< Pair >(value));
-  }
-
   template<typename Key, typename Value, typename Cmp>
   std::pair< Iterator< Key, Value, Cmp >, bool>
   UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
   {
-    return insertImpl(value);
+    return emplace(value);
   }
 
   template<typename Key, typename Value, typename Cmp>
   std::pair< Iterator< Key, Value, Cmp >, bool>
   UBST< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
   {
-    return insertImpl(std::move(value));
+    return emplace(std::move(value));
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -586,6 +576,7 @@ namespace kushekbaev
       else if (cmp_(current->data.first, key))
       {
         current = current->right;
+        isLeft = false;
       }
       else
       {
@@ -615,6 +606,7 @@ namespace kushekbaev
     {
       fakeroot_->right = newNode;
     }
+    newNode->left = newNode->right = nullptr;
     ++size_;
     return{ Iterator< Key, Value, Cmp >(newNode), true };
   }
