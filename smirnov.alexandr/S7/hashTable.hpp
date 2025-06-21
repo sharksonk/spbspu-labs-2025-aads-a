@@ -152,6 +152,7 @@ namespace smirnov
       {
         bucket.occupied = false;
         size_--;
+        return 1;
       }
       ++attempt;
     }
