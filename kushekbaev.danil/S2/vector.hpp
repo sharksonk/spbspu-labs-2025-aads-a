@@ -6,34 +6,6 @@
 namespace kushekbaev
 {
   template< typename T >
-  class RAII
-  {
-    public:
-      explicit RAII(T* p);
-      ~RAII();
-      RAII(RAII&& other) noexcept;
-      T* ptr;
-  };
-
-  template< typename T >
-  RAII< T >::RAII(T* p):
-    ptr(p)
-  {}
-
-  template< typename T >
-  RAII< T >::~RAII()
-  {
-    delete[] ptr;
-  }
-
-  template< typename T >
-  RAII< T >::RAII(RAII&& other) noexcept:
-    ptr(other.ptr)
-  {
-    other.ptr = nullptr;
-  }
-
-  template< typename T >
   class Vector
   {
     public:
@@ -61,6 +33,26 @@ namespace kushekbaev
       size_t size_;
       size_t capacity_;
       void extend_vector();
+      class RAII
+      {
+        public:
+          explicit RAII(T* p):
+            ptr(p)
+          {}
+
+          ~RAII()
+          {
+            delete[] ptr;
+          }
+
+          RAII(RAII&& other) noexcept:
+            ptr(other.ptr)
+          {
+            other.ptr = nullptr;
+          }
+
+          T* ptr;
+      };
   };
 
   template< typename T >
@@ -76,10 +68,13 @@ namespace kushekbaev
     size_(other.size_),
     capacity_(other.capacity_)
   {
+    RAII newHolder(new T[other.capacity_]);
     for (size_t i = 0; i < size_; ++i)
     {
-      data_[i] = other.data_[i];
+      newHolder.ptr[i] = other.data_[i];
     }
+    data_ = newHolder.ptr;
+    newHolder.ptr = nullptr;
   }
 
   template< typename T >
@@ -102,16 +97,16 @@ namespace kushekbaev
   template< typename T >
   Vector< T >& Vector< T >::operator=(const Vector& other)
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
-      T* newData = new T[other.capacity_];
-      for (size_t i = 0; i < other.size_; ++i)
+      RAII newHolder(new T[other.capacity_]);
+      for (size_t i = 0; i < size_; ++i)
       {
-        newData[i] = other.data_[i];
+        newHolder.ptr[i] = std::move(data_[i]);
       }
       delete[] data_;
-      data_ = newData;
-      size_ = other.size_;
+      data_ = newHolder.ptr;
+      newHolder.ptr = nullptr;
       capacity_ = other.capacity_;
     }
     return *this;
@@ -190,7 +185,7 @@ namespace kushekbaev
   void Vector< T >::extend_vector()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-    RAII< T > newHolder(new T[newCapacity]);
+    RAII newHolder(new T[newCapacity]);
     for (size_t i = 0; i < size_; ++i)
     {
       newHolder.ptr[i] = std::move(data_[i]);

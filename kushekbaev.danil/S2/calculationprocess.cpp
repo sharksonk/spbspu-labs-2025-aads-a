@@ -1,23 +1,11 @@
+#include "calculationprocess.hpp"
 #include <limits>
-#include "calculationProcess.hpp"
 #include "stack.hpp"
 
 namespace
 {
   constexpr long long int MIN = std::numeric_limits< long long int >::min();
   constexpr long long int MAX = std::numeric_limits< long long int >::max();
-  bool isNumber(const std::string& symbol)
-  {
-    try
-    {
-      std::stoll(symbol);
-    }
-    catch (const std::exception&)
-    {
-      return false;
-    }
-    return true;
-  }
 
   bool isOperator(const std::string& symbol)
   {
@@ -205,11 +193,15 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     {
       stack.push(symbol);
     }
-    else if (isNumber(symbol))
+    try
     {
       postfixQ.push(symbol);
     }
-    else if (isOperator(symbol))
+    catch (std::exception&)
+    {
+      throw std::logic_error("Not a number inputed!");
+    }
+    if (isOperator(symbol))
     {
       int priority = calculatePriority(symbol);
       while (!stack.empty() && priority <= calculatePriority(stack.top()))
@@ -256,11 +248,15 @@ long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
   {
     std::string symbol = postfixQ.front();
     postfixQ.pop();
-    if (isNumber(symbol))
+    try
     {
       stack.push(std::stoll(symbol));
     }
-    else if (isOperator(symbol))
+    catch (std::exception&)
+    {
+      throw std::logic_error("Not a number inputed!");
+    }
+    if (isOperator(symbol))
     {
       if (stack.size() < 2)
       {

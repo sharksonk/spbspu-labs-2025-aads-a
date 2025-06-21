@@ -26,7 +26,6 @@ namespace kushekbaev
       size_t size() const noexcept;
 
       void push(const T& value);
-      T drop();
       void pop();
       void clear();
 
@@ -47,7 +46,7 @@ namespace kushekbaev
   template < typename T, typename Sequence >
   Queue< T, Sequence >& Queue< T, Sequence >::operator=(const Queue& other) noexcept
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
       sequence_ = other.sequence_;
     }
@@ -57,7 +56,7 @@ namespace kushekbaev
   template< typename T, typename Sequence >
   Queue< T, Sequence >& Queue< T, Sequence >::operator=(Queue&& other) noexcept
   {
-    if (this != &other)
+    if (this != std::addressof(other))
     {
       sequence_ = std::move(other.sequence_);
     }
@@ -104,26 +103,6 @@ namespace kushekbaev
   void Queue< T, Sequence >::push(const T& value)
   {
     sequence_.push_back(value);
-  }
-
-  template < typename T, typename Sequence >
-  T Queue< T, Sequence >::drop()
-  {
-    if (sequence_.empty())
-    {
-      throw std::out_of_range("The vector in the queue is empty!");
-    }
-    T tmp = 0;
-    try
-    {
-      tmp = std::move(front());
-      sequence_.pop_back();
-    }
-    catch (...)
-    {
-      throw std::runtime_error("Error in drop");
-    }
-    return tmp;
   }
 
   template < typename T, typename Sequence >
