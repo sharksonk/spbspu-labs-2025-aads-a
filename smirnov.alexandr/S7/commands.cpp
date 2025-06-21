@@ -204,7 +204,7 @@ void smirnov::create(GraphCollection & graphs, std::istream & in, std::ostream &
   }
 }
 
-void smirnov::merge(GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+void smirnov::merge(GraphCollection & graphs, std::istream & in, std::ostream & err)
 {
   std::string newName, name1, name2;
   if (!(in >> newName >> name1 >> name2))
@@ -257,7 +257,7 @@ void smirnov::merge(GraphCollection & graphs, std::istream & in, std::ostream & 
   graphs.addGraph(newName);
 }
 
-void smirnov::extract(GraphCollection & graphs, std::istream & in, std::ostream & out, std::ostream & err)
+void smirnov::extract(GraphCollection & graphs, std::istream & in, std::ostream & err)
 {
   std::string newGraphName, sourceGraphName;
   size_t vertexCount;
@@ -369,11 +369,11 @@ void smirnov::processCommands(GraphCollection & graphs, std::istream & in, std::
     }
     else if (cmd == "merge")
     {
-      merge(graphs, in, out, err);
+      merge(graphs, in, err);
     }
     else if (cmd == "extract")
     {
-      extract(graphs, in, out, err);
+      extract(graphs, in, err);
     }
     else
     {
