@@ -63,10 +63,13 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
   dataset_t result;
   if (name1 == name2)
   {
+    std::cout << "AAAAAAAAAAAAAAAAAAAAAA\n";
     dictionary[newName] = result;
     return;
   }
+  std::cout << "ZZZZZ\n";
   const dataset_t ds1 = dictionary.at(name1);
+  std::cout << "ZZZZZ\n";
   const dataset_t ds2 = dictionary.at(name2);
   for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
@@ -75,6 +78,7 @@ void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
       result.insert(*it);
     }
   }
+  std::cout << "AAAAAAAAAAAAAAAAAAAAAA\n";
   dictionary[newName] = result;
 }
 

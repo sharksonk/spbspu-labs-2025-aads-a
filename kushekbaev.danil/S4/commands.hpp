@@ -10,13 +10,13 @@ using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАР
 
 namespace kushekbaev
 {
-  void print(std::ostream& out, std::istream& in, const dict_t& dataset);
+  void print(std::ostream& out, std::istream& in, const dict_t& dictionary);
 
-  void complement(std::istream& in, dict_t& dataset);
+  void complement(std::istream& in, dict_t& dictionary);
 
-  void intersect(std::istream& in, dict_t& dataset);
+  void intersect(std::istream& in, dict_t& dictionary);
 
-  void unification(std::istream& in, dict_t& dataset);
+  void unification(std::istream& in, dict_t& dictionary);
 }
 
 #endif
