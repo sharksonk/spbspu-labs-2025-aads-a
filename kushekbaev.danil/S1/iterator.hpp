@@ -19,8 +19,11 @@ namespace kushekbaev
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
 
-    T& operator*() const noexcept;
-    T* operator->() const noexcept;
+    T& operator*() noexcept;
+    T* operator->() noexcept;
+
+    const T& operator*() const noexcept;
+    const T* operator->() const noexcept;
 
     bool operator!=(const this_t&) const noexcept;
     bool operator==(const this_t&) const noexcept;
@@ -59,14 +62,28 @@ namespace kushekbaev
   }
 
   template< typename T >
-  T& Iterator< T >::operator*() const noexcept
+  T& Iterator< T >::operator*() noexcept
   {
     assert(node_ != nullptr);
     return node_->data_;
   }
 
   template< typename T >
-  T* Iterator< T >::operator->() const noexcept
+  T* Iterator< T >::operator->() noexcept
+  {
+    assert(node_ != nullptr);
+    return std::addressof(node_->data_);
+  }
+
+  template< typename T >
+  const T& Iterator< T >::operator*() const noexcept
+  {
+    assert(node_ != nullptr);
+    return node_->data_;
+  }
+
+  template< typename T >
+  const T* Iterator< T >::operator->() const noexcept
   {
     assert(node_ != nullptr);
     return std::addressof(node_->data_);

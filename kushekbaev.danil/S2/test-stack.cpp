@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "stack.hpp"
+#include <stack.hpp>
 
 using namespace kushekbaev;
 
@@ -71,14 +71,14 @@ BOOST_AUTO_TEST_CASE(stackSize)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_CASE(stackPushPopDrop)
+BOOST_AUTO_TEST_CASE(stackPushPop)
 {
   Stack< int > stack;
   stack.push(10);
   BOOST_TEST(stack.top() == 10);
   stack.push(20);
   BOOST_TEST(stack.top() == 20);
-  BOOST_TEST(stack.drop() == 20);
+  stack.pop();
   stack.pop();
   BOOST_TEST(stack.empty());
 }

@@ -33,9 +33,11 @@ int main()
     {
       inputValueList.push_front(value);
     }
+    inputValueList.reverse();
     pairsList.push_front(std::make_pair(listNumber, inputValueList));
     std::cin.clear();
   }
+  pairsList.reverse();
 
   if (pairsList.empty())
   {
@@ -65,8 +67,10 @@ int main()
         rowList.push_front(*valueIt);
       }
     }
+    rowList.reverse();
     valueList.push_front(rowList);
   }
+  valueList.reverse();
 
   for (auto it = valueList.begin(); it != valueList.end(); ++it)
   {
@@ -85,7 +89,7 @@ int main()
     unsigned long long sum = 0;
     for (auto valueIt = it->begin(); valueIt != it->end(); ++valueIt)
     {
-      if (sum > std::numeric_limits< unsigned long long >::max() - *valueIt)
+      if (*valueIt > std::numeric_limits< unsigned long long >::max() - sum)
       {
         std::cerr << "Overflow!\n";
         return 1;
@@ -95,10 +99,18 @@ int main()
     sumList.push_front(sum);
   }
 
-  std::cout << *(sumList.begin());
-  for (auto it = ++(sumList.begin()); it != sumList.end(); ++it)
+  if (!sumList.empty())
   {
-    std::cout << " " << *it;
+    sumList.reverse();
+    std::cout << *(sumList.begin());
+    for (auto it = ++(sumList.begin()); it != sumList.end(); ++it)
+    {
+      std::cout << " " << *it;
+    }
+  }
+  else
+  {
+    std::cout << 0;
   }
   std::cout << "\n";
   return 0;
