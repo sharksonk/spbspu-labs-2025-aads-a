@@ -1,7 +1,9 @@
 #include "commands.hpp"
+#include <algorithm>
+#include <vector.hpp>
 
-using dataset_t = std::map< size_t, std::string >;
-using dict_t = std::map< std::string, dataset_t >;
+using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
+using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
 
 void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
@@ -12,21 +14,22 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   }
   std::string name;
   in >> name;
-  auto it = dictionary.find(name);
-  if (it == dictionary.end())
+  dataset_t result = dictionary.at(name);
+  if (result.empty())
   {
-    throw std::out_of_range("<INVALID COMMAND>");
-  }
-  const auto& dataset = it->second;
-  if (dataset.empty())
-  {
-    out << "<EMPTY>";
+    out << "<EMPTY>\n";
     return;
   }
-  out << name;
-  for (auto jt = dataset.begin(); jt != dataset.end(); ++jt)
+  kushekbaev::Vector< std::pair < size_t, std::string > > sorted;
+  for (const auto& elem: result)
   {
-    out << " " << jt->first << " " << jt->second;
+    sorted.push_back(elem);
+  }
+  std::sort(sorted.begin(), sorted.end());
+  out << name;
+  for (const auto& elem: sorted)
+  {
+    out << " " << elem.first << " " << elem.second;
   }
   out << "\n";
 }
@@ -35,81 +38,64 @@ void kushekbaev::complement(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  dataset_t dataset;
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  for (auto it = it1.begin(); it != it1.end(); ++it)
+  dataset_t result;
+  if (name1 == name2)
   {
-    if (it2.find(it->first) == it2.end())
+    dictionary[newName] = result;
+    return;
+  }
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
+  {
+    if (ds2.find(it->first) == ds2.cend())
     {
-      dataset.insert({ it->first, it->second });
+      result.insert(*it);
     }
   }
-  for (auto it = it2.begin(); it != it2.end(); ++it)
-  {
-    if (it1.find(it->first) == it1.end())
-    {
-      dataset.insert({ it->first, it->second });
-    }
-  }
-  try
-  {
-    dictionary.at(newName) = dataset;
-  }
-  catch (const std::out_of_range&)
-  {
-    dictionary.insert(std::make_pair(newName, dataset));
-  }
+  dictionary[newName] = result;
 }
 
 void kushekbaev::intersect(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  dataset_t dataset;
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  for (auto it = it1.begin(); it != it1.end(); ++it)
+  dataset_t result;
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  if (name1 == name2)
   {
-    if (it2.find(it->first) != it2.end())
+    result = ds1;
+    dictionary[newName] = result;
+    return;
+  }
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
+  {
+    if (ds2.find(it->first) != ds2.cend())
     {
-      dataset.insert({ it->first, it->second });
+      result.insert(*it);
     }
   }
-  try
-  {
-    dictionary.at(newName) = dataset;
-  }
-  catch (const std::out_of_range&)
-  {
-    dictionary.insert(std::make_pair(newName, dataset));
-  }
+  dictionary[newName] = result;
 }
 
 void kushekbaev::unification(std::istream& in, dict_t& dictionary)
 {
   std::string newName, name1, name2;
   in >> newName >> name1 >> name2;
-  const dataset_t it1 = dictionary.at(name1);
-  const dataset_t it2 = dictionary.at(name2);
-  dataset_t dataset;
-  for (auto it = it1.begin(); it != it1.end(); ++it)
+  const dataset_t ds1 = dictionary.at(name1);
+  const dataset_t ds2 = dictionary.at(name2);
+  dataset_t result;
+  for (auto it = ds1.cbegin(); it != ds1.cend(); ++it)
   {
-    dataset.insert({ it->first, it->second });
+    result.insert(*it);
   }
-  for (auto it = it2.begin(); it != it2.end(); ++it)
+  for (auto it = ds2.cbegin(); it != ds2.cend(); ++it)
   {
-    if (dataset.find(it->first) == dataset.end())
+    if (result.find(it->first) == result.end())
     {
-      dataset.insert({ it->first, it->second });
+      result.insert(*it);
     }
   }
-  try
-  {
-    dictionary.at(newName) = dataset;
-  }
-  catch (const std::out_of_range&)
-  {
-    dictionary.insert(std::make_pair(newName, dataset));
-  }
+  dictionary[newName] = result;
 }

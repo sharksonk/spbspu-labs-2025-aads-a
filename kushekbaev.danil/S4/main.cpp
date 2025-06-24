@@ -4,8 +4,8 @@
 #include <functional>
 #include "commands.hpp"
 
-using dataset_t = std::map< size_t, std::string >; //ЭТО СТРОКА!!
-using dict_t = std::map< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
+using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
+using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
 
 namespace
 {
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   }
   std::ifstream in(argv[1]);
   dict_t dictionary = readInputFromFile(in);
-  std::map< std::string, std::function< void() > > commands;
+  kushekbaev::UBST< std::string, std::function< void() > > commands;
   commands["print"] = std::bind(kushekbaev::print, std::ref(std::cout), std::ref(std::cin), std::cref(dictionary));
   commands["complement"] = std::bind(kushekbaev::complement, std::ref(std::cin), std::ref(dictionary));
   commands["intersect"] = std::bind(kushekbaev::intersect, std::ref(std::cin), std::ref(dictionary));
@@ -56,9 +56,14 @@ int main(int argc, char* argv[])
     {
       commands.at(command)();
     }
-    catch (...)
+    catch (const std::out_of_range& e)
     {
-      std::cout << "<INVALID COMMAND>";
+      std::cout << "<INVALID COMMAND>\n";
+    }
+    catch (const std::exception& e)
+    {
+      std::cout << e.what() << "\n";
+      return 1;
     }
     std::cin.clear();
     std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
