@@ -169,7 +169,7 @@ namespace kushekbaev
   UBST< Key, Value, Cmp >::~UBST()
   {
     clear();
-    delete[] reinterpret_cast< char* >(fakeroot_);
+    std::free(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
