@@ -75,7 +75,7 @@ namespace kushekbaev
     else
     {
       auto parent = node_->parent;
-      while (parent && parent->right == node_)
+      while (parent != parent->parent && parent->right == node_)
       {
         node_ = parent;
         parent = parent->parent;

@@ -97,12 +97,12 @@ namespace kushekbaev
   {
     fakeroot_->left = fakeroot_;
     fakeroot_->right = fakeroot_;
-    fakeroot_->parent = nullptr;
+    fakeroot_->parent = fakeroot_;
   }
 
   template< typename Key, typename Value, typename Cmp >
   UBST< Key, Value, Cmp>::UBST(const UBST< Key, Value, Cmp >& other):
-    fakeroot_(reinterpret_cast<node_t*>(std::malloc(sizeof(node_t)))),
+    fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
   {
@@ -112,19 +112,19 @@ namespace kushekbaev
     }
     fakeroot_->left = fakeroot_;
     fakeroot_->right = fakeroot_;
-    fakeroot_->parent = nullptr;
+    fakeroot_->parent = fakeroot_;
     if (!other.empty())
     {
       root_ = copySubtree(other.root_, fakeroot_);
       size_ = other.size_;
       node_t* minNode = root_;
-      while (minNode->left)
+      while (minNode->left && minNode->left != other.fakeroot_)
       {
         minNode = minNode->left;
       }
       fakeroot_->left = minNode;
       node_t* maxNode = root_;
-      while (maxNode->right)
+      while (maxNode->right && maxNode->right != other.fakeroot_)
       {
         maxNode = maxNode->right;
       }
@@ -169,7 +169,7 @@ namespace kushekbaev
   UBST< Key, Value, Cmp >::~UBST()
   {
     clear();
-    std::free(fakeroot_);
+    delete[] reinterpret_cast< char* >(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
