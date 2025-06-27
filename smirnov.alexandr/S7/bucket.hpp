@@ -9,13 +9,16 @@ namespace smirnov
   {
     std::pair< Key, Value > data;
     bool occupied = false;
+    bool deleted = false;
     Bucket():
       data(),
-      occupied(false)
+      occupied(false),
+      deleted(false)
     {}
     Bucket(const Key & k, const Value & v):
       data(k ,v),
-      occupied(true)
+      occupied(true),
+      deleted(false)
     {}
   };
 }
