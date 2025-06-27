@@ -22,12 +22,11 @@ namespace smirnov
     ConstIteratorHash operator++(int);
     bool operator!=(const ConstIteratorHash & rhs) const;
     bool operator==(const ConstIteratorHash & rhs) const;
-
   private:
     const std::vector< Bucket< Key, Value > > * buckets_;
     size_t current_index_;
     explicit ConstIteratorHash(const std::vector< Bucket< Key, Value > > * buckets, size_t index);
-    void skipEmptyBuckets();
+    void skipInvalidBuckets();
   };
 
   template< class Key, class Value, class Hash, class Equal >
@@ -41,7 +40,7 @@ namespace smirnov
     buckets_(buckets),
     current_index_(index)
   {
-    skipEmptyBuckets();
+    skipInvalidBuckets();
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -57,10 +56,15 @@ namespace smirnov
   }
 
   template < class Key, class Value, class Hash, class Equal >
-  void ConstIteratorHash<Key, Value, Hash, Equal>::skipEmptyBuckets()
+  void smirnov::ConstIteratorHash< Key, Value, Hash, Equal >::skipInvalidBuckets()
   {
-    while (current_index_ < buckets_->size() && !(*buckets_)[current_index_].occupied)
+    while (buckets_ && current_index_ < buckets_->size())
     {
+      const auto & bucket = (*buckets_)[current_index_];
+      if (bucket.occupied && !bucket.deleted)
+      {
+        break;
+      }
       ++current_index_;
     }
   }
@@ -69,7 +73,7 @@ namespace smirnov
   ConstIteratorHash< Key, Value, Hash, Equal > & ConstIteratorHash< Key, Value, Hash, Equal >::operator++()
   {
     ++current_index_;
-    skipEmptyBuckets();
+    skipInvalidBuckets();
     return *this;
   }
 
