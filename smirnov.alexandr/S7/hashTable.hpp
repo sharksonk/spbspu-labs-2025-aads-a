@@ -62,7 +62,7 @@ namespace smirnov
   {
     if (size_ == 0)
     {
-      return 0.0;
+      return 0.0f;
     }
     return static_cast< float >(size_) / buckets_.size();
   }
@@ -97,6 +97,10 @@ namespace smirnov
       {
         return const_iterator(std::addressof(buckets_), index);
       }
+      if (!bucket.occupied && !bucket.deleted)
+      {
+        break;
+      }
       attempt++;
     }
     return end();
@@ -118,15 +122,19 @@ namespace smirnov
     {
       index = probe(hash_value, attempt);
       auto & bucket = buckets_[index];
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         return {const_iterator(std::addressof(buckets_), index), false};
       }
-      if (!bucket.occupied && first_deleted == buckets_.size())
+      if (bucket.deleted && first_deleted == buckets_.size())
       {
         first_deleted = index;
       }
-      attempt++;
+      if (!bucket.occupied && !bucket.deleted)
+      {
+        break;
+      }
+      ++attempt;
     }
     if (first_deleted != buckets_.size())
     {
@@ -134,7 +142,8 @@ namespace smirnov
     }
     buckets_[index].data = {key, value};
     buckets_[index].occupied = true;
-    size_++;
+    buckets_[index].deleted = false;
+    ++size_;
     return {const_iterator(std::addressof(buckets_), index), true};
   }
 
@@ -148,11 +157,16 @@ namespace smirnov
     {
       index = probe(hash_value, attempt);
       auto & bucket = buckets_[index];
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (bucket.occupied &&  !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         bucket.occupied = false;
+        bucket.deleted = true;
         size_--;
         return 1;
+      }
+      if (!bucket.occupied && !bucket.deleted)
+      {
+        break;
       }
       ++attempt;
     }
@@ -169,6 +183,7 @@ namespace smirnov
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t new_capacity)
   {
     std::vector< Bucket< Key, Value > > old_buckets = std::move(buckets_);
+    buckets_.clear();
     buckets_.resize(new_capacity);
     size_ = 0;
     for (size_t i = 0; i < old_buckets.size(); ++i)
