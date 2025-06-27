@@ -393,7 +393,8 @@ namespace smirnov
         stack.push(current);
         current = current->left;
       }
-      current = stack.drop();
+      current = stack.top();
+      stack.pop();
       f(current->data);
       current = current->right;
     }
@@ -413,7 +414,8 @@ namespace smirnov
         stack.push(current);
         current = current->right;
       }
-      current = stack.drop();
+      current = stack.top();
+      stack.pop();
       f(current->data);
       current = current->left;
     }
@@ -432,7 +434,8 @@ namespace smirnov
     q.push(root_);
     while (!q.empty())
     {
-      Node< Key, Value > * current = q.drop();
+      Node< Key, Value > * current = q.front();
+      q.pop();
       f(current->data);
       if (current->left != nullptr)
       {

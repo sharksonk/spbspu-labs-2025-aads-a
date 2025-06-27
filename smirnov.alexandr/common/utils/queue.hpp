@@ -10,34 +10,41 @@ namespace smirnov
   class Queue
   {
   public:
-    void push(T rhs);
-    T drop();
-    T front() const;
-    bool empty() const;
+    void push(const T & value);
+    void push(T && value);
+    void pop();
+    T & front();
+    const T & front() const;
+    bool empty() const noexcept;
+    size_t size() const noexcept;
   private:
     List< T > data_;
   };
 
   template< typename T >
-  void Queue< T >::push(T rhs)
+  void Queue< T >::push(const T & value)
   {
-    pushBack(data_, rhs);
+    pushBack(data_, value);
   }
 
   template< typename T >
-  T Queue< T >::drop()
+  void Queue< T >::push(T && value)
+  {
+    pushBack(data_, std::move(value));
+  }
+
+  template< typename T >
+  void Queue< T >::pop()
   {
     if (empty())
     {
-        throw std::runtime_error("Queue is empty");
+      throw std::runtime_error("Queue is empty");
     }
-    T val = data_.front();
     data_.pop_front();
-    return val;
   }
 
   template< typename T >
-  T Queue< T >::front() const
+  const T & Queue< T >::front() const
   {
     if (empty())
     {
@@ -47,9 +54,25 @@ namespace smirnov
   }
 
   template< typename T >
-  bool Queue< T >::empty() const
+  T & Queue< T >::front()
+  {
+    if (empty())
+    {
+      throw std::runtime_error("Queue is empty");
+    }
+    return data_.front();
+  }
+
+  template< typename T >
+  bool Queue< T >::empty() const noexcept
   {
     return data_.empty();
+  }
+
+  template< typename T >
+  size_t Queue< T >::size() const noexcept
+  {
+    return data_.size();
   }
 }
 #endif
