@@ -50,25 +50,43 @@ void smirnov::outbound(const GraphCollection & graphs, std::istream & in, std::o
   std::string graphName, vertexName;
   if (!(in >> graphName >> vertexName))
   {
-    throw std::invalid_argument("Invalid command");
+    throw std::invalid_argument("Invalid command\n");
   }
   const Graph * g = graphs.getGraph(graphName);
   if (!g || !g->hasVertex(vertexName))
   {
-    throw std::invalid_argument("Invalid command");
+    throw std::invalid_argument("Invalid command\n");
   }
-  auto edges = g->getOutboundEdges(vertexName);
+  std::vector< std::pair< std::string, size_t > > edges = g->getOutboundEdges(vertexName);
   if (edges.empty())
   {
     out << "\n";
     return;
   }
-  out << edges[0].first << " " << edges[0].second;
-  for (size_t i = 1; i < edges.size(); ++i)
+  for (size_t i = 0; i < edges.size(); ++i)
   {
-    out << "\n" << edges[i].first << " " << edges[i].second;
+    for (size_t j = i + 1; j < edges.size(); ++j)
+    {
+      if (edges[j].first < edges[i].first || (edges[j].first == edges[i].first && edges[j].second < edges[i].second))
+      {
+        std::pair< std::string, size_t> tmp = edges[i];
+        edges[i] = edges[j];
+        edges[j] = tmp;
+      }
+    }
   }
-  out << "\n";
+  size_t i = 0;
+  while (i < edges.size())
+  {
+    out << edges[i].first;
+    std::string current = edges[i].first;
+    while (i < edges.size() && edges[i].first == current)
+    {
+      out << " " << edges[i].second;
+      ++i;
+    }
+    out << "\n";
+  }
 }
 
 void smirnov::inbound(const GraphCollection & graphs, std::istream & in, std::ostream & out)
@@ -76,25 +94,43 @@ void smirnov::inbound(const GraphCollection & graphs, std::istream & in, std::os
   std::string graphName, vertexName;
   if (!(in >> graphName >> vertexName))
   {
-    throw std::invalid_argument("Invalid command");
+    throw std::invalid_argument("Invalid command\n");
   }
   const Graph * g = graphs.getGraph(graphName);
   if (!g || !g->hasVertex(vertexName))
   {
-    throw std::invalid_argument("Invalid command");
+    throw std::invalid_argument("Invalid command\n");
   }
-  auto edges = g->getInboundEdges(vertexName);
+  std::vector< std::pair< std::string, size_t > > edges = g->getInboundEdges(vertexName);
   if (edges.empty())
   {
     out << "\n";
     return;
   }
-  out << edges[0].first << " " << edges[0].second;
-  for (size_t i = 1; i < edges.size(); ++i)
+  for (size_t i = 0; i < edges.size(); ++i)
   {
-    out << "\n" << edges[i].first << " " << edges[i].second;
+    for (size_t j = i + 1; j < edges.size(); ++j)
+    {
+      if (edges[j].first < edges[i].first || (edges[j].first == edges[i].first && edges[j].second < edges[i].second))
+      {
+        std::pair< std::string, size_t > tmp = edges[i];
+        edges[i] = edges[j];
+        edges[j] = tmp;
+      }
+    }
   }
-  out << "\n";
+  size_t i = 0;
+  while (i < edges.size())
+  {
+    out << edges[i].first;
+    std::string current = edges[i].first;
+    while (i < edges.size() && edges[i].first == current)
+    {
+      out << " " << edges[i].second;
+      ++i;
+    }
+    out << "\n";
+  }
 }
 
 void smirnov::bind(GraphCollection & graphs, std::istream & in)
