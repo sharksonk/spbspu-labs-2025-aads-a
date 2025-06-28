@@ -12,7 +12,7 @@ const std::string & smirnov::Graph::getName() const noexcept
 
 bool smirnov::Graph::hasVertex(const std::string & vertex) const
 {
-  return edges_.find(vertex) != edges_.end();
+  return edges_.find(vertex) != edges_.cend();
 }
 
 bool smirnov::Graph::addVertex(const std::string & vertex)
@@ -82,7 +82,7 @@ bool smirnov::Graph::removeEdge(const std::string & from, const std::string & to
 std::vector< std::string > smirnov::Graph::getVertices() const
 {
   std::vector< std::string > vertices;
-  for (auto it = edges_.begin(); it != edges_.end(); ++it)
+  for (auto it = edges_.cbegin(); it != edges_.cend(); ++it)
   {
     vertices.push_back(it->first);
   }
@@ -94,12 +94,12 @@ std::vector< std::pair< std::string, size_t > > smirnov::Graph::getOutboundEdges
 {
   std::vector< std::pair< std::string, size_t > > result;
   auto vertexIt = edges_.find(vertex);
-  if (vertexIt == edges_.end())
+  if (vertexIt == edges_.cend())
   {
     return result;
   }
   const auto & outEdges = vertexIt->second;
-  for (auto it = outEdges.begin(); it != outEdges.end(); ++it)
+  for (auto it = outEdges.cbegin(); it != outEdges.cend(); ++it)
   {
     const std::string & target = it->first;
     const std::vector< size_t > & weights = it->second;
@@ -126,12 +126,12 @@ std::vector< std::pair< std::string, size_t > > smirnov::Graph::getOutboundEdges
 std::vector< std::pair< std::string, size_t > > smirnov::Graph::getInboundEdges(const std::string & vertex) const
 {
   std::vector< std::pair< std::string, size_t > > result;
-  for (auto fromIt = edges_.begin(); fromIt != edges_.end(); ++fromIt)
+  for (auto fromIt = edges_.cbegin(); fromIt != edges_.cend(); ++fromIt)
   {
     const std::string & source = fromIt->first;
     const auto & outEdges = fromIt->second;
     auto toIt = outEdges.find(vertex);
-    if (toIt != outEdges.end())
+    if (toIt != outEdges.cend())
     {
       const std::vector< size_t > & weights = toIt->second;
       for (size_t i = 0; i < weights.size(); ++i)

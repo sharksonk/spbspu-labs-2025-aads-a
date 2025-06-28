@@ -17,6 +17,10 @@ namespace smirnov
     using const_iterator = ConstIteratorHash< Key, Value, Hash, Equal >;
 
     HashTable();
+    HashTable(std::initializer_list< std::pair< Key, Value > > list);
+    template< class InputIt >
+    HashTable(InputIt first, InputIt last);
+
     ~HashTable() = default;
     HashTable(const HashTable & rhs) = default;
     HashTable(HashTable && rhs) noexcept = default;
@@ -31,21 +35,35 @@ namespace smirnov
     iterator end();
     iterator find(const Key & key);
 
-    const_iterator begin() const;
-    const_iterator end() const;
+    const_iterator cbegin() const;
+    const_iterator cend() const;
     const_iterator find(const Key & key) const;
+
+    template< class InputIt >
+    void insert(InputIt first, InputIt last);
+
+    std::pair< iterator, bool > insert(const Key & key, const Value & value);
+
+    iterator erase(iterator pos);
+    iterator erase(iterator first, iterator last);
+    size_t erase(const Key & key);
+
+    void clear();
+    void swap(HashTable & other) noexcept;
 
     size_t size() const noexcept;
     bool empty() const noexcept;
-    std::pair< iterator, bool > insert(const Key & key, const Value & value);
-    size_t erase(const Key & key);
+
     float load_factor() const noexcept;
+    float max_load_factor() const noexcept;
+    void max_load_factor(float ml);
+
   private:
     std::vector< Bucket< Key, Value > > buckets_;
     size_t size_;
     Hash hasher_;
     Equal key_equal_;
-    static constexpr float max_load_factor = 0.75f;
+    float max_load_factor_ = 0.75f;
     size_t probe(size_t hash_value, size_t attempt) const noexcept;
     void rehash(size_t new_capacity);
   };
@@ -55,8 +73,30 @@ namespace smirnov
     buckets_(8),
     size_(0),
     hasher_(),
-    key_equal_()
+    key_equal_(),
+    max_load_factor_(0.75f)
   {}
+
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable(std::initializer_list< std::pair< Key, Value > > list):
+    HashTable()
+  {
+    for (const auto & p : list)
+    {
+      insert(p.first, p.second);
+    }
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  template< class InputIt >
+  HashTable< Key, Value, Hash, Equal >::HashTable(InputIt first, InputIt last):
+    HashTable()
+  {
+    for (auto it = first; it != last; ++it)
+    {
+      insert(it->first, it->second);
+    }
+  }
 
   template< class Key, class Value, class Hash, class Equal >
   size_t HashTable< Key, Value, Hash, Equal >::size() const noexcept
@@ -78,6 +118,26 @@ namespace smirnov
       return 0.0f;
     }
     return static_cast< float >(size_) / buckets_.size();
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  float HashTable< Key, Value, Hash, Equal >::max_load_factor() const noexcept
+  {
+    return max_load_factor_;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::max_load_factor(float ml)
+  {
+    if (ml <= 0.0f || ml > 1.0f)
+    {
+      throw std::invalid_argument("Invalid max_load_factor");
+    }
+    max_load_factor_ = ml;
+    if (load_factor() > max_load_factor_)
+    {
+      rehash(buckets_.size() * 2);
+    }
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -120,13 +180,13 @@ namespace smirnov
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin() const
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cbegin() const
   {
     return const_iterator(std::addressof(buckets_), 0);
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end() const
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cend() const
   {
     return const_iterator(std::addressof(buckets_), buckets_.size());
   }
@@ -136,7 +196,7 @@ namespace smirnov
   {
     if (empty())
     {
-      return end();
+      return cend();
     }
     size_t hash_value = hasher_(key) % buckets_.size();
     size_t attempt = 0;
@@ -155,7 +215,7 @@ namespace smirnov
       }
       ++attempt;
     }
-    return end();
+    return cend();
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -185,18 +245,28 @@ namespace smirnov
   const Value & HashTable< Key, Value, Hash, Equal >::at(const Key & key) const
   {
     auto it = find(key);
-    if (it == end())
+    if (it == cend())
     {
       throw std::out_of_range("Key not found\n");
     }
     return it->second;
   }
 
-  template < class Key, class Value, class Hash, class Equal >
+  template< class Key, class Value, class Hash, class Equal >
+  template< class InputIt >
+  void HashTable< Key, Value, Hash, Equal >::insert(InputIt first, InputIt last)
+  {
+    for (; first != last; ++first)
+    {
+      insert(first->first, first->second);
+    }
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
   std::pair< IteratorHash< Key, Value, Hash, Equal >, bool >
       HashTable< Key, Value, Hash, Equal >::insert(const Key & key, const Value & value)
   {
-    if (load_factor() >= max_load_factor)
+    if (load_factor() >= max_load_factor_)
     {
       rehash(buckets_.size() * 2);
     }
@@ -231,6 +301,50 @@ namespace smirnov
     buckets_[index].deleted = false;
     ++size_;
     return {iterator(std::addressof(buckets_), index), true};
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  IteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::erase(iterator pos)
+  {
+    if (pos == end())
+    {
+      return end();
+    }
+    erase(pos->first);
+    ++pos;
+    return pos;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  IteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::erase(iterator first, iterator last)
+  {
+    iterator res = end();
+    while (first != last)
+    {
+      res = erase(first++);
+    }
+    return res;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::clear()
+  {
+    for (size_t i = 0; i < buckets_.size(); ++i)
+    {
+      buckets_[i].occupied = false;
+      buckets_[i].deleted = false;
+    }
+    size_ = 0;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::swap(HashTable & other) noexcept
+  {
+    buckets_.swap(other.buckets_);
+    std::swap(size_, other.size_);
+    std::swap(hasher_, other.hasher_);
+    std::swap(key_equal_, other.key_equal_);
+    std::swap(max_load_factor_, other.max_load_factor_);
   }
 
   template< class Key, class Value, class Hash, class Equal >

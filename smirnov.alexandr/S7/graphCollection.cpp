@@ -24,7 +24,7 @@ smirnov::Graph * smirnov::GraphCollection::getGraph(const std::string & name)
 const smirnov::Graph * smirnov::GraphCollection::getGraph(const std::string & name) const
 {
   auto it = graphs_.find(name);
-  if (it != graphs_.end())
+  if (it != graphs_.cend())
   {
     return std::addressof(it->second);
   }
@@ -34,7 +34,7 @@ const smirnov::Graph * smirnov::GraphCollection::getGraph(const std::string & na
 std::vector< std::string > smirnov::GraphCollection::listGraphs() const
 {
   std::vector< std::string>  names;
-  for (auto it = graphs_.begin(); it != graphs_.end(); ++it)
+  for (auto it = graphs_.cbegin(); it != graphs_.cend(); ++it)
   {
     names.push_back(it->first);
   }
