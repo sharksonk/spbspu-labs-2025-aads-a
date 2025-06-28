@@ -31,16 +31,15 @@ namespace smirnov
     iterator end();
     iterator find(const Key & key);
 
-    const_iterator cbegin() const;
-    const_iterator cend() const;
+    const_iterator begin() const;
+    const_iterator end() const;
     const_iterator find(const Key & key) const;
 
     size_t size() const noexcept;
     bool empty() const noexcept;
-    std::pair< const_iterator, bool > insert(const Key & key, const Value & value);
+    std::pair< iterator, bool > insert(const Key & key, const Value & value);
     size_t erase(const Key & key);
     float load_factor() const noexcept;
-
   private:
     std::vector< Bucket< Key, Value > > buckets_;
     size_t size_;
@@ -121,13 +120,13 @@ namespace smirnov
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cbegin() const
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin() const
   {
     return const_iterator(std::addressof(buckets_), 0);
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cend() const
+  ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end() const
   {
     return const_iterator(std::addressof(buckets_), buckets_.size());
   }
@@ -188,13 +187,13 @@ namespace smirnov
     auto it = find(key);
     if (it == end())
     {
-      throw std::out_of_range("Key not found");
+      throw std::out_of_range("Key not found\n");
     }
     return it->second;
   }
 
   template < class Key, class Value, class Hash, class Equal >
-  std::pair< ConstIteratorHash< Key, Value, Hash, Equal >, bool >
+  std::pair< IteratorHash< Key, Value, Hash, Equal >, bool >
       HashTable< Key, Value, Hash, Equal >::insert(const Key & key, const Value & value)
   {
     if (load_factor() >= max_load_factor)
@@ -211,7 +210,7 @@ namespace smirnov
       auto & bucket = buckets_[index];
       if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
-        return {const_iterator(std::addressof(buckets_), index), false};
+        return {iterator(std::addressof(buckets_), index), false};
       }
       if (bucket.deleted && first_deleted == buckets_.size())
       {
@@ -231,7 +230,7 @@ namespace smirnov
     buckets_[index].occupied = true;
     buckets_[index].deleted = false;
     ++size_;
-    return {const_iterator(std::addressof(buckets_), index), true};
+    return {iterator(std::addressof(buckets_), index), true};
   }
 
   template< class Key, class Value, class Hash, class Equal >
