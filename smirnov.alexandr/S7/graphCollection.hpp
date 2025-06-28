@@ -1,6 +1,6 @@
 #ifndef GRAPHCOLLECTION_HPP
 #define GRAPHCOLLECTION_HPP
-#include "hashTable.hpp"
+#include <hash_table/hashTable.hpp>
 #include "graph.hpp"
 
 namespace smirnov

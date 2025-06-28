@@ -2,7 +2,7 @@
 #define GRAPH_HPP
 #include <string>
 #include <cstddef>
-#include "hashTable.hpp"
+#include <hash_table/hashTable.hpp>
 
 namespace smirnov
 {

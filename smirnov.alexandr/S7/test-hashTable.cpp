@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "hashTable.hpp"
+#include <hash_table/hashTable.hpp>
 
 BOOST_AUTO_TEST_CASE(test_insert_and_find)
 {
