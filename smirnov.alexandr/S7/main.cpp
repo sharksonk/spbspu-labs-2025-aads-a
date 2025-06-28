@@ -76,15 +76,15 @@ int main(int argc, char * argv[])
   }
   using namespace std::placeholders;
   HashTable< std::string, std::function< void() > > commands;
-  commands["graphs"] = std::bind(graphs, std::ref(std::cout), std::cref(graphs_collection));
-  commands["vertexes"] = std::bind(vertexes, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
-  commands["outbound"] = std::bind(outbound, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
-  commands["inbound"] = std::bind(inbound, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
-  commands["bind"] = std::bind(bind, std::ref(std::cin), std::ref(graphs_collection));
-  commands["cut"] = std::bind(cut, std::ref(std::cin), std::ref(graphs_collection));
-  commands["create"] = std::bind(create, std::ref(std::cin), std::ref(graphs_collection));
-  commands["merge"] = std::bind(merge, std::ref(std::cin), std::ref(graphs_collection));
-  commands["extract"] = std::bind(extract, std::ref(std::cin), std::ref(graphs_collection));
+  commands["graphs"] = std::bind(graphs, std::cref(graphs_collection), std::ref(std::cout));
+  commands["vertexes"] = std::bind(vertexes, std::cref(graphs_collection), std::ref(std::cin), std::ref(std::cout));
+  commands["outbound"] = std::bind(outbound, std::cref(graphs_collection), std::ref(std::cin), std::ref(std::cout));
+  commands["inbound"] = std::bind(inbound, std::cref(graphs_collection), std::ref(std::cin), std::ref(std::cout));
+  commands["bind"] = std::bind(bind, std::ref(graphs_collection), std::ref(std::cin));
+  commands["cut"] = std::bind(cut, std::ref(graphs_collection), std::ref(std::cin));
+  commands["create"] = std::bind(create, std::ref(graphs_collection), std::ref(std::cin));
+  commands["merge"] = std::bind(merge, std::ref(graphs_collection), std::ref(std::cin));
+  commands["extract"] = std::bind(extract, std::ref(graphs_collection), std::ref(std::cin));
   std::string command;
   while (std::cin >> command)
   {
