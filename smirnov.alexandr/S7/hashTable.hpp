@@ -1,6 +1,7 @@
 #ifndef HASHTABLE_HPP
 #define HASHTABLE_HPP
 #include <functional>
+#include <stdexcept>
 #include "bucket.hpp"
 #include "constIteratorHash.hpp"
 
@@ -17,22 +18,24 @@ namespace smirnov
     HashTable(HashTable && rhs) noexcept = default;
     HashTable & operator=(const HashTable & rhs) = default;
     HashTable & operator=(HashTable &&) noexcept = default;
-
-    size_t size() const noexcept;
-    bool empty() const noexcept;
-    float load_factor() const noexcept;
-
+    Value & operator[](const Key & key);
+    Value & at(const Key & key);
+    const Value & at(const Key & key) const;
     const_iterator begin() const;
     const_iterator end() const;
-    const_iterator find(const Key & key) const;
+    size_t size() const noexcept;
+    bool empty() const noexcept;
     std::pair< const_iterator, bool > insert(const Key & key, const Value & value);
     size_t erase(const Key & key);
+    const_iterator find(const Key & key) const;
+    float load_factor() const noexcept;
   private:
     std::vector< Bucket< Key, Value > > buckets_;
     size_t size_;
     Hash hasher_;
     Equal key_equal_;
     static constexpr float max_load_factor = 0.75f;
+    Value * findValue(const Key & key);
     size_t probe(size_t hash_value, size_t attempt) const noexcept;
     void rehash(size_t new_capacity);
   };
@@ -171,6 +174,64 @@ namespace smirnov
       ++attempt;
     }
     return 0;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  Value * smirnov::HashTable< Key, Value, Hash, Equal >::findValue(const Key  & key)
+  {
+    if (empty()) return nullptr;
+    size_t hash_value = hasher_(key) % buckets_.size();
+    size_t attempt = 0;
+    size_t index = hash_value;
+    while (attempt < buckets_.size())
+    {
+      index = probe(hash_value, attempt);
+      auto  & bucket = buckets_[index];
+      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      {
+        return &(bucket.data.second);
+      }
+      if (!bucket.occupied && !bucket.deleted)
+      {
+        break;
+      }
+      ++attempt;
+    }
+  return nullptr;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  Value& smirnov::HashTable< Key, Value, Hash, Equal >::operator[](const Key& key)
+  {
+    Value* val = findValue(key);
+    if (val)
+    {
+      return *val;
+    }
+    auto result = insert(key, Value());
+    return const_cast<Value&>(result.first->second);
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  Value & smirnov::HashTable< Key, Value, Hash, Equal >::at(const Key & key)
+  {
+    auto it = find(key);
+    if (it == end())
+    {
+      throw std::out_of_range("Key not found\n");
+    }
+    return const_cast< Value & >(it->second);
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  const Value & smirnov::HashTable< Key, Value, Hash, Equal >::at(const Key & key) const
+  {
+    auto it = find(key);
+    if (it == end())
+    {
+      throw std::out_of_range("Key not found");
+    }
+    return it->second;
   }
 
   template< class Key, class Value, class Hash, class Equal >

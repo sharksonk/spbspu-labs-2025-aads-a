@@ -3,31 +3,43 @@
 #include <string>
 #include <stdexcept>
 #include <limits>
+#include <cstddef>
 #include "graphCollection.hpp"
 #include "commands.hpp"
 
 namespace
 {
-  void loadGraphsFromFile(std::ifstream & inputFile, smirnov::GraphCollection & graphs)
+  void loadGraphs(std::istream & input, smirnov::GraphCollection & graphs)
   {
     std::string graphName;
-    size_t edgeCount;
-    while (inputFile >> graphName >> edgeCount)
+    size_t edgeCount = 0;
+    while (input >> graphName >> edgeCount)
     {
+      if (graphName.empty())
+      {
+        input.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+        continue;
+      }
       smirnov::Graph graph(graphName);
+      bool edgeError = false;
       for (size_t i = 0; i < edgeCount; ++i)
       {
         std::string from, to;
-        unsigned weight;
-        if (!(inputFile >> from >> to >> weight))
+        size_t weight = 0;
+        if (!(input >> from >> to >> weight))
         {
-          throw std::runtime_error("Input file format error");
+          edgeError = true;
+          break;
         }
         graph.addEdge(from, to, weight);
       }
+      if (edgeError)
+      {
+        throw std::runtime_error("Input file format error\n");
+      }
       if (!graphs.addGraph(graphName))
       {
-        throw std::runtime_error("Duplicate graph name in input file");
+        throw std::runtime_error("Duplicate graph name in input file\n");
       }
       smirnov::Graph * g = graphs.getGraph(graphName);
       if (g)
@@ -40,83 +52,51 @@ namespace
 
 int main(int argc, char * argv[])
 {
+  using namespace smirnov;
   if (argc < 2)
   {
-    std::cerr << "Error: input filename required\n";
+    std::cerr << "Input filename required\n";
     return 1;
   }
-
   std::ifstream inputFile(argv[1]);
   if (!inputFile.is_open())
   {
-    std::cerr << "Error: cannot open file " << argv[1] << "\n";
+    std::cerr << "Cannot open file\n";
     return 1;
   }
-
-  smirnov::GraphCollection graphs;
-
+  GraphCollection graphs_collection;;
   try
   {
-    loadGraphsFromFile(inputFile, graphs);
+    loadGraphs(inputFile, graphs_collection);
   }
-  catch (const std::exception & ex)
+  catch (const std::exception & e)
   {
-    std::cerr << "Error loading graphs: " << ex.what() << "\n";
+    std::cerr << "Error loading graphs\n";
     return 1;
   }
-
+  using namespace std::placeholders;
+  HashTable< std::string, std::function< void() > > commands;
+  commands["graphs"] = std::bind(graphs, std::ref(std::cout), std::cref(graphs_collection));
+  commands["vertexes"] = std::bind(vertexes, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
+  commands["outbound"] = std::bind(outbound, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
+  commands["inbound"] = std::bind(inbound, std::ref(std::cout), std::ref(std::cin), std::cref(graphs_collection));
+  commands["bind"] = std::bind(bind, std::ref(std::cin), std::ref(graphs_collection));
+  commands["cut"] = std::bind(cut, std::ref(std::cin), std::ref(graphs_collection));
+  commands["create"] = std::bind(create, std::ref(std::cin), std::ref(graphs_collection));
+  commands["merge"] = std::bind(merge, std::ref(std::cin), std::ref(graphs_collection));
+  commands["extract"] = std::bind(extract, std::ref(std::cin), std::ref(graphs_collection));
   std::string command;
   while (std::cin >> command)
   {
     try
     {
-      if (command == "graphs")
-      {
-        smirnov::graphs(graphs, std::cout);
-      }
-      else if (command == "vertexes")
-      {
-        smirnov::vertexes(graphs, std::cin, std::cout);
-      }
-      else if (command == "outbound")
-      {
-        smirnov::outbound(graphs, std::cin, std::cout);
-      }
-      else if (command == "inbound")
-      {
-        smirnov::inbound(graphs, std::cin, std::cout);
-      }
-      else if (command == "bind")
-      {
-        smirnov::bind(graphs, std::cin);
-      }
-      else if (command == "cut")
-      {
-        smirnov::cut(graphs, std::cin);
-      }
-      else if (command == "create")
-      {
-        smirnov::create(graphs, std::cin);
-      }
-      else if (command == "merge")
-      {
-        smirnov::merge(graphs, std::cin);
-      }
-      else if (command == "extract")
-      {
-        smirnov::extract(graphs, std::cin);
-      }
-      else
-      {
-        std::cout << "<INVALID COMMAND>\n";
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      }
+      commands.at(command)();
     }
-    catch (const std::invalid_argument &)
+    catch (const std::exception &)
     {
-      std::cerr << "<INVALID COMMAND>" << std::endl;
-      return 1;
+      std::cout << "<INVALID COMMAND>\n";
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
-    return 0;
   }
 }
