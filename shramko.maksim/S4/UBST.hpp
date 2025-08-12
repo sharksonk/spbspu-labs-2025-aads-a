@@ -1,9 +1,9 @@
-#ifndef UBST_HPP
-#define UBST_HPP
-
+#ifndef UBST_TREE_HPP
+#define UBST_TREE_HPP
 #include <cstddef>
 #include <stdexcept>
 #include "node.hpp"
+#include "constiterator.hpp"
 
 namespace shramko
 {
@@ -280,4 +280,5 @@ namespace shramko
     return node;
   }
 }
+
 #endif
