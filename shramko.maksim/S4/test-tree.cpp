@@ -1,4 +1,5 @@
 #include <boost/test/unit_test.hpp>
+#include <boost/test/tools/output_test_stream.hpp>
 #include "UBST.hpp"
 
 using namespace shramko;
@@ -116,4 +117,23 @@ BOOST_AUTO_TEST_CASE(ClearTest)
   BOOST_TEST(tree.empty());
   BOOST_TEST(tree.size() == 0);
   BOOST_TEST(tree.cbegin() == tree.cend());
+}
+
+namespace boost::test_tools::tt_detail
+{
+  template<typename Key, typename Value, typename Compare>
+  struct print_log_value<shramko::ConstIterator<Key, Value, Compare>>
+  {
+    void operator()(std::ostream& os, shramko::ConstIterator<Key, Value, Compare> const& it)
+    {
+      if (it == shramko::ConstIterator<Key, Value, Compare>())
+      {
+        os << "end iterator";
+      }
+      else
+      {
+        os << "iterator to [" << it->first << ", " << it->second << "]";
+      }
+    }
+  };
 }
