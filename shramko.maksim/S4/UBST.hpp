@@ -1,5 +1,6 @@
-#ifndef UBST_TREE_HPP
-#define UBST_TREE_HPP
+#ifndef UBST_HPP
+#define UBST_HPP
+
 #include <cstddef>
 #include <stdexcept>
 #include "node.hpp"
