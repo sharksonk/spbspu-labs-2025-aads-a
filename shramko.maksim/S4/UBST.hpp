@@ -35,7 +35,7 @@ namespace shramko
     Node< Key, Value > * root_;
     size_t size_;
     Compare comp_;
-    
+
     void clearNode(Node< Key, Value > * node);
     Node< Key, Value > * insertNode(
       Node< Key, Value > * node,
