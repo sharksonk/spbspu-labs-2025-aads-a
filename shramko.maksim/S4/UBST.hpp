@@ -223,7 +223,8 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
-  Node< Key, Value > * UBstTree< Key, Value, Compare >::insertNode(Node< Key, Value > * node, const Key & key, const Value & value, Node< Key, Value > * parent, size_t & size)
+  Node< Key, Value > * UBstTree< Key, Value, Compare >::insertNode(
+      Node< Key, Value > * node, const Key & key, const Value & value, Node< Key, Value > * parent, size_t & size)
   {
     if (!node)
     {

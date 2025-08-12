@@ -7,7 +7,7 @@ namespace shramko
 {
   template < typename Key, typename Value, typename Compare >
   class UBstTree;
-  
+
   template < typename Key, typename Value, typename Compare = std::less< Key > >
   class ConstIterator
   {
@@ -130,4 +130,5 @@ namespace shramko
     return !(*this == rhs);
   }
 }
+
 #endif
