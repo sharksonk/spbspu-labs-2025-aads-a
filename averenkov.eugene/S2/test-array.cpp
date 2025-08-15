@@ -6,24 +6,20 @@ using array_int = averenkov::Array< int >;
 
 bool isEqual(const array_int& lhs, const array_int& rhs)
 {
-  array_int lhs1 = lhs;
-  array_int rhs1 = rhs;
-  if (lhs1.size() != rhs1.size())
+  auto lhsC = lhs;
+  auto rhsC = rhs;
+  if (!(lhsC.size() == rhsC.size()))
   {
     return false;
   }
-  if (lhs1.empty())
+  while (!(lhsC.empty() && rhsC.empty()))
   {
-    return true;
-  }
-  for (size_t i = 0; i < lhs.size(); i++)
-  {
-    if (lhs1.back() != rhs1.back())
+    if (!(lhsC.front() == rhsC.front() && lhsC.back() == rhsC.back()))
     {
       return false;
     }
-    lhs1.pop_back();
-    rhs1.pop_back();
+    lhsC.pop_back();
+    rhsC.pop_back();
   }
   return true;
 }

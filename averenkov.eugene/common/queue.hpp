@@ -8,11 +8,6 @@ namespace averenkov
   class Queue
   {
   public:
-    Queue() = default;
-    ~Queue() = default;
-    Queue(const Queue &rhs);
-    Queue(Queue &&rhs) noexcept;
-    Queue &operator=(const Queue &rhs);
     bool empty() const noexcept;
     size_t size() const noexcept;
 
@@ -20,31 +15,10 @@ namespace averenkov
     T& front() noexcept;
 
     void push(const T& rhs) noexcept;
-    T drop();
-
+    void pop();
   private:
     Array< T > arr_;
   };
-
-  template< class T >
-  Queue< T >::Queue(const Queue &rhs):
-    arr_(rhs.arr_)
-  {}
-
-  template< class T >
-  Queue< T >::Queue(Queue &&rhs) noexcept:
-    arr_(std::move(rhs.arr_))
-  {}
-
-  template< class T >
-  Queue< T > &Queue< T >::operator=(const Queue &rhs)
-  {
-    if (this != std::addressof(rhs))
-    {
-      arr_ = rhs.arr_;
-    }
-    return *this;
-  }
 
   template< class T >
   bool Queue< T >::empty() const noexcept
@@ -77,15 +51,9 @@ namespace averenkov
   }
 
   template< class T >
-  T Queue< T >::drop()
+  void Queue< T >::pop()
   {
-    if (arr_.empty())
-    {
-      throw std::underflow_error("error");
-    }
-    T temp = front();
     arr_.pop_front();
-    return temp;
   }
 
 }
