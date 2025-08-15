@@ -1,5 +1,5 @@
 #include <iostream>
-#include <climits>
+#include <limits>
 #include <fstream>
 #include <string>
 #include <cctype>
@@ -9,6 +9,8 @@
 
 bool isOverflow(long long a, long long b)
 {
+  const long long int max = std::numeric_limits< long long >::max();
+  const long long int min = std::numeric_limits< long long >::min();
   if (a == 0 || b == 0)
   {
     return false;
@@ -17,24 +19,50 @@ bool isOverflow(long long a, long long b)
   {
     if (b > 0)
     {
-      return a > LLONG_MAX / b;
+      return a > max / b;
     }
     else
     {
-      return b < LLONG_MIN / a;
+      return b < min / a;
     }
   }
   else
   {
     if (b > 0)
     {
-      return a < LLONG_MIN / b;
+      return a < min / b;
     }
     else
     {
-      return a < LLONG_MAX / b;
+      return a < max / b;
     }
   }
+}
+
+bool isAdditionOverflow(long long a, long long b)
+{
+  if (b > 0)
+  {
+    return a > std::numeric_limits< long long >::max() - b;
+  }
+  else if (b < 0)
+  {
+    return a < std::numeric_limits< long long >::min() - b;
+  }
+  return false;
+}
+
+bool isSubtractionOverflow(long long a, long long b)
+{
+  if (b > 0)
+  {
+    return a < std::numeric_limits< long long >::min() + b;
+  }
+  else if (b < 0)
+  {
+    return a > std::numeric_limits< long long >::max() + b;
+  }
+  return false;
 }
 
 bool isOperator(char c)
@@ -53,11 +81,8 @@ bool precedenceFirst(char first, char second)
 
 std::string readToken(const std::string& str, size_t& pos)
 {
-  while (pos < str.size() && std::isspace(str[pos]))
-  {
-    pos++;
-  }
-  if (pos >= str.size())
+  pos = str.find_first_not_of(" \t\n\r", pos);
+  if (pos == std::string::npos)
   {
     return "";
   }
@@ -65,23 +90,29 @@ std::string readToken(const std::string& str, size_t& pos)
   {
     return std::string(1, str[pos++]);
   }
-  std::string num;
-  bool negative = false;
-  if (str[pos] == '-' && (pos == 0 || str[pos-1] == '('))
+  size_t start = pos;
+  size_t end = str.find_first_of(" \t\n\r()", pos);
+  if (end == std::string::npos)
   {
-    negative = true;
-    num += '-';
-    pos++;
+    end = str.size();
   }
-  while (pos < str.size() && std::isdigit(str[pos]))
+  size_t op_pos = str.find_first_of("+-*/%^", pos);
+  if (op_pos != std::string::npos && op_pos < end)
   {
-    num += str[pos++];
+    end = op_pos;
   }
-  if (num.empty() || (negative && num.size() == 1))
+  std::string token = str.substr(start, end - start);
+  pos = end;
+  if (token == "-" && (start == 0 || str[start - 1] == '('))
   {
-    throw std::runtime_error("Error");
+    std::string nextToken = readToken(str, pos);
+    if (nextToken.empty())
+    {
+      throw std::runtime_error("Error");
+    }
+    return "-" + nextToken;
   }
-  return num;
+  return token;
 }
 
 averenkov::Queue< std::string > infixToPostfix(const std::string& infix)
@@ -154,16 +185,11 @@ long long evaluatePostfix(averenkov::Queue< std::string >& postfixQueue)
     {
       long long num = 0;
       bool negative = false;
-      size_t i = 0;
       if (token[0] == '-')
       {
         negative = true;
-        i = 1;
       }
-      for (; i < token.size(); ++i)
-      {
-        num = num * 10 + (token[i] - '0');
-      }
+      num = std::stoll(token);
       evalStack.push(negative ? -num : num);
     }
     else if (isOperator(token[0]))
@@ -180,14 +206,14 @@ long long evaluatePostfix(averenkov::Queue< std::string >& postfixQueue)
       switch (token[0])
       {
         case '+':
-          if (a > 0 && b > 0 && a > LLONG_MAX - b)
+          if (isAdditionOverflow(a, b))
           {
             throw std::runtime_error("Overflow error");
           }
           result = a + b;
           break;
         case '-':
-          if (b > 0 && a < LLONG_MIN + b)
+          if (isSubtractionOverflow(a, b))
           {
             throw std::runtime_error("Overflow error");
           }
@@ -243,16 +269,9 @@ void processExpressions(std::istream& input)
     {
       continue;
     }
-    try
-    {
-      averenkov::Queue< std::string > postfixQueue = infixToPostfix(line);
-      long long result = evaluatePostfix(postfixQueue);
-      results.push(result);
-    }
-    catch (const std::exception& e)
-    {
-      throw std::runtime_error("Error in expression");
-    }
+    averenkov::Queue< std::string > postfixQueue = infixToPostfix(line);
+    long long result = evaluatePostfix(postfixQueue);
+    results.push(result);
   }
   if (!results.empty())
   {
@@ -265,6 +284,7 @@ void processExpressions(std::istream& input)
     }
   }
   std::cout << "\n";
+
 }
 
 int main(int argc, char* argv[])

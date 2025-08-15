@@ -13,11 +13,14 @@ namespace averenkov
     Array();
     Array(const Array &rhs);
     Array(Array &&rhs) noexcept;
-    Array &operator=(const Array &rhs);
+    Array &operator=(const Array &rhs) noexcept;
+    Array &operator=(Array &&rhs) noexcept;
     ~Array();
 
     bool empty() const noexcept;
     size_t size() const noexcept;
+
+    void swap(Array& rhs) noexcept;
 
     const T& front() const noexcept;
     T& front() noexcept;
@@ -33,7 +36,9 @@ namespace averenkov
     size_t last_;
     size_t capacity_;
     size_t first_;
+    void resize(size_t capac);
     void resize();
+    Array< T > copy(const Array& other, size_t capacity);
 
   };
 
@@ -48,25 +53,11 @@ namespace averenkov
   template< class T >
   Array< T >::Array(const Array& rhs):
     data_(nullptr),
-    last_(rhs.last_),
-    capacity_(rhs.capacity_),
-    first_(rhs.first_)
+    last_(0),
+    capacity_(1),
+    first_(0)
   {
-    T* temp = nullptr;
-    try
-    {
-      temp = new T[rhs.capacity_];
-      for (size_t i = 0; i < last_; ++i)
-      {
-        temp[i] = rhs.data_[i];
-      }
-    }
-    catch (...)
-    {
-      delete[] temp;
-      temp = nullptr;
-    }
-    std::swap(temp, data_);
+    *this = copy(rhs, rhs.capacity_);
   }
 
 
@@ -84,16 +75,18 @@ namespace averenkov
   }
 
   template< class T >
-  Array< T >& Array< T >::operator=(const Array& rhs)
+  Array< T >& Array< T >::operator=(const Array& other) noexcept
   {
-    if (this != std::addressof(rhs))
-    {
-      Array< T > temp(rhs);
-      std::swap(data_, temp.data_);
-      last_ = rhs.last_;
-      capacity_ = rhs.capacity_;
-      first_ = rhs.first_;
-    }
+    Array< T > temp(other);
+    swap(temp);
+    return *this;
+  }
+
+  template< class T >
+  Array< T >& Array< T >::operator=(Array&& other) noexcept
+  {
+    Array< T > temp(std::move(other));
+    swap(temp);
     return *this;
   }
 
@@ -101,6 +94,15 @@ namespace averenkov
   Array< T >::~Array()
   {
     delete[] data_;
+  }
+
+  template< class T >
+  void Array< T >::swap(Array< T >& other) noexcept
+  {
+    std::swap(data_, other.data_);
+    std::swap(last_, other.last_);
+    std::swap(capacity_, other.capacity_);
+    std::swap(first_, other.first_);
   }
 
   template< class T >
@@ -169,29 +171,46 @@ namespace averenkov
   }
 
   template< class T >
+  void Array< T >::resize(size_t capac)
+  {
+    auto arr = copy(*this, capac * 2);
+    swap(arr);
+  }
+
+  template< class T >
   void Array< T >::resize()
   {
-    size_t new_capacity = capacity_ * 2;
+    auto arr = copy(*this, capacity_ * 2);
+    swap(arr);
+  }
+
+  template< class T >
+  Array< T > Array< T >::copy(const Array& other, size_t capacity)
+  {
+    Array< T > new_array;
     T* new_data = nullptr;
     try
     {
-      new_data = new T[new_capacity];
-      for (size_t i = 0; i < last_; ++i)
+      new_data = new T[capacity];
+      for (size_t i = 0; i < other.last_; ++i)
       {
-        new_data[i] = data_[i];
+        new_data[i] = other.data_[i];
       }
+      delete[] new_array.data_;
+      new_array.data_ = new_data;
+      new_array.capacity_ = capacity;
+      new_array.last_ = other.last_;
+      new_array.first_ = other.first_;
     }
     catch (...)
     {
       delete[] new_data;
-      return;
+      throw;
     }
-    delete[] data_;
-    data_ = new_data;
-    capacity_ = new_capacity;
+    return new_array;
   }
-}
 
+}
 
 #endif
 
