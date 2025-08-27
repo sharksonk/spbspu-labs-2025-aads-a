@@ -7,7 +7,8 @@ namespace karnauhova
   struct AvlTreeNode
   {
     std::pair< Key, Value > data1;
-    AvlTreeNode< Key, Value >* left, * right,, * parent;
+    AvlTreeNode< Key, Value >* left, * right, * parent;
+    int height;
   };
 }
 

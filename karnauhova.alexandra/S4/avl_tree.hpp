@@ -35,6 +35,7 @@ namespace karnauhova
 
     bool empty() const noexcept;
     size_t size() const noexcept;
+    size_t count(const Key& key) const;
 
     void clear() noexcept;
     void swap(AvlTree< Key, Value, Compare >& oth) noexcept;
@@ -48,6 +49,10 @@ namespace karnauhova
     Compare comp_;
 
     void clearRecursive(Node* node) noexcept;
+    Node* rotateRight(Node*) noexcept;
+    Node* rotateLeft(Node*) noexcept;
+    int height(Node*) const noexcept;
+    void updateHeight(Node*) noexcept;
   };
 
   template< typename Key, typename Value, typename Compare >
@@ -133,6 +138,12 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
+  size_t AvlTree< Key, Value, Compare >::count(const Key& key) const
+  {
+    return find(key) != cend();
+  }
+
+  template< typename Key, typename Value, typename Compare >
   void AvlTree< Key, Value, Compare >::clear() noexcept
   {
     if (empty())
@@ -148,10 +159,53 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   void AvlTree< Key, Value, Compare >::swap(AvlTree< Key, Value, Compare >& oth) noexcept
   {
-    std::swap(root_, oth.root_);
     std::swap(fake_, oth.fake_);
     std::swap(size_, oth.size_);
     std::swap(comp_, oth.comp_);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::find(const Key& key) noexcept
+  {
+    Node* current = fake_->left;
+    while (current != fake_)
+    {
+      if (cmp_(key, current->data.first))
+      {
+        current = current->left;
+      }
+      else if (cmp_(current->data.first, key))
+      {
+        current = current->right;
+      }
+      else
+      {
+        return Iter(current);
+      }
+    }
+    return end();
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CIter AvlTree< Key, Value, Compare >::find(const Key& key) const noexcept
+  {
+    Node* current = fake_->left;
+    while (current != fake_)
+    {
+      if (cmp_(key, current->data.first))
+      {
+        current = current->left;
+      }
+      else if (cmp_(current->data.first, key))
+      {
+        current = current->right;
+      }
+      else
+      {
+        return CIter(current);
+      }
+    }
+    return cend();
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -164,6 +218,103 @@ namespace karnauhova
     clearRecursive(node->left);
     clearRecursive(node->right);
     delete node;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Node* AvlTree< Key, Value, Compare >::rotateRight(Node* node) noexcept
+  {
+    if (!node || node->left == fake_ || node == fake_)
+    {
+      return node;
+    }
+    Node* it = node->left;
+    node->left = it->right;
+    if (it->right != fake_)
+    {
+      it->right->parent = node;
+    }
+
+    it->parent = node->parent;
+    node->parent = it;
+    it->right = node;
+    if (it->parent != fake_)
+    {
+      if (it->parent->left == node)
+      {
+        it->parent->left = it;
+      }
+      else
+      {
+        it->parent->right = it;
+      }
+    }
+    else
+    {
+      fake_->left = it;
+    }
+
+    updateHeight(node);
+    updateHeight(it);
+
+    return it;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Node* AvlTree< Key, Value, Compare >::rotateLeft(Node* node) noexcept
+  {
+    if (!node || node->left == fake_ || node == fake_)
+    {
+      return node;
+    }
+    Node* it = node->right;
+    node->right = it->left;
+    if (it->left != fake_)
+    {
+      it->left->parent = node;
+    }
+
+    it->parent = node->parent;
+    node->parent = it;
+    it->left = node;
+    if (it->parent != fake_)
+    {
+      if (it->parent->left == node)
+      {
+        it->parent->left = it;
+      }
+      else
+      {
+        it->parent->right = it;
+      }
+    }
+    else
+    {
+      fake_->left = it;
+    }
+
+    updateHeight(node);
+    updateHeight(it);
+
+    return it;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  int AvlTree< Key, Value, Compare >::height(Node* node) const noexcept
+  {
+    if (node == fake_ || node == nullptr)
+    {
+      return -1;
+    }
+    return node->height;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  void AvlTree< Key, Value, Compare >::updateHeight(Node* node) noexcept
+  {
+    if (node != fake_ && node != nullptr)
+    {
+      node->height = std::max(height(node->left), height(node->right)) + 1;
+    }
   }
 }
 
