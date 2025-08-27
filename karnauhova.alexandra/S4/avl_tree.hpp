@@ -48,7 +48,10 @@ namespace karnauhova
     size_t size_;
     Compare comp_;
 
-    void clearRecursive(Node* node) noexcept;
+    void clearRecursive(Node*) noexcept;
+    void balance(Node*) noexcept;
+    Node* balanceNode(Node*) noexcept;
+    int bfactor(Node*) const noexcept;
     Node* rotateRight(Node*) noexcept;
     Node* rotateLeft(Node*) noexcept;
     int height(Node*) const noexcept;
@@ -74,13 +77,140 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   std::pair< AvlTreeIterator< Key, Value, Compare >, bool > AvlTree< Key, Value, Compare >::insert(const std::pair< Key, Value >& val)
   {
-    
+    Node* newNode = nullptr;
+    try
+    {
+      newNode = new Node{val, fake_, fake_, nullptr, 0};
+      if (empty())
+      {
+        fake_->left = newNode;
+        newNode->parent = newNode->left = newNode->right = fake_;
+        size_ = 1;
+        return {Iter(newNode), true};
+      }
+      Node* tmp = fake_->left;
+      Node* parent = fake_;
+      while (tmp != fake_)
+      {
+        parent = tmp;
+        if (comp_(newNode->data1.first, tmp->data1.first))
+        {
+          tmp = tmp->left;
+        }
+        else if (comp_(tmp->data1.first, newNode->data1.first))
+        {
+          tmp = tmp->right;
+        }
+        else
+        {
+          delete newNode;
+          return {Iter(tmp), false};
+        }
+      }
+      newNode->parent = parent;
+      if (cmp_(parent->data1.first, newNode->data1.first))
+      {
+        parent->right = newNode;
+      }
+      else
+      {
+        parent->left = newNode;
+      }
+      balance(fake_->left);
+      size_++;
+      return {Iter(newNode), true};
+    }
+    catch (const std::exception& e)
+    {
+      throw;
+    }
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter) noexcept
+  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
   {
-    
+    if (it == cend() || it.node_ == fake_)
+    {
+      return end();
+    }
+    Node* delet = it.node_;
+    Iter res(delet);
+    ++res;
+    Node* new_node = nullptr;
+
+    if (delet->left == fake_ && delet->right == fake_)
+    {
+      new_node = delet->parent;
+      if (new_node != fake_)
+      {
+        if (new_node->left == delet)
+        {
+          new_node->left = fake_;
+        }
+        else
+        {
+          new_node->right = fake_;
+        }
+      }
+      else
+      {
+        fake_->left = fake_;
+      }
+      delete delet;
+      size_--;
+    }
+    else if (delet->left == fake_ || delet->right == fake_)
+    {
+      Node* child = delet->left != fake_ ? delet->left : delet->right;
+      new_node = delet->parent;
+      if (new_node != fake_)
+      {
+        if (new_node->left == delet)
+        {
+          new_node->left = child;
+        }
+        else
+        {
+          new_node->right = child;
+        }
+      }
+      else
+      {
+        fake_->left = child;
+      }
+      child->parent = new_node;
+      delete delet;
+      size_--;
+    }
+    else
+    {
+      Node* tmp = delet->right;
+      while (tmp->left != fake_)
+      {
+        tmp = tmp->left;
+      }
+      std::swap(delet->data1, tmp->data1);
+      new_node = tmp->parent;
+      if (new_node->left == tmp)
+      {
+        new_node->left = tmp->right;
+      }
+      else
+      {
+        new_node->right = tmp->right;
+      }
+      if (tmp->right != fake_)
+      {
+        tmp->right->parent = new_node;
+      }
+      delet tmp;
+      size_--;
+    }
+    if (new_node != fake_)
+    {
+      balance(new_node);
+    }
+    return res;
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -218,6 +348,60 @@ namespace karnauhova
     clearRecursive(node->left);
     clearRecursive(node->right);
     delete node;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  int AvlTree< Key, Value, Compare >::bfactor(Node* node) const noexcept
+  {
+    if (node == fake_ || node == nullptr)
+    {
+      return 0;
+    }
+    return height(node->left) - height(node->right);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Node* AvlTree< Key, Value, Compare >::balanceNode(Node* node) noexcept
+  {
+    updateHeight(node);
+    int factor = bfactor(node);
+    if (factor > 1)
+    {
+      if (bfactor(node->left) < 0)
+      {
+        node->left = rotateLeft(node->left);
+      }
+      return rotateRight(node);
+    }
+    if (factor < -1)
+    {
+      if (bfactor(node->right) > 0)
+      {
+        node->right = rotateRight(node->right);
+      }
+      return rotateLeft(node);
+    }
+    return node;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  void AvlTree< Key, Value, Compare >::balance(Node* node) noexcept
+  {
+    while (node != fake_)
+    {
+      Node* parent = node->parent;
+      bool m = (node == parent->left);
+      node = balance(node);
+      if (m)
+      {
+        parent->left = node;
+      }
+      else
+      {
+        parent->right = node;
+      }
+      node = parent;
+    }
   }
 
   template< typename Key, typename Value, typename Compare >
