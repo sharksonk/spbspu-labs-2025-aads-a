@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -15,7 +16,7 @@ namespace averenkov
   using CommandTree = Tree< std::string, DicFunc >;
   using str = const std::string&;
 
-  void loadDictionaries(const std::string& filename, DictionaryStorage& storage)
+ /* void loadDictionaries(const std::string& filename, DictionaryStorage& storage)
   {
     std::ifstream file(filename);
     if (!file)
@@ -74,7 +75,40 @@ namespace averenkov
 
       storage.push(dictName, dict);
     }
+  }*/
+
+void loadDictionaries(str filename, DictionaryStorage& storage)
+{
+  std::ifstream file(filename);
+  if (!file)
+  {
+    std::cerr << "file error\n";
+    return;
   }
+
+  std::string line;
+  while (std::getline(file, line))
+  {
+    if (line.empty())
+    {
+      continue;
+    }
+
+    std::istringstream iss(line);
+    std::string dictName;
+    iss >> dictName;
+
+    Dictionary dict;
+    int key;
+    std::string value;
+    while (iss >> key >> value)
+    {
+      dict.push(key, value);
+    }
+
+    storage.push(dictName, dict);
+  }
+}
 
  void printDictionary(DictionaryStorage& storage, const std::string& dictName)
   {
