@@ -16,7 +16,7 @@ namespace averenkov
   using CommandTree = Tree< std::string, DicFunc >;
   using str = const std::string&;
 
- /* void loadDictionaries(const std::string& filename, DictionaryStorage& storage)
+  void loadDictionaries(const std::string& filename, DictionaryStorage& storage)
   {
     std::ifstream file(filename);
     if (!file)
@@ -24,7 +24,6 @@ namespace averenkov
       std::cerr << "file error\n";
       return;
     }
-
     std::string line;
     while (std::getline(file, line))
     {
@@ -32,92 +31,55 @@ namespace averenkov
       {
         continue;
       }
-
       size_t space_pos = line.find(' ');
+      std::string dictName;
+      Dictionary dict;
       if (space_pos == std::string::npos)
       {
-        continue;
+        dictName = line;
       }
-
-      std::string dictName = line.substr(0, space_pos);
-      Dictionary dict;
-      size_t pos = space_pos + 1;
-
-      while (pos < line.length())
+      else
       {
-        size_t next_space = line.find(' ', pos);
-        if (next_space == std::string::npos)
+        dictName = line.substr(0, space_pos);
+        size_t pos = space_pos + 1;
+        while (pos < line.length())
         {
-          break;
-        }
-
-        std::string key_str = line.substr(pos, next_space - pos);
-        pos = next_space + 1;
-        next_space = line.find(' ', pos);
-        if (next_space == std::string::npos)
-        {
-          next_space = line.length();
-        }
-
-        std::string value = line.substr(pos, next_space - pos);
-        pos = next_space + 1;
-
-        try
-        {
-          int key = std::stoi(key_str);
-          dict.push(key, value);
-        }
-        catch (...)
-        {
-          continue;
+          size_t key_end = line.find(' ', pos);
+          if (key_end == std::string::npos)
+          {
+            break;
+          }
+          std::string key_str = line.substr(pos, key_end - pos);
+          pos = key_end + 1;
+          size_t value_end = line.find(' ', pos);
+          if (value_end == std::string::npos)
+          {
+            value_end = line.length();
+          }
+          std::string value = line.substr(pos, value_end - pos);
+          pos = value_end + 1;
+          try
+          {
+            int key = std::stoi(key_str);
+            dict.push(key, value);
+          }
+          catch (...)
+          {
+            continue;
+          }
         }
       }
-
       storage.push(dictName, dict);
     }
-  }*/
-
-void loadDictionaries(str filename, DictionaryStorage& storage)
-{
-  std::ifstream file(filename);
-  if (!file)
-  {
-    std::cerr << "file error\n";
-    return;
   }
 
-  std::string line;
-  while (std::getline(file, line))
-  {
-    if (line.empty())
-    {
-      continue;
-    }
-
-    std::istringstream iss(line);
-    std::string dictName;
-    iss >> dictName;
-
-    Dictionary dict;
-    int key;
-    std::string value;
-    while (iss >> key >> value)
-    {
-      dict.push(key, value);
-    }
-
-    storage.push(dictName, dict);
-  }
-}
-
- void printDictionary(DictionaryStorage& storage, const std::string& dictName)
+  void printDictionary(DictionaryStorage& storage, const std::string& dictName)
   {
     auto dict = storage.find(dictName);
     if (dict->second.empty())
     {
       throw std::out_of_range("<EMPTY>");
     }
-
     std::cout << dictName;
     for (auto it = dict->second.begin(); it != dict->second.end(); ++it)
     {
