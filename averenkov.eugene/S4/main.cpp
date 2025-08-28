@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
     }
     catch (const std::invalid_argument& e)
     {
-      std::cout << "<INVALID COMMAND>\n";
+      std::cout << e.what();
       return 0;
     }
   }
