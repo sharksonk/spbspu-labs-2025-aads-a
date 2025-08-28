@@ -1,5 +1,5 @@
-#ifndef BITREE_ITERATOR_HPP
-#define BITREE_ITERATOR_HPP
+#ifndef AVLTREE_CITERATOR_HPP
+#define AVLTREE_CITERATOR_HPP
 #include "avltree_node.hpp"
 #include <iostream>
 #include <cstddef>
@@ -27,43 +27,55 @@ namespace karnauhova
 
     bool operator==(const this_t& rhs) const noexcept;
     bool operator!=(const this_t& rhs) const noexcept;
+
+    // Оператор вывода для AvlTreeCIterator  
+   // template< typename K, typename V, typename C >
+    //friend std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it);
   private:
     Node* node_;
-    explicit AvlTreeCIterator(const Node* node) noexcept;
+    Node* fake_;
+    explicit AvlTreeCIterator(Node* node, Node* fake) noexcept;
   };
 
   template< typename Key, typename Value, typename Compare >
   AvlTreeCIterator< Key, Value, Compare >::AvlTreeCIterator() noexcept:
-    node_(nullptr)
+    node_(nullptr),
+    fake_(nullptr)
   {}
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeCIterator< Key, Value, Compare >::AvlTreeCIterator(const Node* node) noexcept:
-    node_(node)
+  AvlTreeCIterator< Key, Value, Compare >::AvlTreeCIterator(Node* node, Node* fake) noexcept:
+    node_(node),
+    fake_(fake)
   {}
 
   template< typename Key, typename Value, typename Compare >
   AvlTreeCIterator< Key, Value, Compare >&  AvlTreeCIterator< Key, Value, Compare >::operator++() noexcept
   {
-    if (node_->right)
+    if (node_ == fake_ || node_ == nullptr)
     {
-      Node* current = node_->right;
-      while (current->left)
+      return *this;
+    }
+
+    if (node_->right != fake_)
+    {
+      node_ = node_->right;
+      while (node_->left != fake_)
       {
-        current = current->left;
+        node_ = node_->left;
       }
-      this_t it{current};
-      return it;
     }
-    Node* parent = node_->parent;
-    Node* last = node_;
-    while (parent->left != last && parent->parent)
+    else
     {
-      last = last->parent;
-      parent = parent->parent;
+      Node* parent = node_->parent;
+      while (parent != fake_ && node_ == parent->right)
+      {
+        node_ = parent;
+        parent = parent->parent;
+      }
+      node_ = parent;
     }
-    this_t it{parent};
-    return it;
+    return *this;
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -77,25 +89,23 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   AvlTreeCIterator< Key, Value, Compare >&  AvlTreeCIterator< Key, Value, Compare >::operator--() noexcept
   {
-    if (node_->left)
+    if (node_->left != fake_)
     {
-      Node* current = node_->left;
-      while (current->right)
+      node_ = node_->left;
+      while (node_->right != fake_)
       {
-        current = current->right;
+        node_ = node_->right;
       }
-      this_t it{current};
-      return it;
-      }
-      Node* parent = node_->parent;
-      Node* last = node_;
-      while (parent->right != last && parent->parent)
+    }
+    else
+    {
+      while ((node_->parent != fake_) && (node_->parent->left == node_))
       {
-        last = last->parent;
-        parent = parent->parent;
+        node_ = node_->parent;
       }
-    this_t it{parent};
-    return it;
+      node_ = node_->parent;
+    }
+    return *this;
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -129,5 +139,14 @@ namespace karnauhova
   {
     return !(*this == rhs);
   }
+
+  /* template< typename K, typename V, typename C >
+  std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it)
+{
+  if (it.node_ == nullptr || it.node_ == it.fake_) {
+    return os << "cend()";
+  }
+  return os << "CIterator(" << it->first << ", " << it->second << ")";
+} */
 }
 #endif

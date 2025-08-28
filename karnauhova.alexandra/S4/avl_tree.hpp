@@ -23,6 +23,11 @@ namespace karnauhova
     AvlTree(AvlTree< Key, Value, Compare >&& oth) noexcept;
     ~AvlTree();
 
+    Value& operator[](const Key&);
+    const Value& operator[](const Key&) const;
+    Value& at(const Key&);
+    const Value& at(const Key&) const;
+    
     std::pair< Iter, bool > insert(const std::pair< Key, Value >& val);
 
     Iter erase(Iter) noexcept;
@@ -75,6 +80,37 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
+  Value& AvlTree< Key, Value, Compare >::operator[](const Key& key)
+  {
+    auto it = insert(std::make_pair(key, Value()));
+    return it.first->second;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  const Value& AvlTree< Key, Value, Compare >::operator[](const Key& key) const
+  {
+    CIter it = find(key);
+    return it->second;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  Value& AvlTree< Key, Value, Compare >::at(const Key& key)
+  {
+    return const_cast< Value& >(static_cast< const AvlTree< Key, Value, Compare >& >(*this).at(key));
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  const Value& AvlTree< Key, Value, Compare >::at(const Key& key) const
+  {
+    CIter it = find(key);
+    if (it == cend())
+    {
+      throw std::out_of_range("No such key");
+    }
+    return it->second;
+  }
+
+  template< typename Key, typename Value, typename Compare >
   std::pair< AvlTreeIterator< Key, Value, Compare >, bool > AvlTree< Key, Value, Compare >::insert(const std::pair< Key, Value >& val)
   {
     Node* newNode = nullptr;
@@ -86,29 +122,29 @@ namespace karnauhova
         fake_->left = newNode;
         newNode->parent = newNode->left = newNode->right = fake_;
         size_ = 1;
-        return {Iter(newNode), true};
+        return {Iter(newNode, fake_), true};
       }
       Node* tmp = fake_->left;
       Node* parent = fake_;
       while (tmp != fake_)
       {
         parent = tmp;
-        if (comp_(newNode->data1.first, tmp->data1.first))
+        if (comp_(newNode->data.first, tmp->data.first))
         {
           tmp = tmp->left;
         }
-        else if (comp_(tmp->data1.first, newNode->data1.first))
+        else if (comp_(tmp->data.first, newNode->data.first))
         {
           tmp = tmp->right;
         }
         else
         {
           delete newNode;
-          return {Iter(tmp), false};
+          return {Iter(tmp, fake_), false};
         }
       }
       newNode->parent = parent;
-      if (cmp_(parent->data1.first, newNode->data1.first))
+      if (comp_(parent->data.first, newNode->data.first))
       {
         parent->right = newNode;
       }
@@ -118,7 +154,7 @@ namespace karnauhova
       }
       balance(fake_->left);
       size_++;
-      return {Iter(newNode), true};
+      return {Iter(newNode, fake_), true};
     }
     catch (const std::exception& e)
     {
@@ -134,7 +170,7 @@ namespace karnauhova
       return end();
     }
     Node* delet = it.node_;
-    Iter res(delet);
+    Iter res(delet, fake_);
     ++res;
     Node* new_node = nullptr;
 
@@ -189,7 +225,7 @@ namespace karnauhova
       {
         tmp = tmp->left;
       }
-      std::swap(delet->data1, tmp->data1);
+      std::swap(delet->data, tmp->data);
       new_node = tmp->parent;
       if (new_node->left == tmp)
       {
@@ -203,7 +239,7 @@ namespace karnauhova
       {
         tmp->right->parent = new_node;
       }
-      delet tmp;
+      delete tmp;
       size_--;
     }
     if (new_node != fake_)
@@ -216,13 +252,13 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::end() const noexcept
   {
-    return Iter(fake_);
+    return Iter(fake_, fake_);
   }
 
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::CIter AvlTree< Key, Value, Compare >::cend() const noexcept
   {
-    return CIter(fake_);
+    return CIter(fake_, fake_);
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -237,7 +273,7 @@ namespace karnauhova
     {
       tmp = tmp->left;
     }
-    return Iter(tmp);
+    return Iter(tmp, fake_);
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -252,7 +288,7 @@ namespace karnauhova
     {
       tmp = tmp->left;
     }
-    return CIter(tmp);
+    return CIter(tmp, fake_);
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -300,17 +336,17 @@ namespace karnauhova
     Node* current = fake_->left;
     while (current != fake_)
     {
-      if (cmp_(key, current->data.first))
+      if (comp_(key, current->data.first))
       {
         current = current->left;
       }
-      else if (cmp_(current->data.first, key))
+      else if (comp_(current->data.first, key))
       {
         current = current->right;
       }
       else
       {
-        return Iter(current);
+        return Iter(current, fake_);
       }
     }
     return end();
@@ -322,17 +358,17 @@ namespace karnauhova
     Node* current = fake_->left;
     while (current != fake_)
     {
-      if (cmp_(key, current->data.first))
+      if (comp_(key, current->data.first))
       {
         current = current->left;
       }
-      else if (cmp_(current->data.first, key))
+      else if (comp_(current->data.first, key))
       {
         current = current->right;
       }
       else
       {
-        return CIter(current);
+        return CIter(current, fake_);
       }
     }
     return cend();
@@ -391,7 +427,7 @@ namespace karnauhova
     {
       Node* parent = node->parent;
       bool m = (node == parent->left);
-      node = balance(node);
+      node = balanceNode(node);
       if (m)
       {
         parent->left = node;
@@ -446,7 +482,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::Node* AvlTree< Key, Value, Compare >::rotateLeft(Node* node) noexcept
   {
-    if (!node || node->left == fake_ || node == fake_)
+    if (!node || node->right == fake_ || node == fake_)
     {
       return node;
     }
