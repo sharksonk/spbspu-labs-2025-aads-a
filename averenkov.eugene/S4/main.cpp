@@ -108,16 +108,16 @@ namespace averenkov
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
-    auto dict1 = storage.find(name1);
-    auto dict2 = storage.find(name2);
-    if (dict1 == storage.end() || dict2 == storage.end())
+    if (storage.find(name1) == storage.end() || storage.find(name2) == storage.end())
     {
       throw std::invalid_argument("<INVALID COMMAND>");
     }
     Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    auto& dict1 = storage.find(name1)->second;
+    auto& dict2 = storage.find(name2)->second;
+    for (auto it = dict1.begin(); it != dict1.end(); ++it)
     {
-      if (dict2->second.find(it->first) == dict2->second.end())
+      if (dict2.find(it->first) == dict2.end())
       {
         result.push(it->first, it->second);
       }
@@ -137,16 +137,16 @@ namespace averenkov
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
-    auto dict1 = storage.find(name1);
-    auto dict2 = storage.find(name2);
-    if (dict1 == storage.end() || dict2 == storage.end())
+    if (storage.find(name1) == storage.end() || storage.find(name2) == storage.end())
     {
       throw std::invalid_argument("<INVALID COMMAND>");
     }
     Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    auto& dict1 = storage.find(name1)->second;
+    auto& dict2 = storage.find(name2)->second;
+    for (auto it = dict1.begin(); it != dict1.end(); ++it)
     {
-      if (dict2->second.find(it->first) != dict2->second.end())
+      if (dict2.find(it->first) != dict2.end())
       {
         result.push(it->first, it->second);
       }
@@ -166,18 +166,18 @@ namespace averenkov
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
-    auto dict1 = storage.find(name1);
-    auto dict2 = storage.find(name2);
-    if (dict1 == storage.end() || dict2 == storage.end())
+    if (storage.find(name1) == storage.end() || storage.find(name2) == storage.end())
     {
       throw std::invalid_argument("<INVALID COMMAND>");
     }
     Dictionary result;
-    for (auto it = dict1->second.begin(); it != dict1->second.end(); ++it)
+    auto& dict1 = storage.find(name1)->second;
+    auto& dict2 = storage.find(name2)->second;
+    for (auto it = dict1.begin(); it != dict1.end(); ++it)
     {
       result.push(it->first, it->second);
     }
-    for (auto it = dict2->second.begin(); it != dict2->second.end(); ++it)
+    for (auto it = dict2.begin(); it != dict2.end(); ++it)
     {
       if (result.find(it->first) == result.end())
       {
