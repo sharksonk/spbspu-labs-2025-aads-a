@@ -30,12 +30,12 @@ namespace karnauhova
     const Value& operator[](const Key&) const;
     Value& at(const Key&);
     const Value& at(const Key&) const;
-    
+
     std::pair< Iter, bool > insert(const std::pair< Key, Value >& val);
 
     Iter erase(Iter) noexcept;
     Iter erase(CIter) noexcept;
-    
+
     Iter begin() const noexcept;
     Iter end() const noexcept;
     CIter cbegin() const noexcept;

@@ -28,7 +28,7 @@ namespace karnauhova
     bool operator==(const this_t& rhs) const noexcept;
     bool operator!=(const this_t& rhs) const noexcept;
 
-    // Оператор вывода для AvlTreeCIterator  
+    // Оператор вывода для AvlTreeCIterator
     template< typename K, typename V, typename C >
     friend std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it);
   private:
