@@ -133,10 +133,6 @@ void complement(DictionaryStorage& storage, const std::string& args)
   std::string name2 = args.substr(space2 + 1);
   auto dict1_iter = storage.find(name1);
   auto dict2_iter = storage.find(name2);
-  if (dict1_iter == storage.end() || dict2_iter == storage.end())
-  {
-    throw std::invalid_argument("<INVALID COMMAND>");
-  }
   Dictionary result;
   Dictionary& dict1 = dict1_iter->second;
   Dictionary& dict2 = dict2_iter->second;
