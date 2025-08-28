@@ -6,6 +6,172 @@ using namespace karnauhova;
 
 BOOST_AUTO_TEST_SUITE(avl_tree)
 
+BOOST_AUTO_TEST_CASE(default_constructor)
+{
+  AvlTree< int, std::string > tree;
+  BOOST_TEST(tree.size() == 0);
+  BOOST_TEST(tree.empty());
+  BOOST_TEST(tree.begin() == tree.end());
+}
+
+BOOST_AUTO_TEST_CASE(copy_constructor)
+{
+  AvlTree< int, std::string > original;
+  original.insert({1, "one"});
+  original.insert({2, "two"});
+  original.insert({3, "three"});
+
+  AvlTree< int, std::string > copy(original);
+  
+  BOOST_TEST(copy.size() == 3);
+  BOOST_TEST(copy.find(1) != copy.end());
+  BOOST_TEST(copy.find(2) != copy.end());
+  BOOST_TEST(copy.find(3) != copy.end());
+  BOOST_TEST(copy[1] == "one");
+  BOOST_TEST(copy[2] == "two");
+  BOOST_TEST(copy[3] == "three");
+  
+  // Проверяем, что оригинал не изменился
+  BOOST_TEST(original.size() == 3);
+}
+
+BOOST_AUTO_TEST_CASE(move_constructor)
+{
+  AvlTree< int, std::string > original;
+  original.insert({1, "one"});
+  original.insert({2, "two"});
+  original.insert({3, "three"});
+
+  AvlTree< int, std::string > moved(std::move(original));
+  
+  BOOST_TEST(moved.size() == 3);
+  BOOST_TEST(moved.find(1) != moved.end());
+  BOOST_TEST(moved.find(2) != moved.end());
+  BOOST_TEST(moved.find(3) != moved.end());
+  BOOST_TEST(moved[1] == "one");
+  BOOST_TEST(moved[2] == "two");
+  BOOST_TEST(moved[3] == "three");
+  
+  // Оригинал должен быть пустым после перемещения
+  BOOST_TEST(original.size() == 0);
+  BOOST_TEST(original.empty());
+}
+
+BOOST_AUTO_TEST_CASE(copy_assignment)
+{
+  AvlTree< int, std::string > original;
+  original.insert({1, "one"});
+  original.insert({2, "two"});
+  original.insert({3, "three"});
+
+  AvlTree< int, std::string > copy;
+  copy = original;
+  
+  BOOST_TEST(copy.size() == 3);
+  BOOST_TEST(copy[1] == "one");
+  BOOST_TEST(copy[2] == "two");
+  BOOST_TEST(copy[3] == "three");
+  
+  // Проверяем self-assignment
+  copy = copy;
+  BOOST_TEST(copy.size() == 3);
+  BOOST_TEST(copy[1] == "one");
+}
+
+BOOST_AUTO_TEST_CASE(move_assignment)
+{
+  AvlTree< int, std::string > original;
+  original.insert({1, "one"});
+  original.insert({2, "two"});
+  original.insert({3, "three"});
+
+  AvlTree< int, std::string > moved;
+  moved = std::move(original);
+  
+  BOOST_TEST(moved.size() == 3);
+  BOOST_TEST(moved[1] == "one");
+  BOOST_TEST(moved[2] == "two");
+  BOOST_TEST(moved[3] == "three");
+  
+  // Оригинал должен быть пустым после перемещения
+  BOOST_TEST(original.size() == 0);
+  BOOST_TEST(original.empty());
+  
+  // Проверяем self-assignment
+  moved = std::move(moved);
+  BOOST_TEST(moved.size() == 3);
+}
+
+BOOST_AUTO_TEST_CASE(subscript_operator)
+{
+  AvlTree< int, std::string > tree;
+  
+  // Оператор [] для вставки
+  tree[1] = "one";
+  tree[2] = "two";
+  tree[3] = "three";
+  
+  BOOST_TEST(tree.size() == 3);
+  BOOST_TEST(tree[1] == "one");
+  BOOST_TEST(tree[2] == "two");
+  BOOST_TEST(tree[3] == "three");
+  
+  // Оператор [] для модификации
+  tree[2] = "modified";
+  BOOST_TEST(tree[2] == "modified");
+  
+  // Оператор [] для создания нового элемента
+  tree[4] = "four";
+  BOOST_TEST(tree.size() == 4);
+  BOOST_TEST(tree[4] == "four");
+}
+
+BOOST_AUTO_TEST_CASE(const_subscript_operator)
+{
+  AvlTree< int, std::string > tree;
+  tree.insert({1, "one"});
+  tree.insert({2, "two"});
+  tree.insert({3, "three"});
+
+  const AvlTree< int, std::string >& const_tree = tree;
+  
+  BOOST_TEST(const_tree[1] == "one");
+  BOOST_TEST(const_tree[2] == "two");
+  BOOST_TEST(const_tree[3] == "three");
+}
+
+BOOST_AUTO_TEST_CASE(at_method)
+{
+  AvlTree< int, std::string > tree;
+  tree.insert({1, "one"});
+  tree.insert({2, "two"});
+  tree.insert({3, "three"});
+
+  BOOST_TEST(tree.at(1) == "one");
+  BOOST_TEST(tree.at(2) == "two");
+  BOOST_TEST(tree.at(3) == "three");
+  
+  // Метод at должен бросать исключение для несуществующего ключа
+  BOOST_CHECK_THROW(tree.at(4), std::out_of_range);
+}
+
+BOOST_AUTO_TEST_CASE(const_at_method)
+{
+  AvlTree< int, std::string > tree;
+  tree.insert({1, "one"});
+  tree.insert({2, "two"});
+  tree.insert({3, "three"});
+
+  const AvlTree< int, std::string >& const_tree = tree;
+  
+  BOOST_TEST(const_tree.at(1) == "one");
+  BOOST_TEST(const_tree.at(2) == "two");
+  BOOST_TEST(const_tree.at(3) == "three");
+  
+  // Const метод at также должен бросать исключение
+  BOOST_CHECK_THROW(const_tree.at(4), std::out_of_range);
+}
+
 BOOST_AUTO_TEST_CASE(constructors)
 {
   AvlTree< size_t, std::string > tree;

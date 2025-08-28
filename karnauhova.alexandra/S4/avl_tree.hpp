@@ -23,6 +23,9 @@ namespace karnauhova
     AvlTree(AvlTree< Key, Value, Compare >&& oth) noexcept;
     ~AvlTree();
 
+    AvlTree< Key, Value, Compare >& operator=(const AvlTree< Key, Value, Compare >&);
+    AvlTree< Key, Value, Compare >& operator=(AvlTree< Key, Value, Compare >&&) noexcept;
+
     Value& operator[](const Key&);
     const Value& operator[](const Key&) const;
     Value& at(const Key&);
@@ -70,6 +73,46 @@ namespace karnauhova
     comp_()
   {
     fake_->left = fake_->right = fake_;
+    fake_->height = -1;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTree< Key, Value, Compare >::AvlTree(const AvlTree< Key, Value, Compare >& oth):
+    AvlTree()
+  {
+    for (CIter it = oth.cbegin(); it != oth.cend(); ++it)
+    {
+      insert(*it);
+    }
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTree< Key, Value, Compare >::AvlTree(AvlTree< Key, Value, Compare >&& oth) noexcept:
+    fake_(std::exchange(oth.fake_, nullptr)),
+    size_(std::exchange(oth.size_, 0)),
+    comp_(std::move(oth.comp_))
+  {}
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTree< Key, Value, Compare >& AvlTree< Key, Value, Compare >::operator=(const AvlTree< Key, Value, Compare >& rhs)
+  {
+    if (this != std::addressof(rhs))
+    {
+      AvlTree< Key, Value, Compare > temp(rhs);
+      swap(temp);
+    }
+    return *this;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTree< Key, Value, Compare >& AvlTree< Key, Value, Compare >::operator=(AvlTree< Key, Value, Compare >&& rhs) noexcept
+  {
+    if (this != std::addressof(rhs))
+    {
+      AvlTree< Key, Value, Compare > temp(std::move(rhs));
+      swap(temp);
+    }
+    return *this;
   }
 
   template< typename Key, typename Value, typename Compare >

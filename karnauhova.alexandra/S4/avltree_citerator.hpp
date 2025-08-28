@@ -29,8 +29,8 @@ namespace karnauhova
     bool operator!=(const this_t& rhs) const noexcept;
 
     // Оператор вывода для AvlTreeCIterator  
-   // template< typename K, typename V, typename C >
-    //friend std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it);
+    template< typename K, typename V, typename C >
+    friend std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it);
   private:
     Node* node_;
     Node* fake_;
@@ -140,13 +140,13 @@ namespace karnauhova
     return !(*this == rhs);
   }
 
-  /* template< typename K, typename V, typename C >
+  template< typename K, typename V, typename C >
   std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it)
 {
   if (it.node_ == nullptr || it.node_ == it.fake_) {
     return os << "cend()";
   }
   return os << "CIterator(" << it->first << ", " << it->second << ")";
-} */
+}
 }
 #endif
