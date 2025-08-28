@@ -92,7 +92,7 @@ namespace averenkov
     std::cout << "\n";
   }
 
-/*  void complement(DictionaryStorage& storage, const std::string& args)
+//  void complement(DictionaryStorage& storage, const std::string& args)
   {
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
