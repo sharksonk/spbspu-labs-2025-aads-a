@@ -96,7 +96,7 @@ namespace averenkov
     std::cout << "\n";
   }
 
-  void complement(DictionaryStorage& storage, const std::string& args)
+/*  void complement(DictionaryStorage& storage, const std::string& args)
   {
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
@@ -123,7 +123,36 @@ namespace averenkov
       }
     }
     storage.push(newName, result);
+  }*/
+void complement(DictionaryStorage& storage, const std::string& args)
+{
+  size_t space1 = args.find(' ');
+  size_t space2 = args.find(' ', space1 + 1);
+  if (space1 == std::string::npos || space2 == std::string::npos)
+  {
+    throw std::invalid_argument("<INVALID COMMAND>");
   }
+  std::string newName = args.substr(0, space1);
+  std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
+  std::string name2 = args.substr(space2 + 1);
+  auto dict1_iter = storage.find(name1);
+  auto dict2_iter = storage.find(name2);
+  if (dict1_iter == storage.end() || dict2_iter == storage.end())
+  {
+    throw std::invalid_argument("<INVALID COMMAND>");
+  }
+  Dictionary result;
+  Dictionary& dict1 = dict1_iter->second;
+  Dictionary& dict2 = dict2_iter->second;
+  for (auto it = dict1.begin(); it != dict1.end(); ++it)
+  {
+    if (dict2.find(it->first) == dict2.end())
+    {
+      result.push(it->first, it->second);
+    }
+  }
+  storage.push(newName, result);
+}
 
   void intersect(DictionaryStorage& storage, const std::string& args)
   {
