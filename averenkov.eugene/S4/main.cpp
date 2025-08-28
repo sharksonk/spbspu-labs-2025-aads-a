@@ -83,10 +83,6 @@ namespace averenkov
     {
       throw std::out_of_range("<EMPTY>");
     }
-    if (dict == storage.end())
-    {
-      throw std::invalid_argument("<INVALID COMMAND>");
-    }
 
     std::cout << dictName;
     for (auto it = dict->second.begin(); it != dict->second.end(); ++it)
