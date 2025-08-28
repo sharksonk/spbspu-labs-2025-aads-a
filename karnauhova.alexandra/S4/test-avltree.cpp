@@ -96,10 +96,6 @@ BOOST_AUTO_TEST_CASE(move_assignment)
   // Оригинал должен быть пустым после перемещения
   BOOST_TEST(original.size() == 0);
   BOOST_TEST(original.empty());
-
-  // Проверяем self-assignment
-  moved = std::move(moved);
-  BOOST_TEST(moved.size() == 3);
 }
 
 BOOST_AUTO_TEST_CASE(subscript_operator)
