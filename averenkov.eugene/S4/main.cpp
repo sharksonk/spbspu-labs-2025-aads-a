@@ -79,9 +79,13 @@ namespace averenkov
  void printDictionary(DictionaryStorage& storage, const std::string& dictName)
   {
     auto dict = storage.find(dictName);
-    if (dict == storage.end() || dict->second.empty())
+    if (dict->second.empty())
     {
       throw std::out_of_range("<EMPTY>");
+    }
+    if (dict == storage.end())
+    {
+      throw std::invalid_argument("<INVALID COMMAND>");
     }
 
     std::cout << dictName;
@@ -97,6 +101,10 @@ namespace averenkov
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
     size_t space2 = args.find(' ', space1 + 1);
+    if (space1 == std::string::npos || space2 == std::string::npos)
+    {
+      throw std::invalid_argument("<INVALID COMMAND>");
+    }
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
@@ -122,6 +130,10 @@ namespace averenkov
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
     size_t space2 = args.find(' ', space1 + 1);
+    if (space1 == std::string::npos || space2 == std::string::npos)
+    {
+      throw std::invalid_argument("<INVALID COMMAND>");
+    }
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
@@ -147,6 +159,10 @@ namespace averenkov
     size_t pos = 0;
     size_t space1 = args.find(' ', pos);
     size_t space2 = args.find(' ', space1 + 1);
+    if (space1 == std::string::npos || space2 == std::string::npos)
+    {
+      throw std::invalid_argument("<INVALID COMMAND>");
+    }
     std::string newName = args.substr(pos, space1);
     std::string name1 = args.substr(space1 + 1, space2 - space1 - 1);
     std::string name2 = args.substr(space2 + 1);
