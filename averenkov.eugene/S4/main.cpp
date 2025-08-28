@@ -31,6 +31,13 @@ namespace averenkov
       {
         continue;
       }
+      size_t start = line.find_first_not_of(" ");
+      size_t end = line.find_last_not_of(" ");
+      if (start == std::string::npos)
+      {
+        continue;
+      }
+      line = line.substr(start, end - start + 1);
       size_t space_pos = line.find(' ');
       std::string dictName;
       Dictionary dict;
@@ -44,6 +51,14 @@ namespace averenkov
         size_t pos = space_pos + 1;
         while (pos < line.length())
         {
+          while (pos < line.length() && line[pos] == ' ')
+          {
+            pos++;
+          }
+          if (pos >= line.length())
+          {
+            break;
+          }
           size_t key_end = line.find(' ', pos);
           if (key_end == std::string::npos)
           {
@@ -51,6 +66,14 @@ namespace averenkov
           }
           std::string key_str = line.substr(pos, key_end - pos);
           pos = key_end + 1;
+          while (pos < line.length() && line[pos] == ' ')
+          {
+            pos++;
+          }
+          if (pos >= line.length())
+          {
+            break;
+          }
           size_t value_end = line.find(' ', pos);
           if (value_end == std::string::npos)
           {
@@ -76,6 +99,10 @@ namespace averenkov
   void printDictionary(DictionaryStorage& storage, const std::string& dictName)
   {
     auto dict = storage.find(dictName);
+    if (dict == storage.end())
+    {
+      throw std::invalid_argument("<INVALID COMMAND>");
+    }
     if (dict->second.empty())
     {
       throw std::out_of_range("<EMPTY>");
@@ -217,6 +244,10 @@ int main(int argc, char* argv[])
       std::cout << "<EMPTY>\n";
     }
     catch (const std::invalid_argument& e)
+    {
+      std::cout << "<INVALID COMMAND>\n";
+    }
+    catch (...)
     {
       std::cout << "<INVALID COMMAND>\n";
     }
