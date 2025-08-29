@@ -31,6 +31,9 @@ namespace averenkov
     void pop_front();
     void pop_back() noexcept;
 
+    const T& operator[](size_t index) const;
+    T& operator[](size_t index);
+
   private:
     T* data_;
     size_t last_;
@@ -168,6 +171,26 @@ namespace averenkov
     {
       --last_;
     }
+  }
+
+  template< class T >
+  const T& Array< T >::operator[](size_t index) const
+  {
+    if (index >= size())
+    {
+      throw std::out_of_range("Index out of range");
+    }
+    return data_[first_ + index];
+  }
+
+  template< class T >
+  T& Array< T >::operator[](size_t index)
+  {
+    if (index >= size())
+    {
+      throw std::out_of_range("Index out of range");
+    }
+    return data_[first_ + index];
   }
 
   template< class T >
