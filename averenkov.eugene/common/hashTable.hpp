@@ -426,34 +426,39 @@ namespace averenkov
   }
 
   template < class Key, class Value, class Hash, class Equal >
-  typename HashTable< Key, Value, Hash, Equal >::iterator HashTable< Key, Value, Hash, Equal >::find(const Key& key)
+  typename HashTable< Key, Value, Hash, Equal >::iterator
+  HashTable< Key, Value, Hash, Equal >::find(const Key& key)
   {
     if (empty())
     {
       return end();
     }
-
     size_t index = hash_to_index(key);
     size_t i = 0;
-
     while (i < table_.size())
     {
       size_t current_index = (index + i * i) % table_.size();
       auto& bucket = table_[current_index];
-
-      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted)
       {
-        return iterator(&table_[current_index], &table_[0] + table_.size());
+        try
+        {
+          if (key_equal_(bucket.data.first, key))
+          {
+            return iterator(&table_[current_index], &table_[0] + table_.size());
+          }
+        }
+        catch (...)
+        {
+          continue;
+        }
       }
-
       if (!bucket.occupied && !bucket.deleted)
       {
         break;
       }
-
       i++;
     }
-
     return end();
   }
 
