@@ -28,13 +28,13 @@ BOOST_AUTO_TEST_CASE(LNRTraverseTest)
 
   KeySum ks;
   ks = tree.traverse_lnr(ks);
-  BOOST_TEST(ks.values_ == "two three four five eight");
+  BOOST_TEST(ks.values_ == "two three four five eight ");
   BOOST_TEST(ks.sum_ == 22);
 
   const auto& constTree = tree;
   KeySum ks1;
   ks1 = constTree.traverse_lnr(ks1);
-  BOOST_TEST(ks1.values_ == "two three four five eight");
+  BOOST_TEST(ks1.values_ == "two three four five eight ");
   BOOST_TEST(ks1.sum_ == 22);
 }
 
@@ -44,13 +44,13 @@ BOOST_AUTO_TEST_CASE(RNLTraverseTest)
 
   KeySum ks;
   ks = tree.traverse_rnl(ks);
-  BOOST_TEST(ks.values_ == "eight five four three two one");
+  BOOST_TEST(ks.values_ == "eight five four three two ");
   BOOST_TEST(ks.sum_ == 22);
 
   const auto& constTree = tree;
   KeySum ks1;
   ks1 = constTree.traverse_rnl(ks1);
-  BOOST_TEST(ks1.values_ == "eight five four three two one");
+  BOOST_TEST(ks1.values_ == "eight five four three two ");
   BOOST_TEST(ks1.sum_ == 22);
 }
 
@@ -60,13 +60,13 @@ BOOST_AUTO_TEST_CASE(BreadthTraverseTest)
 
   KeySum ks;
   ks = tree.traverse_breadth(ks);
-  BOOST_TEST(ks.values_ == "five three seven two four six eight");
+  BOOST_TEST(ks.values_ == "five three eight two four ");
   BOOST_TEST(ks.sum_ == 22);
 
   const auto& constTree = tree;
   KeySum ks1;
   ks1 = constTree.traverse_breadth(ks1);
-  BOOST_TEST(ks1.values_ == "five three seven two four six eight");
+  BOOST_TEST(ks1.values_ == "five three eight two four ");
   BOOST_TEST(ks1.sum_ == 22);
 }
 
@@ -77,5 +77,5 @@ BOOST_AUTO_TEST_CASE(EmptyTreeTraverseTest)
   KeySum ks;
   ks = emptyTree.traverse_lnr(ks);
   BOOST_TEST(ks.sum_ == 0);
-  BOOST_TEST(ks.values_ == "five");
+  BOOST_TEST(ks.values_ == "");
 }

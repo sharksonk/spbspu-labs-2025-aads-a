@@ -38,10 +38,10 @@ int main(int argc, char* argv[])
   try
   {
     averenkov::KeySum proc;
-//    if (mode == "ascending")
-//    {
-//      proc = bst.traverse_lnr(proc);
-//    }
+    if (mode == "ascending")
+    {
+      proc = bst.traverse_lnr(proc);
+    }
      if (mode == "descending")
     {
       proc = bst.traverse_rnl(proc);
