@@ -17,6 +17,8 @@ namespace karnauhova
     using Node = AvlTreeNode< Key, Value >;
     using Iter = AvlTreeIterator< Key, Value, Compare >;
     using CIter = AvlTreeCIterator< Key, Value, Compare >;
+    using pairIter = std::pair< Iter, Iter >;
+    using pairCIter = std::pair< CIter, CIter >;
 
     AvlTree();
     AvlTree(const AvlTree< Key, Value, Compare >&);
@@ -58,8 +60,8 @@ namespace karnauhova
     CIter lower_bound(const Key&) const noexcept;
     Iter upper_bound(const Key&) noexcept;
     CIter upper_bound(const Key&) const noexcept;
-    std::pair< Iter, Iter > equal_range(const Key&) noexcept;
-    std::pair< CIter, CIter > equal_range(const Key&) const noexcept;
+    pairIter equal_range(const Key&) noexcept;
+    pairCIter equal_range(const Key&) const noexcept;
 
     void clear() noexcept;
     void swap(AvlTree< Key, Value, Compare >& oth) noexcept;
@@ -495,13 +497,13 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  std::pair< AvlTreeIterator< Key, Value, Compare >, AvlTreeIterator< Key, Value, Compare > > AvlTree< Key, Value, Compare >::equal_range(const Key& key) noexcept
+  typename AvlTree< Key, Value, Compare >::pairIter AvlTree< Key, Value, Compare >::equal_range(const Key& key) noexcept
   {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Compare >
-  std::pair< AvlTreeCIterator< Key, Value, Compare >, AvlTreeCIterator< Key, Value, Compare > > AvlTree< Key, Value, Compare >::equal_range(const Key& key) const noexcept
+  typename AvlTree< Key, Value, Compare >::pairCIter AvlTree< Key, Value, Compare >::equal_range(const Key& key) const noexcept
   {
     return std::make_pair(CIter(lower_bound(key)), CIter(upper_bound(key)));
   }
