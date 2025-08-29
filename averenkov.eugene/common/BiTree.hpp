@@ -7,7 +7,7 @@
 #include <utility>
 #include <initializer_list>
 #include <stdexcept>
-#include <stack>
+#include <stack.hpp>
 
 namespace averenkov
 {
@@ -477,7 +477,7 @@ namespace averenkov
     }
     NodeType* NodeTypeo_erase = pos.current;
     NodeType* parent = NodeTypeo_erase->parent;
-    std::stack< NodeType* > path;
+    Stack< NodeType* > path;
     if (NodeTypeo_erase->left == fake_root_ && NodeTypeo_erase->right == fake_root_)
     {
       if (parent->left == NodeTypeo_erase)
