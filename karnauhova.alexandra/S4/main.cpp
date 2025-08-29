@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   {
     input_trees(file, set_trees);
   }
-  catch(const std::exception& e)
+  catch (const std::exception& e)
   {
     std::cerr << "1" << e.what() << '\n';
     return 1;
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
       {
         std::string name_tree;
         std::cin >> name_tree;
-        print_dataset(std::cout, name_tree, set_trees);
+        printDataset(std::cout, name_tree, set_trees);
       }
       else if (name_operat == "complement")
       {
@@ -90,14 +90,14 @@ int main(int argc, char* argv[])
         std::string name_tree1;
         std::string name_tree2;
         std::cin >> name_new_tree >> name_tree1 >> name_tree2;
-        union_data(name_new_tree, name_tree1, name_tree2, set_trees);
+        unionData(name_new_tree, name_tree1, name_tree2, set_trees);
       }
       else
       {
         throw std::logic_error("Error in commands");
       }
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
       std::cout << "<INVALID COMMAND>\n";
       std::cin.clear();

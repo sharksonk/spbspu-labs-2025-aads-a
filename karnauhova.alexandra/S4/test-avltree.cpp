@@ -10,18 +10,18 @@ BOOST_AUTO_TEST_SUITE(avl_tree)
 
 BOOST_AUTO_TEST_CASE(constructors_and_assignment)
 {
-  AvlTree<int, std::string> tree1;
+  AvlTree< int, std::string > tree1;
   BOOST_TEST(tree1.empty());
 
   tree1.insert({1, "one"});
   tree1.insert({2, "two"});
 
-  AvlTree<int, std::string> tree2(tree1);
+  AvlTree< int, std::string > tree2(tree1);
   BOOST_TEST(tree2.size() == 2);
   BOOST_TEST(tree2.count(1) == 1);
   BOOST_TEST(tree2.count(2) == 1);
 
-  AvlTree<int, std::string> tree3(std::move(tree1));
+  AvlTree< int, std::string > tree3(std::move(tree1));
   BOOST_TEST(tree3.size() == 2);
   BOOST_TEST(tree1.empty());
 
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(constructors_and_assignment)
 
 BOOST_AUTO_TEST_CASE(element_access_operations)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   tree.insert({1, "one"});
   tree.insert({2, "two"});
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(element_access_operations)
 
 BOOST_AUTO_TEST_CASE(insert_operations)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
 
   auto result1 = tree.insert({1, "one"});
   BOOST_TEST(result1.second == true);
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(insert_operations)
   BOOST_TEST(tree.count(2) == 1);
   BOOST_TEST(tree.count(3) == 1);
 
-  std::vector<std::pair<int, std::string>> vec = {{4, "four"}, {5, "five"}};
+  std::vector< std::pair< int, std::string > > vec = {{4, "four"}, {5, "five"}};
   tree.insert(vec.begin(), vec.end());
   BOOST_TEST(tree.size() == 5);
   BOOST_TEST(tree.count(4) == 1);
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(insert_operations)
 
 BOOST_AUTO_TEST_CASE(erase_operations)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   for (int i = 1; i <= 5; ++i) tree.insert({i, "value"});
 
   auto it = tree.find(2);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(erase_operations)
 
 BOOST_AUTO_TEST_CASE(iteration_and_traversal)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   tree.insert({2, "two"});
   tree.insert({1, "one"});
   tree.insert({3, "three"});
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(iteration_and_traversal)
 
 BOOST_AUTO_TEST_CASE(lookup_operations)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   tree.insert({1, "one"});
   tree.insert({2, "two"});
 
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(lookup_operations)
 
 BOOST_AUTO_TEST_CASE(tree_modifications)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   tree.insert({1, "one"});
   tree.insert({2, "two"});
 
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(tree_modifications)
   BOOST_TEST(tree.size() == 0);
 
   tree.insert({3, "three"});
-  AvlTree<int, std::string> other;
+  AvlTree< int, std::string > other;
   other.insert({4, "four"});
 
   tree.swap(other);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(tree_modifications)
 
 BOOST_AUTO_TEST_CASE(bound_operations)
 {
-  AvlTree<int, std::string> tree;
+  AvlTree< int, std::string > tree;
   tree.insert({1, "one"});
   tree.insert({3, "three"});
   tree.insert({5, "five"});

@@ -1,6 +1,6 @@
 #include "dataset_work.hpp"
 
-void karnauhova::print_dataset(std::ostream& out, std::string named, DataTree& dataset)
+void karnauhova::printDataset(std::ostream& out, std::string named, DataTree& dataset)
 {
   TreeKey& tree = dataset.at(named);
   if (tree.empty())
@@ -49,7 +49,7 @@ void karnauhova::intersect(std::string name_new_tree, std::string name_tree1, st
   set_trees[name_new_tree] = new_tree;
 }
 
-void karnauhova::union_data(std::string name_new_tree, std::string name_tree1, std::string name_tree2, DataTree& set_trees)
+void karnauhova::unionData(std::string name_new_tree, std::string name_tree1, std::string name_tree2, DataTree& set_trees)
 {
   TreeKey new_tree;
   TreeKey& tree1 = set_trees.at(name_tree1);

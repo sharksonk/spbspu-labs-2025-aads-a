@@ -1,9 +1,7 @@
 #ifndef AVLTREE_ITERATOR_HPP
 #define AVLTREE_ITERATOR_HPP
 #include "avltree_node.hpp"
-#include <iostream>
 #include <cstddef>
-#include <stdexcept>
 namespace karnauhova
 {
   template<typename Key, typename Value, typename Compare >
@@ -56,7 +54,6 @@ namespace karnauhova
     {
       return *this;
     }
-
     if (node_->right != fake_)
     {
       node_ = node_->right;

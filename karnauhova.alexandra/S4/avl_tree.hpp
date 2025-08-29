@@ -1,7 +1,6 @@
 #ifndef AVL_TREE_HPP
 #define AVL_TREE_HPP
 
-#include <iostream>
 #include <cstddef>
 #include <stdexcept>
 #include <utility>
@@ -267,7 +266,7 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
   {
     if (it == cend() || it.node_ == fake_)
     {
@@ -354,14 +353,14 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(Iter it) noexcept
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::erase(Iter it) noexcept
   {
     CIter i(it);
     return erase(i);
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter first, CIter last) noexcept
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::erase(CIter first, CIter last) noexcept
   {
     CIter current = first;
     while (current != last)
@@ -379,7 +378,6 @@ namespace karnauhova
     {
       return 0;
     }
-
     erase(it);
     return 1;
   }
@@ -397,7 +395,7 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::begin() const noexcept
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::begin() const noexcept
   {
     if (empty())
     {
