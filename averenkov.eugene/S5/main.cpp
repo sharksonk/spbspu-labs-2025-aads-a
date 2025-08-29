@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     {
       proc = bst.traverse_lnr(proc);
     }
-     if (mode == "descending")
+    else if (mode == "descending")
     {
       proc = bst.traverse_rnl(proc);
     }
