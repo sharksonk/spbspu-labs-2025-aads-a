@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   std::ifstream file(filename);
   if (!file)
   {
-    std::cerr << "Error1\n";
+    std::cerr << "Error\n";
     return 1;
   }
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     {
       proc = bst.traverse_lnr(proc);
     }
-     if (mode == "descending")
+    else if (mode == "descending")
     {
       proc = bst.traverse_rnl(proc);
     }
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cerr << "Error2\n";
+      std::cerr << "Error\n";
       return 1;
     }
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   }
   catch (...)
   {
-    std::cerr << "Error3\n";
+    std::cerr << "Error\n";
     return 1;
   }
 
