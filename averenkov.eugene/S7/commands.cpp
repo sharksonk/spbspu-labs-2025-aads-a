@@ -554,7 +554,7 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
   graphs.insert({newGraph, extractedGraph});
 }
 
-void averenkov::commandsInit(HashTable< std::string, std::function< void() > > cmds, HashTable< std::string, Graph > graphs)
+void averenkov::commandsInit(HashTable< std::string, std::function< void() > >& cmds, HashTable< std::string, Graph > graphs)
 {
   cmds["graphs"] = std::bind(printGraphs, std::ref(std::cout), std::cref(graphs));
   cmds["vertexes"] = std::bind(printVertices, std::ref(std::cout), std::ref(std::cin), std::cref(graphs));

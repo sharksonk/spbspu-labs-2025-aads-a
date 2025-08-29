@@ -18,7 +18,7 @@ namespace averenkov
   void createGraph(std::istream& in, HashTable< std::string, Graph >& graphs);
   void mergeGraphs(std::istream& in, HashTable< std::string, Graph >& graphs);
   void extractGraph(std::istream& in, HashTable< std::string, Graph >& graphs);
-  void commandsInit(HashTable< std::string, std::function< void() > >, HashTable< std::string, Graph > graphs);
+  void commandsInit(HashTable< std::string, std::function< void() > >& cmds, HashTable< std::string, Graph > graphs);
 }
 
 #endif
