@@ -860,7 +860,7 @@ namespace averenkov
         current = current->left;
       }
       current = stack.top();
-      stack.drop();
+      stack.pop();
 
       f(current->data);
       current = current->right;
@@ -882,7 +882,7 @@ namespace averenkov
         current = current->right;
       }
       current = stack.top();
-      stack.drop();
+      stack.pop();
       f(current->data);
       current = current->left;
     }
@@ -902,7 +902,7 @@ namespace averenkov
     while (!queue.empty())
     {
       NodeType* current = queue.front();
-      queue.drop();
+      queue.pop();
       f(current->data);
       if (current->left)
       {
@@ -930,7 +930,7 @@ namespace averenkov
         current = current->left;
       }
       current = stack.top();
-      stack.drop();
+      stack.pop();
       f(current->data);
       current = current->right;
     }
@@ -951,7 +951,7 @@ namespace averenkov
         current = current->right;
       }
       current = stack.top();
-      stack.drop();
+      stack.pop();
       f(current->data);
       current = current->left;
     }
@@ -971,7 +971,7 @@ namespace averenkov
     while (!queue.empty())
     {
       NodeType* current = queue.front();
-      queue.drop();
+      queue.pop();
       f(current->data);
       if (current->left)
       {
