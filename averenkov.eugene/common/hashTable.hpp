@@ -441,7 +441,7 @@ namespace averenkov
       size_t current_index = (index + i * i) % table_.size();
       auto& bucket = table_[current_index];
 
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         return iterator(&table_[current_index], &table_[0] + table_.size());
       }
@@ -474,7 +474,7 @@ namespace averenkov
       size_t current_index = (index + i * i) % table_.size();
       const auto& bucket = table_[current_index];
 
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         return const_iterator(&table_[current_index], &table_[0] + table_.size());
       }
