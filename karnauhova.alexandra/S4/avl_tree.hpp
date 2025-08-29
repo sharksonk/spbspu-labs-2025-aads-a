@@ -19,8 +19,11 @@ namespace karnauhova
     using CIter = AvlTreeCIterator< Key, Value, Compare >;
 
     AvlTree();
-    AvlTree(const AvlTree< Key, Value, Compare >& oth);
-    AvlTree(AvlTree< Key, Value, Compare >&& oth) noexcept;
+    AvlTree(const AvlTree< Key, Value, Compare >&);
+    AvlTree(AvlTree< Key, Value, Compare >&&) noexcept;
+    template< typename InputIt >
+    AvlTree(InputIt, InputIt);
+    AvlTree(std::initializer_list< std::pair< Iter, bool > >);
     ~AvlTree();
 
     AvlTree< Key, Value, Compare >& operator=(const AvlTree< Key, Value, Compare >&);
@@ -31,10 +34,16 @@ namespace karnauhova
     Value& at(const Key&);
     const Value& at(const Key&) const;
 
-    std::pair< Iter, bool > insert(const std::pair< Key, Value >& val);
+    std::pair< Iter, bool > insert(const std::pair< Key, Value >&);
+    std::pair< Iter, bool > insert(std::pair< Key, Value >&&);
+    template< typename InputIt >
+    void insert(InputIt, InputIt);
+    void insert(std::initializer_list< std::pair< Key, Value > >);
 
     Iter erase(Iter) noexcept;
     Iter erase(CIter) noexcept;
+    size_t erase(const Key&) noexcept;
+    Iter erase(CIter, CIter) noexcept;
 
     Iter begin() const noexcept;
     Iter end() const noexcept;
@@ -44,6 +53,13 @@ namespace karnauhova
     bool empty() const noexcept;
     size_t size() const noexcept;
     size_t count(const Key& key) const;
+
+    Iter lower_bound(const Key&) noexcept;
+    CIter lower_bound(const Key&) const noexcept;
+    Iter upper_bound(const Key&) noexcept;
+    CIter upper_bound(const Key&) const noexcept;
+    std::pair< Iter, Iter > equal_range(const Key&) noexcept;
+    std::pair< CIter, CIter > equal_range(const Key&) const noexcept;
 
     void clear() noexcept;
     void swap(AvlTree< Key, Value, Compare >& oth) noexcept;
@@ -92,6 +108,27 @@ namespace karnauhova
     size_(std::exchange(oth.size_, 0)),
     comp_(std::move(oth.comp_))
   {}
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename InputIt >
+  AvlTree< Key, Value, Compare >::AvlTree(InputIt first, InputIt last):
+    AvlTree()
+  {
+    for (auto it = first; it != last; it++)
+    {
+      insert(*it);
+    }
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTree< Key, Value, Compare >::AvlTree(std::initializer_list< std::pair< Iter, bool > > list):
+    AvlTree()
+  {
+    for (auto it = list.begin(); it != list.end(); it++)
+    {
+      insert(*it);
+    }
+  }
 
   template< typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >& AvlTree< Key, Value, Compare >::operator=(const AvlTree< Key, Value, Compare >& rhs)
@@ -206,6 +243,28 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
+  std::pair< AvlTreeIterator< Key, Value, Compare >, bool > AvlTree< Key, Value, Compare >::insert(std::pair< Key, Value >&& val)
+  {
+    return insert(val);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename InputIt >
+  void AvlTree< Key, Value, Compare >::insert(InputIt first, InputIt last)
+  {
+    for (auto it = first; it != last; ++it)
+    {
+      insert(*it);
+    }
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  void AvlTree< Key, Value, Compare >::insert(std::initializer_list< std::pair< Key, Value > > list)
+  {
+    insert(list.begin(), list.end());
+  }
+
+  template< typename Key, typename Value, typename Compare >
   AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
   {
     if (it == cend() || it.node_ == fake_)
@@ -293,6 +352,37 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
+  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(Iter it) noexcept
+  {
+    CIter i(it);
+    return erase(i);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTreeIterator< Key, Value, Compare > AvlTree< Key, Value, Compare >::erase(CIter first, CIter last) noexcept
+  {
+    CIter current = first;
+    while (current != last)
+    {
+      current = erase(current);
+    }
+    return Iter(last.node_, last.fake_);;
+  }
+  
+  template< typename Key, typename Value, typename Compare >
+  size_t AvlTree< Key, Value, Compare >::erase(const Key& key) noexcept
+  {
+    Iter it = find(key);
+    if (it == end())
+    {
+      return 0;
+    }
+
+    erase(it);
+    return 1;
+  }
+
+  template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::end() const noexcept
   {
     return Iter(fake_, fake_);
@@ -350,6 +440,70 @@ namespace karnauhova
   size_t AvlTree< Key, Value, Compare >::count(const Key& key) const
   {
     return find(key) != cend();
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::lower_bound(const Key& key) noexcept
+  {
+    Node* current = fake_->left;
+    Node* res = fake_;
+    while (current != fake_ && current != nullptr)
+    {
+      if (!comp_(current->data.first, key))
+      {
+        res = current;
+        current = current->left;
+      }
+      else
+      {
+        current = current->right;
+      }
+    }
+    return Iter(res, fake_);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CIter AvlTree< Key, Value, Compare >::lower_bound(const Key& key) const noexcept
+  {
+    return CIter(lower_bound(key));
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::upper_bound(const Key& key) noexcept
+  {
+    Node* current = fake_->left;
+    Node* res = fake_;
+    while (current != fake_ && current != nullptr)
+    {
+      if (comp_(key, current->data.first))
+      {
+        res = current;
+        current = current->left;
+      }
+      else
+      {
+        current = current->right;
+      }
+    }
+    return Iter(res, fake_);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CIter AvlTree< Key, Value, Compare >::upper_bound(const Key& key) const noexcept
+  {
+    return CIter(upper_bound(key));
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  std::pair< AvlTreeIterator< Key, Value, Compare >, AvlTreeIterator< Key, Value, Compare > > AvlTree< Key, Value, Compare >::equal_range(const Key& key) noexcept
+  {
+    return std::make_pair(lower_bound(key), upper_bound(key));
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  std::pair< AvlTreeCIterator< Key, Value, Compare >, AvlTreeCIterator< Key, Value, Compare > > AvlTree< Key, Value, Compare >::equal_range(const Key& key) const noexcept
+  {
+    return std::make_pair(CIter(lower_bound(key)), CIter(upper_bound(key)));
   }
 
   template< typename Key, typename Value, typename Compare >

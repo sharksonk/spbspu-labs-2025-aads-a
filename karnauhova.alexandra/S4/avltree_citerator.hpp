@@ -9,14 +9,19 @@ namespace karnauhova
   template<typename Key, typename Value, typename Compare >
   class AvlTree;
 
+  template<typename Key, typename Value, typename Compare >
+  class AvlTreeIterator;
+
   template< typename Key, typename Value, typename Compare = std::less< Key >>
   struct AvlTreeCIterator
   {
     friend class AvlTree< Key, Value, Compare >;
+    friend class AvlTreeIterator< Key, Value, Compare >;
   public:
     using this_t = AvlTreeCIterator< Key, Value, Compare>;
     using Node = AvlTreeNode< Key, Value >;
     AvlTreeCIterator() noexcept;
+    AvlTreeCIterator(const AvlTreeIterator< Key, Value, Compare >&) noexcept;
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
     this_t& operator--() noexcept;
@@ -27,10 +32,6 @@ namespace karnauhova
 
     bool operator==(const this_t& rhs) const noexcept;
     bool operator!=(const this_t& rhs) const noexcept;
-
-    // Оператор вывода для AvlTreeCIterator
-    template< typename K, typename V, typename C >
-    friend std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it);
   private:
     Node* node_;
     Node* fake_;
@@ -41,6 +42,12 @@ namespace karnauhova
   AvlTreeCIterator< Key, Value, Compare >::AvlTreeCIterator() noexcept:
     node_(nullptr),
     fake_(nullptr)
+  {}
+
+  template< typename Key, typename Value, typename Compare >
+  AvlTreeCIterator< Key, Value, Compare >::AvlTreeCIterator(const AvlTreeIterator< Key, Value, Compare >& oth) noexcept:
+    node_(oth.node_),
+    fake_(oth.fake_)
   {}
 
   template< typename Key, typename Value, typename Compare >
@@ -139,14 +146,5 @@ namespace karnauhova
   {
     return !(*this == rhs);
   }
-
-  template< typename K, typename V, typename C >
-  std::ostream& operator<<(std::ostream& os, const AvlTreeCIterator<K, V, C>& it)
-{
-  if (it.node_ == nullptr || it.node_ == it.fake_) {
-    return os << "cend()";
-  }
-  return os << "CIterator(" << it->first << ", " << it->second << ")";
-}
 }
 #endif

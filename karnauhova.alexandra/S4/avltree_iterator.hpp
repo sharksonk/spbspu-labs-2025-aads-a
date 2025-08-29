@@ -9,10 +9,14 @@ namespace karnauhova
   template<typename Key, typename Value, typename Compare >
   class AvlTree;
 
+  template<typename Key, typename Value, typename Compare >
+  class AvlTreeCIterator;
+
   template< typename Key, typename Value, typename Compare = std::less< Key >>
   struct AvlTreeIterator
   {
     friend class AvlTree< Key, Value, Compare >;
+    friend class AvlTreeCIterator< Key, Value, Compare >;
   public:
     using this_t = AvlTreeIterator< Key, Value, Compare>;
     using Node = AvlTreeNode< Key, Value >;
@@ -27,9 +31,6 @@ namespace karnauhova
 
     bool operator==(const this_t& rhs) const noexcept;
     bool operator!=(const this_t& rhs) const noexcept;
-    template< typename K, typename V, typename C >
-    friend std::ostream& operator<<(std::ostream& os, const AvlTreeIterator<K, V, C>& it);
-
   private:
     Node* node_;
     Node* fake_;
@@ -138,14 +139,5 @@ namespace karnauhova
   {
     return !(*this == rhs);
   }
-
-  template< typename K, typename V, typename C >
-  std::ostream& operator<<(std::ostream& os, const AvlTreeIterator<K, V, C>& it)
-{
-  if (it.node_ == nullptr || it.node_ == it.fake_) {
-    return os << "end()";
-  }
-  return os << "Iterator(" << it->first << ", " << it->second << ")";
-}
 }
 #endif
