@@ -368,7 +368,7 @@ namespace karnauhova
     }
     return Iter(last.node_, last.fake_);;
   }
-  
+
   template< typename Key, typename Value, typename Compare >
   size_t AvlTree< Key, Value, Compare >::erase(const Key& key) noexcept
   {
