@@ -7,7 +7,6 @@
 #include <iterator>
 #include <algorithm>
 #include <bucket.hpp>
-#include <vector>
 #include <array.hpp>
 #include <hashTIterator.hpp>
 
@@ -73,7 +72,7 @@ namespace averenkov
     void reserve(size_t count);
 
   private:
-    std::vector< Bucket< Key, Value > > table_;
+    Array< Bucket< Key, Value > > table_;
     size_t size_;
     Hash hasher_;
     Equal key_equal_;
@@ -439,6 +438,10 @@ namespace averenkov
     while (i < table_.size())
     {
       size_t current_index = (index + i * i) % table_.size();
+      if (current_index >= table_.size())
+      {
+        break;
+      }
       auto& bucket = table_[current_index];
       if (bucket.occupied && !bucket.deleted)
       {
@@ -459,6 +462,10 @@ namespace averenkov
         break;
       }
       i++;
+      if (i >= table_.size())
+      {
+        break;
+      }
     }
     return end();
   }
@@ -527,7 +534,7 @@ namespace averenkov
       count = static_cast<size_t>(size_ / max_load_factor_) + 1;
     }
 
-    std::vector< Bucket< Key, Value > > new_table;
+    Array< Bucket< Key, Value > > new_table;
     for (size_t i = 0; i < count; ++i)
     {
       new_table.push_back(Bucket< Key, Value >());
@@ -566,6 +573,10 @@ namespace averenkov
   template < class Key, class Value, class Hash, class Equal >
   size_t HashTable< Key, Value, Hash, Equal >::hash_to_index(const Key& key) const
   {
+    if (table_.empty())
+    {
+      return 0;
+    }
     return hasher_(key) % table_.size();
   }
 
