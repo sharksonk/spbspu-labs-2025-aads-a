@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cerr << "Error1\n";
+      std::cerr << "Error\n";
       return 1;
     }
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   }
   catch (...)
   {
-    std::cerr << "Error2\n";
+    std::cerr << "Error\n";
     return 1;
   }
 
