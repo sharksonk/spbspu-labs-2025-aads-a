@@ -88,7 +88,6 @@ namespace averenkov
     template< class F >
     F traverse_breadth(F f);
 
-
   private:
     NodeType* fake_root_;
     Compare comp_;
