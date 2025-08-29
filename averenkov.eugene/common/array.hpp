@@ -9,6 +9,10 @@ namespace averenkov
   template< class T >
   class Array
   {
+
+    template< typename Key, typename Value, typename Hash, typename Equal >
+    friend class HashTable;
+
   public:
     Array();
     Array(const Array &rhs);
@@ -42,7 +46,7 @@ namespace averenkov
     void resize(size_t capac);
     void resize();
     Array< T > copy(const Array& other, size_t capacity);
-
+    explicit Array(size_t size);
   };
 
   template< class T >
@@ -50,6 +54,14 @@ namespace averenkov
     data_(new T[1]),
     last_(0),
     capacity_(1),
+    first_(0)
+  {}
+
+  template< typename T >
+  Array< T >::Array(size_t size):
+    data_(new T[size]),
+    last_(size),
+    capacity_(size),
     first_(0)
   {}
 

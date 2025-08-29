@@ -9,6 +9,7 @@
 #include <bucket.hpp>
 #include <array.hpp>
 #include <hashTIterator.hpp>
+#include <prime.hpp>
 
 namespace averenkov
 {
@@ -529,12 +530,8 @@ namespace averenkov
   template < class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t count)
   {
-    if (count < size_ / max_load_factor_)
-    {
-      count = static_cast<size_t>(size_ / max_load_factor_) + 1;
-    }
-
-    Array< Bucket< Key, Value > > new_table;
+    count = next_prime(count);
+    Array< Bucket < Key, Value > > new_table(count);
     for (size_t i = 0; i < count; ++i)
     {
       new_table.push_back(Bucket< Key, Value >());
