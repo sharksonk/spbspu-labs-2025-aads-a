@@ -70,23 +70,24 @@ namespace averenkov
     bool empty() const noexcept;
     size_t size() const noexcept;
 
-  template< class F >
-  F traverse_lnr(F f) const;
+    template< class F >
+    F traverse_lnr(F f) const;
 
-  template< class F >
-  F traverse_rnl(F f) const;
+    template< class F >
+    F traverse_rnl(F f) const;
 
-  template< class F >
-  F traverse_breadth(F f) const;
+    template< class F >
+    F traverse_breadth(F f) const;
 
-  template< class F >
-  F traverse_lnr(F f);
+    template< class F >
+    F traverse_lnr(F f);
 
-  template< class F >
-  F traverse_rnl(F f);
+    template< class F >
+    F traverse_rnl(F f);
 
-  template< class F >
-  F traverse_breadth(F f);
+    template< class F >
+    F traverse_breadth(F f);
+
 
   private:
     NodeType* fake_root_;
@@ -846,7 +847,7 @@ namespace averenkov
     return node;
   }
 
-  template < class Key, class Value, class Compare >
+template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_lnr(F f) const
   {
@@ -984,5 +985,6 @@ namespace averenkov
     }
     return f;
   }
+
 }
 #endif
