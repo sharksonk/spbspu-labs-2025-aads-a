@@ -4,8 +4,8 @@
 #include <functional>
 #include "commands.hpp"
 
-using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
-using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
+using dataset_t = kushekbaev::UBST< size_t, std::string >;
+using dict_t = kushekbaev::UBST< std::string, dataset_t >;
 
 namespace
 {
