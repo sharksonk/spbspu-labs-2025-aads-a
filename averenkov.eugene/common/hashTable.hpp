@@ -86,8 +86,10 @@ namespace averenkov
 
   template < class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable():
-    table_(),
+    table_(11),
     size_(0),
+    hasher_(),
+    key_equal_(),
     max_load_factor_(0.75f)
   {
     for (size_t i = 0; i < 11; ++i)
