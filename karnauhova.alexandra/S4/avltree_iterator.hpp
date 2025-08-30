@@ -1,7 +1,8 @@
 #ifndef AVLTREE_ITERATOR_HPP
 #define AVLTREE_ITERATOR_HPP
-#include "avltree_node.hpp"
 #include <cstddef>
+#include <functional>
+#include "avltree_node.hpp"
 namespace karnauhova
 {
   template<typename Key, typename Value, typename Compare >

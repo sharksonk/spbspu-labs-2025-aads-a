@@ -2,6 +2,7 @@
 #define AVL_TREE_HPP
 
 #include <cstddef>
+#include <functional>
 #include <stdexcept>
 #include <utility>
 #include "avltree_node.hpp"
