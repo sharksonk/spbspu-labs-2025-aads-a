@@ -6,7 +6,7 @@
 
 namespace shramko
 {
-  void outputStack(std::ostream& out, StackLongLong& stack)
+  void outputStack(std::ostream& out, Stack<long long>& stack)
   {
     if (stack.empty())
     {

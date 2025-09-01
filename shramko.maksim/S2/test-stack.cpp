@@ -4,7 +4,7 @@
 
 namespace shramko
 {
-  void outputStackString(std::ostream& out, StackString& stack)
+  void outputStackString(std::ostream& out, Stack<std::string>& stack)
   {
     if (stack.empty())
     {
@@ -22,14 +22,14 @@ namespace shramko
 
 BOOST_AUTO_TEST_CASE(stack_basic_constructor_test)
 {
-  shramko::StackString stack;
+  shramko::Stack<std::string> stack;
   BOOST_TEST(stack.empty());
   BOOST_TEST(stack.size() == 0);
 }
 
 BOOST_AUTO_TEST_CASE(stack_pop_test)
 {
-  shramko::StackString stack;
+  shramko::Stack<std::string> stack;
   stack.push("1");
   stack.push("2");
   stack.push("3");
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(stack_pop_test)
 
 BOOST_AUTO_TEST_CASE(stack_lvalue_push_test)
 {
-  shramko::StackString stack;
+  shramko::Stack<std::string> stack;
   std::string temp = "3";
   stack.push(temp);
   std::ostringstream out;
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(stack_lvalue_push_test)
 
 BOOST_AUTO_TEST_CASE(stack_top_size_test)
 {
-  shramko::StackString stack;
+  shramko::Stack<std::string> stack;
   stack.push("2");
   stack.push("3");
   BOOST_TEST(stack.top() == "3");
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(stack_top_size_test)
 
 BOOST_AUTO_TEST_CASE(stack_move_push_test)
 {
-  shramko::StackString stack;
+  shramko::Stack<std::string> stack;
   stack.push("1");
   BOOST_TEST(!stack.empty());
   BOOST_TEST(stack.size() == 1);

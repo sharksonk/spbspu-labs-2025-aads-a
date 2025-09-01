@@ -34,7 +34,7 @@ namespace
     return false;
   }
 
-  void inputInfix(std::istream& in, shramko::QueueString& queue)
+  void inputInfix(std::istream& in, shramko::Queue<std::string>& queue)
   {
     std::string infix = "";
     std::getline(in, infix);
@@ -67,22 +67,22 @@ namespace
     }
   }
 
-  void input(std::istream& in, shramko::QueueOfQueueString& queue)
+  void input(std::istream& in, shramko::Queue<shramko::Queue<std::string>>& queue)
   {
     while (!in.eof())
     {
-      shramko::QueueString temp_inf_expr;
+      shramko::Queue<std::string> temp_inf_expr;
       inputInfix(in, temp_inf_expr);
       if (!temp_inf_expr.empty())
       {
-        queue.push(temp_inf_expr);
+        queue.push(std::move(temp_inf_expr));
       }
     }
   }
 
-  void convertInfToPost(shramko::QueueString& inf, shramko::QueueString& post_queue)
+  void convertInfToPost(shramko::Queue<std::string>& inf, shramko::Queue<std::string>& post_queue)
   {
-    shramko::StackString stack;
+    shramko::Stack<std::string> stack;
     while (!inf.empty())
     {
       std::string temp = inf.front();
@@ -232,9 +232,9 @@ namespace
     return (a == min && b == -1);
   }
 
-  long long calculateExpr(shramko::QueueString& post)
+  long long calculateExpr(shramko::Queue<std::string>& post)
   {
-    shramko::StackLongLong stack;
+    shramko::Stack<long long> stack;
     while (!post.empty())
     {
       std::string temp = post.front();
@@ -324,8 +324,8 @@ namespace
 int main(const int argc, const char* const* const argv)
 {
   using namespace shramko;
-  QueueOfQueueString inf_exprs;
-  StackLongLong results;
+  Queue<Queue<std::string>> inf_exprs;
+  Stack<long long> results;
   try
   {
     if (argc == 1)
@@ -344,8 +344,8 @@ int main(const int argc, const char* const* const argv)
     }
     while (!inf_exprs.empty())
     {
-      shramko::QueueString temp_inf;
-      shramko::QueueString& front_ref = inf_exprs.front();
+      shramko::Queue<std::string> temp_inf;
+      shramko::Queue<std::string>& front_ref = inf_exprs.front();
       while (!front_ref.empty())
       {
         temp_inf.push(front_ref.front());
@@ -356,7 +356,7 @@ int main(const int argc, const char* const* const argv)
 
       if (!temp_inf.empty())
       {
-        shramko::QueueString temp_post;
+        shramko::Queue<std::string> temp_post;
         convertInfToPost(temp_inf, temp_post);
         results.push(calculateExpr(temp_post));
       }
