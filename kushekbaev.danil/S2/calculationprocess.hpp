@@ -6,7 +6,7 @@
 
 namespace kushekbaev
 {
-  Queue< std::string > convertToPostfix(Queue< std::string > Q);
+  Queue< std::string > convertToPostfix(Queue< std::string >& Q);
   long long int calculatePostfix(Queue< std::string > postfixQ);
 }
 

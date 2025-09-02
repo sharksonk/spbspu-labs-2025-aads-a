@@ -181,7 +181,7 @@ namespace
   }
 }
 
-kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string > Q)
+kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string >& Q)
 {
   Queue< std::string > postfixQ;
   Stack< std::string > stack;
