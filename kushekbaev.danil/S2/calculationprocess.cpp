@@ -74,7 +74,7 @@ namespace
     {
       throw std::runtime_error("Division by zero!");
     }
-    return (operand1 % operand2 + operand2) % operand2;
+    return operand1 % operand2;
   }
 
   long long int multiplicate(long long int operand1, long long int operand2)
