@@ -92,6 +92,17 @@ namespace
           throw std::runtime_error("Multiplication underflow!");
         }
       }
+      else if (operand2 < 0)
+      {
+        if (operand1 > MIN / operand2)
+        {
+          throw std::runtime_error("Multiplication overflow!");
+        }
+        else if (operand2 > MAX / operand1)
+        {
+          throw std::runtime_error("Multiplication underflow!");
+        }
+      }
     }
     else if (operand1 < 0)
     {
@@ -102,6 +113,17 @@ namespace
           throw std::runtime_error("Multiplication underflow!");
         }
         else if (operand2 != 0 && operand1 > MAX / operand2)
+        {
+          throw std::runtime_error("Multiplication overflow!");
+        }
+      }
+      else if (operand2 < 0)
+      {
+        if (operand1 < MAX / operand2)
+        {
+          throw std::runtime_error("Multiplication underflow!");
+        }
+        else if (operand2 != 0 && operand1 > MIN / operand2)
         {
           throw std::runtime_error("Multiplication overflow!");
         }
