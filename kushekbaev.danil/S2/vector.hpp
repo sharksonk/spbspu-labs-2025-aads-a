@@ -15,6 +15,7 @@ namespace kushekbaev
       ~Vector() noexcept;
 
       Vector& operator=(const Vector& other) noexcept;
+      Vector& operator=(Vector&& other) noexcept;
 
       T& front() noexcept;
       T& back() noexcept;
@@ -109,6 +110,25 @@ namespace kushekbaev
       newHolder.ptr = nullptr;
       capacity_ = other.capacity_;
       size_ = other.size_;
+    }
+    return *this;
+  }
+
+  template< typename T >
+  Vector< T >& Vector< T >::operator=(Vector&& other) noexcept
+  {
+    if (this != std::addressof(other))
+    {
+      RAII newHolder(new T[other.capacity_]);
+      for (size_t i = 0; i < other.size_; ++i)
+      {
+        newHolder.ptr[i] = std::move(other.data_[i]);
+      }
+      delete[] data_;
+      data_ = std::move(newHolder.ptr);
+      newHolder.ptr = nullptr;
+      capacity_ = std::move(other.capacity_);
+      size_ = std::move(other.size_);
     }
     return *this;
   }
