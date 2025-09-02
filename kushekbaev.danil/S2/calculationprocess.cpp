@@ -150,7 +150,7 @@ namespace
       return 1;
     }
     bool isNegative = (x < 0) && (power % 2 != 0);
-    if (x != MIN)
+    if (x < MAX - 1)
     {
       x = std::abs(x);
     }
