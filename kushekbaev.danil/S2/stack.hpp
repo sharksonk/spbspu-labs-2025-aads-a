@@ -24,7 +24,7 @@ namespace kushekbaev
       T& top() noexcept;
       const T& top() const noexcept;
 
-      void push(const T& value);
+      void push(const T& value) noexcept;
       void pop();
 
     private:
@@ -86,7 +86,7 @@ namespace kushekbaev
   }
 
   template< typename T, typename Sequence >
-  void Stack< T, Sequence >::push(const T& value)
+  void Stack< T, Sequence >::push(const T& value) noexcept
   {
     return sequence_.push_back(value);
   }

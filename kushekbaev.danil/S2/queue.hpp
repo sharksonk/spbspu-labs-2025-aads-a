@@ -25,7 +25,7 @@ namespace kushekbaev
       bool empty() const noexcept;
       size_t size() const noexcept;
 
-      void push(const T& value);
+      void push(const T& value) noexcept;
       void pop();
       void clear();
 
@@ -100,7 +100,7 @@ namespace kushekbaev
   }
 
   template < typename T, typename Sequence >
-  void Queue< T, Sequence >::push(const T& value)
+  void Queue< T, Sequence >::push(const T& value) noexcept
   {
     sequence_.push_back(value);
   }
