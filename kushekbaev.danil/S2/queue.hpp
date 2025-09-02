@@ -102,7 +102,7 @@ namespace kushekbaev
   template < typename T, typename Sequence >
   void Queue< T, Sequence >::push(const T& value) noexcept
   {
-    sequence_.push_back(value);
+    sequence_.pushBack(value);
   }
 
   template < typename T, typename Sequence >
@@ -112,7 +112,7 @@ namespace kushekbaev
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
-    sequence_.pop_front();
+    sequence_.popFront();
   }
 
   template < typename T, typename Sequence >
