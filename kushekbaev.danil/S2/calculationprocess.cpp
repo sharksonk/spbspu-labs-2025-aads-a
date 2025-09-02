@@ -6,18 +6,6 @@ namespace
 {
   constexpr long long int MIN = std::numeric_limits< long long int >::min();
   constexpr long long int MAX = std::numeric_limits< long long int >::max();
-  bool isNumber(const std::string& symbol)
-  {
-    try
-    {
-      std::stoll(symbol);
-    }
-    catch (const std::exception&)
-    {
-      return false;
-    }
-    return true;
-  }
 
   bool isOperator(const std::string& symbol)
   {
@@ -205,10 +193,6 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     {
       stack.push(symbol);
     }
-    else if (isNumber(symbol))
-    {
-      postfixQ.push(symbol);
-    }
     else if (isOperator(symbol))
     {
       int priority = calculatePriority(symbol);
@@ -237,7 +221,7 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     }
     else
     {
-      throw std::runtime_error("Invalid symbol!");
+      postfixQ.push(symbol);
     }
     Q.pop();
   }
