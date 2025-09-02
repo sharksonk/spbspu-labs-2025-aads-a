@@ -95,7 +95,10 @@ namespace lebedev
   {
     if (this != std::addressof(other))
     {
-      swap(other);
+      clear();
+      head_ = other.head_;
+      tail_ = other.tail_;
+      size_ = other.size_;
       other.head_ = nullptr;
       other.tail_ = nullptr;
       other.size_ = 0;
