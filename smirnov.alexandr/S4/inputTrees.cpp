@@ -14,6 +14,6 @@ void smirnov::inputTrees(TreeOfTrees & trees, std::istream & input)
       tree[key] = value;
     }
     trees[dictName] = tree;
-    input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    input.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
   }
 }

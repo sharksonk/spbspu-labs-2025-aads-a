@@ -61,10 +61,9 @@ namespace smirnov
 
   template < typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >::AvlTree(const AvlTree & other):
-    root_(nullptr),
-    size_(0),
-    comp_(other.comp_)
+    AvlTree()
   {
+    comp_ = other.comp_;
     for (auto it = other.cbegin(); it != other.cend(); ++it)
     {
       operator[](it->first) = it->second;
@@ -94,12 +93,8 @@ namespace smirnov
   {
     if (this != std::addressof(other))
     {
-      clear();
-      comp_ = other.comp_;
-      for (auto it = other.cbegin(); it != other.cend(); ++it)
-      {
-        operator[](it->first) = it->second;
-      }
+      AvlTree temp(other);
+      swap(temp);
     }
     return *this;
   }
@@ -167,7 +162,7 @@ namespace smirnov
     {
       throw std::out_of_range("Key not found");
     }
-    return std::addressof(node->data)->second;
+    return node->data.second;
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -178,7 +173,7 @@ namespace smirnov
     {
       throw std::out_of_range("Key not found");
     }
-    return std::addressof(node->data)->second;
+    return node->data.second;
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -189,7 +184,7 @@ namespace smirnov
     {
       throw std::out_of_range("Key not found");
     }
-    return std::addressof(node->data)->second;
+    return node->data.second;
   }
 
   template < typename Key, typename Value, typename Compare >

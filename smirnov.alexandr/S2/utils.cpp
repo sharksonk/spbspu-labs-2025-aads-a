@@ -25,7 +25,7 @@ bool smirnov::comparePriority(const std::string & op1, const std::string & op2)
   {
     p2 = 2;
   }
-  return p1 >= p2;
+  return p1 < p2;
 }
 
 smirnov::List< std::string > smirnov::splitBySpace(const std::string & line)

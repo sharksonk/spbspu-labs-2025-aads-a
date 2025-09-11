@@ -1,6 +1,7 @@
 #ifndef CONST_ITERATOR_HPP
 #define CONST_ITERATOR_HPP
 #include <memory>
+#include <iterator>
 #include "node.hpp"
 
 namespace smirnov
@@ -8,7 +9,7 @@ namespace smirnov
   template < typename Key, typename Value, typename Compare >
   class AvlTree;
   template < typename Key, typename Value, typename Compare = std::less< Key > >
-  class ConstIterator
+  class ConstIterator: public std::iterator< std::bidirectional_iterator_tag, const std::pair< Key, Value > >
   {
     friend class AvlTree< Key, Value, Compare >;
   public:
