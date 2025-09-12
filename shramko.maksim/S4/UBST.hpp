@@ -137,7 +137,7 @@ namespace shramko
         root_ = new Node< Key, Value >(other.root_->data.first, other.root_->data.second);
         root_->parent = nullptr;
         size_ = other.size_;
-        std::vector<std::pair<Node< Key, Value >*, Node< Key, Value >*>> nodes;
+        std::vector< std::pair< Node< Key, Value >*, Node< Key, Value >* > > nodes;
         nodes.emplace_back(root_, other.root_);
         while (!nodes.empty())
         {
