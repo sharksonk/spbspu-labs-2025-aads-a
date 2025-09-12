@@ -61,7 +61,8 @@ void shramko::intersect(TreeOfTrees & trees, std::istream & in, std::ostream & o
   BasicTree result;
   for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
   {
-    if (second_it->second.find(it->first) != second_it->second.cend())
+    auto second_it_find = second_it->second.find(it->first);
+    if (second_it_find != second_it->second.cend() && it->second == second_it_find->second)
     {
       result[it->first] = it->second;
     }

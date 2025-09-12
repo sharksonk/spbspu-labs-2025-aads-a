@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(EmptyTreeTest)
 
 BOOST_AUTO_TEST_CASE(InsertAndFindTest)
 {
-  UBstTree<int, std::string> tree;
+  UBstTree< int, std::string > tree;
   tree[10] = "ten";
   tree[5] = "five";
   tree[15] = "fifteen";
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(InsertAndFindTest)
 
 BOOST_AUTO_TEST_CASE(IteratorTraversalTest)
 {
-  UBstTree<int, int> tree;
+  UBstTree< int, int > tree;
   for (int i = 20; i >= 0; --i)
   {
     tree[i] = i * 10;
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(IteratorTraversalTest)
 
 BOOST_AUTO_TEST_CASE(UpdateValueTest)
 {
-  UBstTree<int, std::string> tree;
+  UBstTree< int, std::string > tree;
   tree[1] = "one";
   BOOST_TEST(tree[1] == "one");
 
@@ -76,14 +76,14 @@ BOOST_AUTO_TEST_CASE(UpdateValueTest)
 
 BOOST_AUTO_TEST_CASE(CopyConstructorAndAssignmentTest)
 {
-  UBstTree<int, std::string> tree1;
+  UBstTree< int, std::string > tree1;
   tree1[1] = "one";
 
-  UBstTree<int, std::string> tree2(tree1);
+  UBstTree< int, std::string > tree2(tree1);
   BOOST_TEST(tree2.size() == 1);
   BOOST_TEST(tree2.find(1) != tree2.cend());
 
-  UBstTree<int, std::string> tree3;
+  UBstTree< int, std::string > tree3;
   tree3 = tree1;
   BOOST_TEST(tree3.size() == 1);
   BOOST_TEST(tree3.find(1) != tree3.cend());
@@ -91,14 +91,14 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndAssignmentTest)
 
 BOOST_AUTO_TEST_CASE(MoveConstructorAndAssignmentTest)
 {
-  UBstTree<int, std::string> tree1;
+  UBstTree< int, std::string > tree1;
   tree1[1] = "one";
 
-  UBstTree<int, std::string> tree2(std::move(tree1));
+  UBstTree< int, std::string > tree2(std::move(tree1));
   BOOST_TEST(tree2.size() == 1);
   BOOST_TEST(tree1.empty());
 
-  UBstTree<int, std::string> tree3;
+  UBstTree< int, std::string > tree3;
   tree3 = std::move(tree2);
   BOOST_TEST(tree3.size() == 1);
   BOOST_TEST(tree2.empty());
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorAndAssignmentTest)
 
 BOOST_AUTO_TEST_CASE(ClearTest)
 {
-  UBstTree<int, std::string> tree;
+  UBstTree< int, std::string > tree;
   tree[1] = "val1";
   tree[2] = "val2";
   tree[3] = "val3";
@@ -121,12 +121,12 @@ BOOST_AUTO_TEST_CASE(ClearTest)
 
 namespace boost::test_tools::tt_detail
 {
-  template<typename Key, typename Value, typename Compare>
-  struct print_log_value<shramko::ConstIterator<Key, Value, Compare>>
+  template< typename Key, typename Value, typename Compare >
+  struct print_log_value< shramko::ConstIterator< Key, Value, Compare > >
   {
-    void operator()(std::ostream& os, shramko::ConstIterator<Key, Value, Compare> const& it)
+    void operator()(std::ostream& os, shramko::ConstIterator< Key, Value, Compare > const& it)
     {
-      if (it == shramko::ConstIterator<Key, Value, Compare>())
+      if (it == shramko::ConstIterator< Key, Value, Compare >())
       {
         os << "end iterator";
       }
