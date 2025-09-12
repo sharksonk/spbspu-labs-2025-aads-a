@@ -3,12 +3,13 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <vector>
 #include "node.hpp"
 #include "constiterator.hpp"
 
 namespace shramko
 {
-  template <typename Key, typename Value, typename Compare = std::less<Key>>
+  template < typename Key, typename Value, typename Compare = std::less< Key > >
   class UBstTree
   {
   public:
@@ -44,15 +45,10 @@ namespace shramko
   };
 
   template < typename Key, typename Value, typename Compare >
-  UBstTree< Key, Value, Compare >::UBstTree(): root_(nullptr),
-    size_(0),
-    comp_(Compare())
-  {}
+  UBstTree< Key, Value, Compare >::UBstTree(): root_(nullptr), size_(0), comp_(Compare()) {}
 
   template < typename Key, typename Value, typename Compare >
-  UBstTree< Key, Value, Compare >::UBstTree(const UBstTree& other): root_(nullptr),
-    size_(0),
-    comp_(other.comp_)
+  UBstTree< Key, Value, Compare >::UBstTree(const UBstTree& other): root_(nullptr), size_(0), comp_(other.comp_)
   {
     if (other.root_)
     {
@@ -82,9 +78,42 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
-  UBstTree< Key, Value, Compare >::UBstTree(UBstTree&& other) noexcept: root_(other.root_),
-    size_(other.size_),
-    comp_(std::move(other.comp_))
+  void UBstTree< Key, Value, Compare >::copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode, Node< Key, Value >* parent)
+  {
+    if (!otherNode)
+    {
+      node = nullptr;
+      return;
+    }
+
+    node = new Node< Key, Value >(otherNode->data.first, otherNode->data.second);
+    node->parent = parent;
+    std::vector<std::pair< Node< Key, Value >*, Node< Key, Value >* > > nodes;
+    nodes.emplace_back(node, otherNode);
+
+    while (!nodes.empty())
+    {
+      auto [currentNode, currentOtherNode] = nodes.back();
+      nodes.pop_back();
+
+      if (currentOtherNode->left)
+      {
+        currentNode->left = new Node< Key, Value >(currentOtherNode->left->data.first, currentOtherNode->left->data.second);
+        currentNode->left->parent = currentNode;
+        nodes.emplace_back(currentNode->left, currentOtherNode->left);
+      }
+
+      if (currentOtherNode->right)
+      {
+        currentNode->right = new Node< Key, Value >(currentOtherNode->right->data.first, currentOtherNode->right->data.second);
+        currentNode->right->parent = currentNode;
+        nodes.emplace_back(currentNode->right, currentOtherNode->right);
+      }
+    }
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  UBstTree< Key, Value, Compare >::UBstTree(UBstTree&& other) noexcept: root_(other.root_), size_(other.size_), comp_(std::move(other.comp_))
   {
     other.root_ = nullptr;
     other.size_ = 0;
@@ -108,7 +137,7 @@ namespace shramko
         root_ = new Node< Key, Value >(other.root_->data.first, other.root_->data.second);
         root_->parent = nullptr;
         size_ = other.size_;
-        std::vector< std::pair< Node< Key, Value >*, Node< Key, Value >* > > nodes;
+        std::vector<std::pair<Node< Key, Value >*, Node< Key, Value >*>> nodes;
         nodes.emplace_back(root_, other.root_);
         while (!nodes.empty())
         {
