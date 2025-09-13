@@ -73,31 +73,20 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable():
     buckets_(8),
-    size_(0),
-    hasher_(),
-    key_equal_(),
-    max_load_factor_(0.75f)
+    size_(0)
   {}
 
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(std::initializer_list< std::pair< Key, Value > > list):
-    HashTable()
-  {
-    for (const auto & p : list)
-    {
-      insert(p.first, p.second);
-    }
-  }
+    HashTable(list.begin(), list.end())
+  {}
 
   template< class Key, class Value, class Hash, class Equal >
   template< class InputIt >
   HashTable< Key, Value, Hash, Equal >::HashTable(InputIt first, InputIt last):
     HashTable()
   {
-    for (auto it = first; it != last; ++it)
-    {
-      insert(it->first, it->second);
-    }
+    insert(begin, end);
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -119,7 +108,7 @@ namespace smirnov
     {
       return 0.0f;
     }
-    return static_cast< float >(size_) / buckets_.size();
+    return size_ / buckets_.size();
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -167,12 +156,11 @@ namespace smirnov
     while (attempt < buckets_.size())
     {
       index = probe(hash_value, attempt);
-      auto & bucket = buckets_[index];
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (buckets_[index].occupied && key_equal_(buckets_[index].data.first, key))
       {
         return iterator{this, index};
       }
-      if (!bucket.occupied && !bucket.deleted)
+      if (!buckets_[index].occupied && !buckets_[index].deleted)
       {
         break;
       }
@@ -206,12 +194,11 @@ namespace smirnov
     while (attempt < buckets_.size())
     {
       index = probe(hash_value, attempt);
-      const auto & bucket = buckets_[index];
-      if (bucket.occupied && key_equal_(bucket.data.first, key))
+      if (buckets_[index].occupied && key_equal_(buckets_[index].data.first, key))
       {
         return const_iterator{this, index};
       }
-      if (!bucket.occupied && !bucket.deleted)
+      if (!buckets_[index].occupied && !buckets_[index].deleted)
       {
         break;
       }
@@ -258,9 +245,9 @@ namespace smirnov
   template< class InputIt >
   void HashTable< Key, Value, Hash, Equal >::insert(InputIt first, InputIt last)
   {
-    for (; first != last; ++first)
+    for (auto it = first; it != last; ++it)
     {
-      insert(first->first, first->second);
+      insert(*it);
     }
   }
 
@@ -279,16 +266,15 @@ namespace smirnov
     while (attempt < buckets_.size())
     {
       index = probe(hash_value, attempt);
-      auto & bucket = buckets_[index];
-      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (buckets_[index].occupied && !buckets_[index].deleted && key_equal_(buckets_[index].data.first, key))
       {
         return {iterator{this, index}, false};
       }
-      if (bucket.deleted && first_deleted == buckets_.size())
+      if (buckets_[index].deleted && first_deleted == buckets_.size())
       {
         first_deleted = index;
       }
-      if (!bucket.occupied && !bucket.deleted)
+      if (!buckets_[index].occupied && !buckets_[index].deleted)
       {
         break;
       }
@@ -342,7 +328,7 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::swap(HashTable & other) noexcept
   {
-    buckets_.swap(other.buckets_);
+    std::swap(buckets_, other.buckets_);
     std::swap(size_, other.size_);
     std::swap(hasher_, other.hasher_);
     std::swap(key_equal_, other.key_equal_);
@@ -358,15 +344,14 @@ namespace smirnov
     while (attempt < buckets_.size())
     {
       index = probe(hash_value, attempt);
-      auto & bucket = buckets_[index];
-      if (bucket.occupied &&  !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (buckets_[index].occupied &&  !buckets_[index].deleted && key_equal_(buckets_[index].data.first, key))
       {
-        bucket.occupied = false;
-        bucket.deleted = true;
+        buckets_[index].occupied = false;
+        buckets_[index].deleted = true;
         size_--;
         return 1;
       }
-      if (!bucket.occupied && !bucket.deleted)
+      if (!buckets_[index].occupied && !buckets_[index].deleted)
       {
         break;
       }
@@ -390,10 +375,9 @@ namespace smirnov
     size_ = 0;
     for (size_t i = 0; i < old_buckets.size(); ++i)
     {
-      const auto & bucket = old_buckets[i];
-      if (bucket.occupied)
+      if (old_buckets[i].occupied)
       {
-        insert(bucket.data.first, bucket.data.second);
+        insert(old_buckets[i].data.first, old_buckets[i].data.second);
       }
     }
   }
