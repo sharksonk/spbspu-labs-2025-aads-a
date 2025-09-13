@@ -41,10 +41,10 @@ namespace
       {
         throw std::runtime_error("Duplicate graph name in input file\n");
       }
-      smirnov::Graph * g = graphs.getGraph(graphName);
-      if (g)
+      smirnov::Graph * addedGraph = graphs.getGraph(graphName);
+      if (addedGraph)
       {
-        *g = graph;
+        *addedGraph = graph;
       }
     }
   }
