@@ -8,9 +8,9 @@ void output_sums(std::ostream& out, karnauhova::Stack< long long int > calc)
 {
   if (!calc.empty())
   {
-  long long int sum = calc.top();
-  out << sum;
-  calc.pop();
+    long long int sum = calc.top();
+    out << sum;
+    calc.pop();
   }
   while (!calc.empty())
   {
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
       std::ifstream file(argv[1]);
       if (file.is_open())
       {
-        calc = karnauhova::input_str(file);
+        calc = karnauhova::inputStr(file);
         file.close();
       }
       else
@@ -42,11 +42,11 @@ int main(int argc, char** argv)
     }
     else
     {
-      calc = karnauhova::input_str(std::cin);
+      calc = karnauhova::inputStr(std::cin);
     }
     output_sums(std::cout, calc);
   }
-  catch(const std::exception& e)
+  catch (const std::exception& e)
   {
     std::cerr << e.what() << '\n';
     return 1;

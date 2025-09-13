@@ -7,7 +7,7 @@
 int main()
 {
   std::string name = "kekw";
-  karnauhova::Fwd_list<std::pair<std::string, karnauhova::Fwd_list<unsigned long long>>> lists;
+  karnauhova::FwdList< std::pair< std::string, karnauhova::FwdList< unsigned long long > > > lists;
   try
   {
     while (std::cin >> name && !std::cin.eof())

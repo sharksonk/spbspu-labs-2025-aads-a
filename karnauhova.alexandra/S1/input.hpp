@@ -8,7 +8,7 @@
 
 namespace karnauhova
 {
-  std::pair<std::string, karnauhova::Fwd_list<unsigned long long>> input_line(std::istream& in, std::string name);
+  std::pair< std::string, karnauhova::FwdList< unsigned long long > > input_line(std::istream& in, std::string name);
 }
 
 #endif

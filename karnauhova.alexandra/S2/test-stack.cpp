@@ -39,19 +39,19 @@ BOOST_AUTO_TEST_CASE(test_top_stack)
 
 BOOST_AUTO_TEST_CASE(test_constructors_and_operator_stack)
 {
-  karnauhova::Stack<int> stack;
+  karnauhova::Stack< int > stack;
   stack.push(2);
 
-  karnauhova::Stack<int> copystack(stack);
+  karnauhova::Stack< int > copystack(stack);
   BOOST_TEST(copystack.size() == 1);
   BOOST_TEST(copystack.top() == 2);
 
-  karnauhova::Stack<int> movestack(std::move(stack));
+  karnauhova::Stack< int > movestack(std::move(stack));
   BOOST_TEST(movestack.size() == 1);
   BOOST_TEST(movestack.top() == 2);
   BOOST_TEST(stack.empty());
 
-  karnauhova::Stack<int> another_stack;
+  karnauhova::Stack< int > another_stack;
   another_stack.push(3);
   another_stack.push(4);
   copystack = another_stack;
@@ -65,11 +65,11 @@ BOOST_AUTO_TEST_CASE(test_constructors_and_operator_stack)
 
 BOOST_AUTO_TEST_CASE(test_swap_stack)
 {
-  karnauhova::Stack<int> stack1;
+  karnauhova::Stack< int > stack1;
   stack1.push(1);
   stack1.push(2);
   stack1.push(3);
-  karnauhova::Stack<int> stack2;
+  karnauhova::Stack< int > stack2;
   stack2.push(1);
   stack2.push(2);
   stack1.swap(stack2);

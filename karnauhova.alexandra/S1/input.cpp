@@ -4,10 +4,10 @@
 #include <stdexcept>
 
 
-std::pair<std::string, karnauhova::Fwd_list<unsigned long long>> karnauhova::input_line(std::istream& in, std::string name)
+std::pair< std::string, karnauhova::FwdList< unsigned long long > > karnauhova::input_line(std::istream& in, std::string name)
 {
   unsigned long long x = 0;
-  karnauhova::Fwd_list<unsigned long long> numbers;
+  FwdList< unsigned long long > numbers;
   while (in >> x)
   {
     if (!x)
@@ -18,6 +18,6 @@ std::pair<std::string, karnauhova::Fwd_list<unsigned long long>> karnauhova::inp
   }
   in.clear();
   numbers.reverse();
-  std::pair<std::string, karnauhova::Fwd_list<unsigned long long>> p (name, numbers);
+  std::pair< std::string, karnauhova::FwdList< unsigned long long > > p (name, numbers);
   return p;
 }
