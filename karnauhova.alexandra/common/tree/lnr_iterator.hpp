@@ -1,7 +1,7 @@
 #ifndef LNR_ITERATOR_HPP
 #define LNR_ITERATOR_HPP
 #include <functional>
-#include <avltree_node.hpp>
+#include "avltree_node.hpp"
 #include <stack.hpp>
 namespace karnauhova
 {

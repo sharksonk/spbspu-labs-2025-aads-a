@@ -5,6 +5,7 @@
 #include <functional>
 #include <stdexcept>
 #include <utility>
+#include "queue.hpp"
 #include "avltree_node.hpp"
 #include "avltree_iterator.hpp"
 #include "avltree_citerator.hpp"
@@ -22,6 +23,8 @@ namespace karnauhova
     using CIter = AvlTreeCIterator< Key, Value, Compare >;
     using pairIter = std::pair< Iter, Iter >;
     using pairCIter = std::pair< CIter, CIter >;
+    using LnrIter = LnrIterator< Key, Value, Compare >;
+    using RnlIter = RnlIterator< Key, Value, Compare >;
 
     AvlTree();
     AvlTree(const AvlTree< Key, Value, Compare >&);
