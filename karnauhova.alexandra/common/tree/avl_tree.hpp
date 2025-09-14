@@ -8,6 +8,9 @@
 #include "avltree_node.hpp"
 #include "avltree_iterator.hpp"
 #include "avltree_citerator.hpp"
+#include "lnr_iterator.hpp"
+#include "rnl_iterator.hpp"
+
 namespace karnauhova
 {
   template< typename Key, typename Value, typename Compare = std::less< Key >>
