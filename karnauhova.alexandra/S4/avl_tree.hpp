@@ -74,7 +74,6 @@ namespace karnauhova
     size_t size_;
     Compare comp_;
 
-    void clearRecursive(Node*) noexcept;
     void balance(Node*) noexcept;
     Node* balanceNode(Node*) noexcept;
     int bfactor(Node*) const noexcept;
@@ -269,7 +268,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
   {
-    if (it == cend() || it.node_ == fake_)
+    if (it == cend())
     {
       return end();
     }
@@ -514,10 +513,7 @@ namespace karnauhova
     {
       return;
     }
-    clearRecursive(fake_->left);
-    fake_->left = fake_;
-    fake_->right = fake_;
-    size_ = 0;
+    erase(begin(), end());
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -570,18 +566,6 @@ namespace karnauhova
       }
     }
     return cend();
-  }
-
-  template< typename Key, typename Value, typename Compare >
-  void AvlTree< Key, Value, Compare >::clearRecursive(Node* node) noexcept
-  {
-    if (node == fake_)
-    {
-      return;
-    }
-    clearRecursive(node->left);
-    clearRecursive(node->right);
-    delete node;
   }
 
   template< typename Key, typename Value, typename Compare >
