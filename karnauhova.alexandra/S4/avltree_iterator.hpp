@@ -11,7 +11,7 @@ namespace karnauhova
   template<typename Key, typename Value, typename Compare >
   class AvlTreeCIterator;
 
-  template< typename Key, typename Value, typename Compare = std::less< Key >>
+  template< typename Key, typename Value, typename Compare = std::less< Key > >
   struct AvlTreeIterator
   {
     friend class AvlTree< Key, Value, Compare >;

@@ -10,7 +10,7 @@
 #include "avltree_citerator.hpp"
 namespace karnauhova
 {
-  template< typename Key, typename Value, typename Compare = std::less< Key >>
+  template< typename Key, typename Value, typename Compare = std::less< Key > >
   class AvlTree
   {
   public:
