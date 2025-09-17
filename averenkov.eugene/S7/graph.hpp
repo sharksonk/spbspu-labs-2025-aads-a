@@ -3,16 +3,15 @@
 
 #include <string>
 #include <array.hpp>
-#include <unordered_map>
-#include <functional>
+#include <hashTable.hpp>
 
 namespace averenkov
 {
   struct Graph
   {
     std::string name;
-    std::unordered_map< std::string, std::unordered_map< std::string, Array< size_t > > > edges;
-    std::unordered_map< std::string, bool > vertices;
+    HashTable< std::string, HashTable< std::string, Array< size_t > > > edges;
+    HashTable< std::string, bool > vertices;
   };
 
 }
