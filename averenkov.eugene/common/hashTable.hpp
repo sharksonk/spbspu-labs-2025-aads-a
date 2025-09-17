@@ -74,29 +74,29 @@ namespace averenkov
 
   private:
     Array< Bucket< Key, Value > > table_;
-    size_t size_;
+    size_t size_ = 0;
     Hash hasher_;
     Equal key_equal_;
-    float max_load_factor_;
+    float max_load_factor_ = 0.75;
 
+    explicit HashTable(size_t bucket_count, const Hash& hash = Hash(), const Equal& equal = Equal());
     size_t hash_to_index(const Key& key) const;
     void rehash_if_needed();
   };
 
 
   template < class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable(size_t bucket_count, const Hash& hash, const Equal& equal):
+    table_(next_prime(bucket_count)),
+    hasher_(hash),
+    key_equal_(equal)
+  {}
+
+
+  template < class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable():
-    table_(11),
-    size_(0),
-    hasher_(),
-    key_equal_(),
-    max_load_factor_(0.75f)
-  {
-    for (size_t i = 0; i < 11; ++i)
-    {
-      table_.push_back(Bucket< Key, Value >());
-    }
-  }
+    HashTable(11)
+  {}
 
   template < class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other):
@@ -120,10 +120,8 @@ namespace averenkov
 
   template < class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(std::initializer_list< std::pair< Key, Value > > init):
-    HashTable()
-  {
-    insert(init);
-  }
+    HashTable(init.begin(), init.end())
+  {}
 
   template < class Key, class Value, class Hash, class Equal >
   template< typename InputIt >
