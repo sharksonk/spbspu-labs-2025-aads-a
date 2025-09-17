@@ -1,23 +1,10 @@
 #include "commands.hpp"
 #include <algorithm>
 #include <cctype>
+#include <limits>
 
 namespace
 {
-  void trim(std::string& str)
-  {
-    size_t start = 0;
-    while (start < str.size() && std::isspace(str[start]))
-    {
-      ++start;
-    }
-    size_t end = str.size();
-    while (end > start && std::isspace(str[end - 1]))
-    {
-      --end;
-    }
-    str = str.substr(start, end - start);
-  }
 
   void readVertices(std::istream& in, size_t count, averenkov::Array< std::string >& vertices)
   {
@@ -35,6 +22,31 @@ namespace
 
 void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std::istream& in)
 {
+   std::string name;
+    size_t edgeCount = 0;
+    while (in >> name >> edgeCount)
+    {
+        Graph currentGraph;
+        currentGraph.name = name;
+        for (size_t i = 0; i < edgeCount; ++i)
+        {
+            std::string from;
+            std::string to;
+            size_t weight;
+            if (!(in >> from >> to >> weight))
+            {
+                throw std::runtime_error("Invalid input format");
+            }
+            currentGraph.addEdge(from, to, weight);
+        }
+        graphs[name] = currentGraph;
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    if (!in.eof() && in.fail())
+    {
+        throw std::runtime_error("Error reading graph data");
+    }
+/*
   std::string line;
   while (std::getline(in, line))
   {
@@ -144,7 +156,7 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
       }
     }
     graphs.insert({graphName, graph});
-  }
+  }*/
 }
 
 void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
