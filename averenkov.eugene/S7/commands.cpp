@@ -24,13 +24,7 @@ namespace
     std::string vertex;
     for (size_t i = 0; i < count; ++i)
     {
-      vertex.clear();
-      char c;
-      while (in.get(c) && !std::isspace(c))
-      {
-        vertex += c;
-      }
-      if (vertex.empty())
+      if (!(in >> vertex))
       {
         throw std::invalid_argument("Not enough vertices");
       }
@@ -414,7 +408,7 @@ void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& g
   {
     graph.vertices.insert({vertices[i], true});
   }
-  graphs.insert({graphName, graph});
+  graphs.insert({ graphName, graph });
 }
 
 void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& graphs)
