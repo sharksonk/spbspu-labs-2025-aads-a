@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <stdexcept>
 #include <vector>
+#include <stack>
+#include <queue>
 #include "node.hpp"
 #include "constiterator.hpp"
 
@@ -35,6 +37,15 @@ namespace shramko
     const_iterator cend() const noexcept;
     const_iterator find(const Key& key) const noexcept;
 
+    template < typename F >
+    F traverse_lnr(F f) const;
+
+    template < typename F >
+    F traverse_rnl(F f) const;
+
+    template < typename F >
+    F traverse_breadth(F f) const;
+
   private:
     Node< Key, Value >* root_;
     size_t size_;
@@ -42,15 +53,14 @@ namespace shramko
 
     void clearNode(Node< Key, Value >* node);
 
-    Node< Key, Value >* insertNode(Node< Key, Value >* node, const Key& key,
-      const Value& value, Node< Key, Value >* parent, size_t& size);
+    Node< Key, Value >* insertNode(Node< Key, Value >* node,
+      const Key& key, const Value& value, Node< Key, Value >* parent, size_t& size);
 
     Node< Key, Value >* findNode(Node< Key, Value >* node, const Key& key) const;
 
     Node< Key, Value >* minNode(Node< Key, Value >* node) const;
 
-    void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode,
-      Node< Key, Value >* parent);
+    void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode, Node< Key, Value >* parent);
   };
 
   template < typename Key, typename Value, typename Compare >
@@ -208,6 +218,75 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
+  template < typename F >
+  F UBstTree< Key, Value, Compare >::traverse_lnr(F f) const
+  {
+    std::stack< Node< Key, Value >* > stack;
+    Node< Key, Value >* current = root_;
+    while (current || !stack.empty())
+    {
+      while (current)
+      {
+        stack.push(current);
+        current = current->left;
+      }
+      current = stack.top();
+      stack.pop();
+      f(current->data);
+      current = current->right;
+    }
+    return f;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  template < typename F >
+  F UBstTree< Key, Value, Compare >::traverse_rnl(F f) const
+  {
+    std::stack< Node< Key, Value >* > stack;
+    Node< Key, Value >* current = root_;
+    while (current || !stack.empty())
+    {
+      while (current)
+      {
+        stack.push(current);
+        current = current->right;
+      }
+      current = stack.top();
+      stack.pop();
+      f(current->data);
+      current = current->left;
+    }
+    return f;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  template < typename F >
+  F UBstTree< Key, Value, Compare >::traverse_breadth(F f) const
+  {
+    if (!root_)
+    {
+      return f;
+    }
+    std::queue< Node< Key, Value >* > queue;
+    queue.push(root_);
+    while (!queue.empty())
+    {
+      Node< Key, Value >* current = queue.front();
+      queue.pop();
+      f(current->data);
+      if (current->left)
+      {
+        queue.push(current->left);
+      }
+      if (current->right)
+      {
+        queue.push(current->right);
+      }
+    }
+    return f;
+  }
+
+  template < typename Key, typename Value, typename Compare >
   void UBstTree< Key, Value, Compare >::clearNode(Node< Key, Value >* node)
   {
     if (!node)
@@ -246,8 +325,7 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
-  Node< Key, Value >* UBstTree< Key, Value, Compare >::findNode(Node< Key, Value >* node,
-    const Key& key) const
+  Node< Key, Value >* UBstTree< Key, Value, Compare >::findNode(Node< Key, Value >* node, const Key& key) const
   {
     if (!node)
     {
@@ -280,8 +358,7 @@ namespace shramko
 
   template < typename Key, typename Value, typename Compare >
   void UBstTree< Key, Value, Compare >::copyTree(Node< Key, Value >*& node,
-    Node< Key, Value >* otherNode,
-    Node< Key, Value >* parent)
+    Node< Key, Value >* otherNode, Node< Key, Value >* parent)
   {
     if (!otherNode)
     {
