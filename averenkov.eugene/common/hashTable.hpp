@@ -434,35 +434,18 @@ namespace averenkov
     {
       return end();
     }
-    size_t index = hash_to_index(key);
+    size_t hash = hasher_(key) % table_.size();
     size_t i = 0;
-    while (i < table_.size())
+    size_t index = probe(hash, i);
+
+    while (table_[index].occupied || table_[index].deleted)
     {
-      size_t current_index = (index + i * i) % table_.size();
-      if (current_index >= table_.size())
+      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
       {
-        break;
+        return iterator(table_.data_ + index, table_.data_ + table_.size());
       }
-      auto& bucket = table_[current_index];
-      if (bucket.occupied && !bucket.deleted)
-      {
-        try
-        {
-          if (key_equal_(bucket.data.first, key))
-          {
-            return iterator(&table_[current_index], &table_[0] + table_.size());
-          }
-        }
-        catch (...)
-        {
-          continue;
-        }
-      }
-      if (!bucket.occupied && !bucket.deleted)
-      {
-        break;
-      }
-      i++;
+      ++i;
+      index = probe(hash, i);
       if (i >= table_.size())
       {
         break;
@@ -477,31 +460,26 @@ namespace averenkov
   {
     if (empty())
     {
-      return end();
+      return cend();
     }
-
-    size_t index = hash_to_index(key);
+    size_t hash = hasher_(key) % table_.size();
     size_t i = 0;
+    size_t index = probe(hash, i);
 
-    while (i < table_.size())
+    while (table_[index].occupied || table_[index].deleted)
     {
-      size_t current_index = (index + i * i) % table_.size();
-      const auto& bucket = table_[current_index];
-
-      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
       {
-        return const_iterator(&table_[current_index], &table_[0] + table_.size());
+        return const_iterator(table_.data_ + index, table_.data_ + table_.size());
       }
-
-      if (!bucket.occupied && !bucket.deleted)
+      ++i;
+      index = probe(hash, i);
+      if (i >= table_.size())
       {
         break;
       }
-
-      i++;
     }
-
-    return end();
+    return cend();
   }
 
   template < class Key, class Value, class Hash, class Equal >
