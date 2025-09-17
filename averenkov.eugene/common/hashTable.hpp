@@ -51,6 +51,9 @@ namespace averenkov
     void insert(InputIt first, InputIt last);
     void insert(std::initializer_list< std::pair< Key, Value > > init);
 
+    template < typename K, typename V >
+    std::pair< iterator, bool > emplace(K&& key, V&& value);
+
     iterator erase(iterator pos);
     size_t erase(const Key& key);
     iterator erase(iterator first, iterator last);
@@ -71,6 +74,7 @@ namespace averenkov
     void max_load_factor(float ml);
     void rehash(size_t count);
     void reserve(size_t count);
+    size_t probe(size_t hash, size_t i) const noexcept;
 
   private:
     Array< Bucket< Key, Value > > table_;
@@ -251,7 +255,53 @@ namespace averenkov
   std::pair< typename HashTable< Key, Value, Hash, Equal >::iterator, bool >
   HashTable< Key, Value, Hash, Equal >::insert(const std::pair< Key, Value >& value)
   {
-    return insert(std::pair< Key, Value >(value));
+    return emplace(value.first, value.second);
+  }
+
+  template < class Key, class Value, class Hash, class Equal >
+  template < typename K, typename V >
+  std::pair< typename HashTable< Key, Value, Hash, Equal >::iterator, bool >
+    HashTable< Key, Value, Hash, Equal >::emplace(K&& key, V&& value)
+  {
+    if (size_ + 1 > max_load_factor_ * table_.size())
+    {
+      rehash(table_.size() * 2);
+    }
+    size_t hash = hasher_(key) % table_.size();
+    size_t i = 0;
+    size_t index = probe(hash, i);
+    size_t first_deleted = table_.size();
+
+    while (table_[index].occupied || table_[index].deleted)
+    {
+      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
+      {
+        if (table_[index].deleted)
+        {
+          table_[index].data = { key, value };
+          table_[index].occupied = true;
+          table_[index].deleted = false;
+          ++size_;
+          return { iterator(table_.data_ + index, table_.data_ + table_.size()), true };
+        }
+        return { iterator(table_.data_ + index, table_.data_ + table_.size()), false };
+      }
+      if (table_[index].deleted && first_deleted == table_.size())
+      {
+        first_deleted = index;
+      }
+      ++i;
+      index = probe(hash, i);
+    }
+    if (first_deleted != table_.size())
+    {
+      index = first_deleted;
+    }
+    table_[index].data = { key, value };
+    table_[index].occupied = true;
+    table_[index].deleted = false;
+    ++size_;
+    return { iterator(table_.data_ + index, table_.data_ + table_.size()), true };
   }
 
   template < class Key, class Value, class Hash, class Equal >
