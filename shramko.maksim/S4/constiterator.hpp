@@ -20,7 +20,7 @@ namespace shramko
     ConstIterator():
       node_(nullptr)
     {}
-    explicit ConstIterator(Node< Key, Value >* node): 
+    explicit ConstIterator(Node< Key, Value >* node):
       node_(node)
     {}
 
