@@ -6,7 +6,6 @@
 
 namespace shramko
 {
-  // Forward declaration of UBstTree template class
   template < typename Key, typename Value, typename Compare >
   class UBstTree;
 
