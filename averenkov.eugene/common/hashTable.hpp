@@ -46,7 +46,6 @@ namespace averenkov
 
     void clear() noexcept;
     std::pair< iterator, bool > insert(const std::pair< Key, Value >& value);
-    std::pair< iterator, bool > insert(std::pair< Key, Value >&& value);
     template< typename InputIt >
     void insert(InputIt first, InputIt last);
     void insert(std::initializer_list< std::pair< Key, Value > > init);
@@ -88,6 +87,11 @@ namespace averenkov
     void rehash_if_needed();
   };
 
+  template < class Key, class Value, class Hash, class Equal >
+  size_t HashTable< Key, Value, Hash, Equal >::probe(size_t hash, size_t i) const noexcept
+  {
+    return (hash + i * i) % table_.size();
+  }
 
   template < class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(size_t bucket_count, const Hash& hash, const Equal& equal):
@@ -302,60 +306,6 @@ namespace averenkov
     table_[index].deleted = false;
     ++size_;
     return { iterator(table_.data_ + index, table_.data_ + table_.size()), true };
-  }
-
-  template < class Key, class Value, class Hash, class Equal >
-  std::pair< typename HashTable< Key, Value, Hash, Equal >::iterator, bool >
-  HashTable< Key, Value, Hash, Equal >::insert(std::pair< Key, Value >&& value)
-  {
-    rehash_if_needed();
-
-    size_t index = hash_to_index(value.first);
-    size_t i = 0;
-    size_t first_deleted = table_.size();
-
-    while (i < table_.size())
-    {
-      size_t current_index = (index + i * i) % table_.size();
-      auto& bucket = table_[current_index];
-
-      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, value.first))
-      {
-        return std::make_pair(iterator(&table_[current_index], &table_[0] + table_.size()), false);
-      }
-
-      if (!bucket.occupied)
-      {
-        if (first_deleted != table_.size())
-        {
-          current_index = first_deleted;
-        }
-        table_[current_index].data = std::move(value);
-        table_[current_index].occupied = true;
-        table_[current_index].deleted = false;
-        size_++;
-        return std::make_pair(iterator(&table_[current_index], &table_[0] + table_.size()), true);
-      }
-
-      if (bucket.deleted && first_deleted == table_.size())
-      {
-        first_deleted = current_index;
-      }
-
-      i++;
-    }
-
-    if (first_deleted != table_.size())
-    {
-      table_[first_deleted].data = std::move(value);
-      table_[first_deleted].occupied = true;
-      table_[first_deleted].deleted = false;
-      size_++;
-      return std::make_pair(iterator(&table_[first_deleted], &table_[0] + table_.size()), true);
-    }
-
-    rehash(table_.size() * 2 + 1);
-    return insert(std::move(value));
   }
 
   template < class Key, class Value, class Hash, class Equal >
