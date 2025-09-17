@@ -21,10 +21,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  HashTable< std::string, Graph > graphs;
+  std::unordered_map< std::string, Graph > graphs;
   loadGraphsFromFile(graphs, file);
 
-  HashTable< std::string, std::function< void() > > cmds;
+  std::unordered_map< std::string, std::function< void() > > cmds;
   commandsInit(cmds, graphs);
 
   std::string command;

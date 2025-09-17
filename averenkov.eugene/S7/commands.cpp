@@ -39,7 +39,7 @@ namespace
   }
 }
 
-void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std::istream& in)
+void averenkov::loadGraphsFromFile(std::unordered_map< std::string, Graph >& graphs, std::istream& in)
 {
   std::string line;
   while (std::getline(in, line))
@@ -128,7 +128,7 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
       auto toMapIt = graph.edges.find(from);
       if (toMapIt == graph.edges.end())
       {
-        HashTable< std::string, Array< size_t > > newMap;
+        std::unordered_map< std::string, Array< size_t > > newMap;
         Array< size_t > weights;
         weights.push_back(weight);
         newMap.insert({to, weights});
@@ -153,7 +153,7 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
   }
 }
 
-void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
+void averenkov::printGraphs(std::ostream& out, const std::unordered_map< std::string, Graph >& graphs)
 {
   Array< std::string > graphNames;
   for (auto it = graphs.begin(); it != graphs.end(); ++it)
@@ -176,7 +176,7 @@ void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Gra
   }
 }
 
-void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printVertices(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName;
   in >> graphName;
@@ -206,7 +206,7 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTab
   }
 }
 
-void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printOutbound(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, vertex;
   in >> graphName >> vertex;
@@ -221,7 +221,7 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
     throw std::invalid_argument("Vertex not found");
   }
   Array< std::string > targets;
-  HashTable< std::string, Array< size_t > > weightsMap;
+  std::unordered_map< std::string, Array< size_t > > weightsMap;
   for (auto it = edgesIt->second.begin(); it != edgesIt->second.end(); ++it)
   {
     targets.push_back(it->first);
@@ -260,7 +260,7 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
   }
 }
 
-void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printInbound(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, vertex;
   in >> graphName >> vertex;
@@ -270,7 +270,7 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
     throw std::invalid_argument("Graph not found");
   }
   Array< std::string > sources;
-  HashTable< std::string, Array< size_t > > weightsMap;
+  std::unordered_map< std::string, Array< size_t > > weightsMap;
   for (auto fromIt = graphIt->second.edges.begin(); fromIt != graphIt->second.edges.end(); ++fromIt)
   {
     for (auto toIt = fromIt->second.begin(); toIt != fromIt->second.end(); ++toIt)
@@ -316,7 +316,7 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
   }
 }
 
-void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::bindEdge(std::istream& in, std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, from, to;
   size_t weight;
@@ -331,7 +331,7 @@ void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& grap
   auto toMapIt = graphIt->second.edges.find(from);
   if (toMapIt == graphIt->second.edges.end())
   {
-    HashTable< std::string, Array< size_t > > newMap;
+    std::unordered_map< std::string, Array< size_t > > newMap;
     Array< size_t > weights;
     weights.push_back(weight);
     newMap.insert({to, weights});
@@ -353,7 +353,7 @@ void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& grap
   }
 }
 
-void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::cutEdge(std::istream& in, std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, from, to;
   size_t weight;
@@ -397,7 +397,7 @@ void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graph
   }
 }
 
-void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::createGraph(std::istream& in, std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName;
   size_t count;
@@ -417,7 +417,7 @@ void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& g
   graphs.insert({graphName, graph});
 }
 
-void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::mergeGraphs(std::istream& in, std::unordered_map< std::string, Graph >& graphs)
 {
   std::string newGraph, graph1, graph2;
   in >> newGraph >> graph1 >> graph2;
@@ -448,7 +448,7 @@ void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& g
       auto mergedToIt = mergedGraph.edges.find(fromIt->first);
       if (mergedToIt == mergedGraph.edges.end())
       {
-        HashTable< std::string, Array< size_t > > newMap;
+        std::unordered_map< std::string, Array< size_t > > newMap;
         newMap.insert({toIt->first, toIt->second});
         mergedGraph.edges.insert({fromIt->first, newMap});
       }
@@ -465,7 +465,7 @@ void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& g
       auto mergedToIt = mergedGraph.edges.find(fromIt->first);
       if (mergedToIt == mergedGraph.edges.end())
       {
-        HashTable< std::string, Array< size_t > > newMap;
+        std::unordered_map< std::string, Array< size_t > > newMap;
         newMap.insert({toIt->first, toIt->second});
         mergedGraph.edges.insert({fromIt->first, newMap});
       }
@@ -489,7 +489,7 @@ void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& g
   graphs.insert({newGraph, mergedGraph});
 }
 
-void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::extractGraph(std::istream& in, std::unordered_map< std::string, Graph >& graphs)
 {
   std::string newGraph, oldGraph;
   size_t count;
@@ -539,7 +539,7 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
           auto extractedToIt = extractedGraph.edges.find(vertices[i]);
           if (extractedToIt == extractedGraph.edges.end())
           {
-            HashTable< std::string, Array< size_t > > newMap;
+            std::unordered_map< std::string, Array< size_t > > newMap;
             newMap.insert({toIt->first, toIt->second});
             extractedGraph.edges.insert({vertices[i], newMap});
           }
@@ -554,7 +554,7 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
   graphs.insert({newGraph, extractedGraph});
 }
 
-void averenkov::commandsInit(HashTable< std::string, std::function< void() > >& cmds, HashTable< std::string, Graph > graphs)
+void averenkov::commandsInit(std::unordered_map< std::string, std::function< void() > >& cmds, std::unordered_map< std::string, Graph > graphs)
 {
   cmds["graphs"] = std::bind(printGraphs, std::ref(std::cout), std::cref(graphs));
   cmds["vertexes"] = std::bind(printVertices, std::ref(std::cout), std::ref(std::cin), std::cref(graphs));
