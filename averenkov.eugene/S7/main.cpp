@@ -3,7 +3,7 @@
 #include <functional>
 #include <stdexcept>
 #include <limits>
-#include "graph.hpp"
+#include <graph.hpp>
 #include "commands.hpp"
 
 int main(int argc, char* argv[])

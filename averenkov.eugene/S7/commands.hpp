@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <hashTable.hpp>
-#include "graph.hpp"
+#include <graph.hpp>
 
 namespace averenkov
 {
