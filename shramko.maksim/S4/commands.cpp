@@ -63,10 +63,9 @@ namespace shramko
     BasicTree result;
     for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
     {
-      auto second_it_find = second_it->second.find(it->first);
-      if (second_it_find != second_it->second.cend())
+      if (second_it->second.find(it->first) != second_it->second.cend())
       {
-        result[it->first] = second_it_find->second;
+        result[it->first] = it->second;
       }
     }
     trees[newDict] = result;
@@ -76,10 +75,8 @@ namespace shramko
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
     TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-
     if (first_it == trees.cend() || second_it == trees.cend())
     {
       out << "<INVALID COMMAND>\n";
