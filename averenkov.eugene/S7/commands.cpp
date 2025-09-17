@@ -40,11 +40,6 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
       currentGraph.addEdge(from, to, weight);
     }
     graphs[name] = currentGraph;
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-  }
-  if (!in.eof() && in.fail())
-  {
-    throw std::runtime_error("Error reading graph data");
   }
 }
 
