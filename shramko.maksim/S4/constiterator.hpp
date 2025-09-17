@@ -3,10 +3,13 @@
 
 #include <iterator>
 #include "node.hpp"
-#include "UBST.hpp"
 
 namespace shramko
 {
+  // Forward declaration of UBstTree template class
+  template < typename Key, typename Value, typename Compare >
+  class UBstTree;
+
   template < typename Key, typename Value, typename Compare = std::less< Key > >
   class ConstIterator
   {
@@ -20,6 +23,7 @@ namespace shramko
     ConstIterator():
       node_(nullptr)
     {}
+
     explicit ConstIterator(Node< Key, Value >* node):
       node_(node)
     {}
@@ -28,6 +32,7 @@ namespace shramko
     {
       return node_->data;
     }
+
     pointer operator->() const
     {
       return &(node_->data);
@@ -38,7 +43,9 @@ namespace shramko
       if (node_)
       {
         if (node_->right)
+        {
           node_ = minNode(node_->right);
+        }
         else
         {
           Node< Key, Value >* parent = node_->parent;
@@ -65,7 +72,9 @@ namespace shramko
       if (node_)
       {
         if (node_->left)
+        {
           node_ = maxNode(node_->left);
+        }
         else
         {
           Node< Key, Value >* parent = node_->parent;
@@ -91,6 +100,7 @@ namespace shramko
     {
       return node_ == other.node_;
     }
+
     bool operator!=(const ConstIterator& other) const
     {
       return !(*this == other);
@@ -103,14 +113,18 @@ namespace shramko
     Node< Key, Value >* minNode(Node< Key, Value >* node) const
     {
       while (node && node->left)
-      node = node->left;
+      {
+        node = node->left;
+      }
       return node;
     }
 
     Node< Key, Value >* maxNode(Node< Key, Value >* node) const
     {
       while (node && node->right)
-      node = node->right;
+      {
+        node = node->right;
+      }
       return node;
     }
   };
