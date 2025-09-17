@@ -176,7 +176,8 @@ void averenkov::printGraphs(std::ostream& out, const std::unordered_map< std::st
   }
 }
 
-void averenkov::printVertices(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
+void averenkov::printVertices(std::ostream& out,
+ std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName;
   in >> graphName;
@@ -206,7 +207,8 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const std::un
   }
 }
 
-void averenkov::printOutbound(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
+void averenkov::printOutbound(std::ostream& out,
+ std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, vertex;
   in >> graphName >> vertex;
@@ -260,7 +262,8 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const std::un
   }
 }
 
-void averenkov::printInbound(std::ostream& out, std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
+void averenkov::printInbound(std::ostream& out,
+ std::istream& in, const std::unordered_map< std::string, Graph >& graphs)
 {
   std::string graphName, vertex;
   in >> graphName >> vertex;
@@ -554,7 +557,8 @@ void averenkov::extractGraph(std::istream& in, std::unordered_map< std::string, 
   graphs.insert({newGraph, extractedGraph});
 }
 
-void averenkov::commandsInit(std::unordered_map< std::string, std::function< void() > >& cmds, std::unordered_map< std::string, Graph > graphs)
+void averenkov::commandsInit(std::unordered_map< std::string,
+ std::function< void() > >& cmds, std::unordered_map< std::string, Graph > graphs)
 {
   cmds["graphs"] = std::bind(printGraphs, std::ref(std::cout), std::cref(graphs));
   cmds["vertexes"] = std::bind(printVertices, std::ref(std::cout), std::ref(std::cin), std::cref(graphs));
