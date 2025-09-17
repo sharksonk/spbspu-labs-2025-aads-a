@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include "node.hpp"
+#include "UBST.hpp"
 
 namespace shramko
 {
@@ -16,11 +17,21 @@ namespace shramko
     using pointer = const value_type*;
     using reference = const value_type&;
 
-    ConstIterator(): node_(nullptr) {}
-    explicit ConstIterator(Node< Key, Value >* node): node_(node) {}
+    ConstIterator():
+      node_(nullptr)
+    {}
+    explicit ConstIterator(Node< Key, Value >* node): 
+      node_(node)
+    {}
 
-    reference operator*() const { return node_->data; }
-    pointer operator->() const { return &(node_->data); }
+    reference operator*() const
+    {
+      return node_->data;
+    }
+    pointer operator->() const
+    {
+      return &(node_->data);
+    }
 
     ConstIterator& operator++()
     {
@@ -76,24 +87,30 @@ namespace shramko
       return temp;
     }
 
-    bool operator==(const ConstIterator& other) const { return node_ == other.node_; }
-    bool operator!=(const ConstIterator& other) const { return !(*this == other); }
+    bool operator==(const ConstIterator& other) const
+    {
+      return node_ == other.node_;
+    }
+    bool operator!=(const ConstIterator& other) const
+    {
+      return !(*this == other);
+    }
 
   private:
-    friend class UBstTree<Key, Value, Compare>;
+    friend class UBstTree< Key, Value, Compare >;
     Node< Key, Value >* node_;
 
     Node< Key, Value >* minNode(Node< Key, Value >* node) const
     {
       while (node && node->left)
-        node = node->left;
+      node = node->left;
       return node;
     }
 
     Node< Key, Value >* maxNode(Node< Key, Value >* node) const
     {
       while (node && node->right)
-        node = node->right;
+      node = node->right;
       return node;
     }
   };
