@@ -6,11 +6,15 @@ void shramko::printNames(const PairList& lists, std::ostream& out)
   {
     return;
   }
-  auto it = lists.begin();
-  out << it->first;
-  for (++it; it != lists.end(); ++it)
+  bool isFirst = true;
+  for (auto it = lists.begin(); it != lists.end(); ++it)
   {
-    out << " " << it->first;
+    if (!isFirst)
+    {
+      out << " ";
+    }
+    out << it->first;
+    isFirst = false;
   }
   out << "\n";
 }
@@ -33,11 +37,15 @@ void shramko::printSumResult(const ForwardList< int >& sums, bool overflow, std:
     return;
   }
 
-  auto it = sums.begin();
-  out << *it;
-  for (++it; it != sums.end(); ++it)
+  bool isFirst = true;
+  for (auto it = sums.begin(); it != sums.end(); ++it)
   {
-    out << " " << *it;
+    if (!isFirst)
+    {
+      out << " ";
+    }
+    out << *it;
+    isFirst = false;
   }
   out << "\n";
 }
@@ -61,18 +69,21 @@ void shramko::processLists(const PairList& lists, size_t maxLen, bool& overflow,
           ++it;
         }
 
-        if (*it > static_cast<unsigned long long>(std::numeric_limits<int>::max()))
+        if (*it > static_cast< unsigned long long >(std::numeric_limits< int >::max()))
         {
           overflow = true;
         }
         else
         {
-          int currentValue = static_cast<int>(*it);
+          int currentValue = static_cast< int >(*it);
           if (checkSumOverflow(currentSum, currentValue))
           {
             overflow = true;
           }
-          currentSum += currentValue;
+          else
+          {
+            currentSum += currentValue;
+          }
         }
 
         if (!firstElement)
