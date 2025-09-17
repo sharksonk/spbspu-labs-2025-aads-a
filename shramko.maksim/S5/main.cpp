@@ -3,6 +3,8 @@
 #include <limits>
 #include <UBST.hpp>
 
+#include "key_sum.hpp"
+
 int main(int argc, char* argv[])
 {
   using namespace shramko;
