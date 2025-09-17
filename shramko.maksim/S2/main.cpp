@@ -34,11 +34,7 @@ namespace
     return false;
   }
 
-<<<<<<< HEAD
-  void inputInfix(std::istream& in, shramko::Queue<std::string>& queue)
-=======
   void inputInfix(std::istream& in, shramko::Queue< std::string >& queue)
->>>>>>> master
   {
     std::string infix;
     std::getline(in, infix);
@@ -71,19 +67,11 @@ namespace
     }
   }
 
-<<<<<<< HEAD
-  void input(std::istream& in, shramko::Queue<shramko::Queue<std::string>>& queue)
-  {
-    while (!in.eof())
-    {
-      shramko::Queue<std::string> temp_inf_expr;
-=======
   void input(std::istream& in, shramko::Queue< shramko::Queue< std::string > >& queue)
   {
     while (!in.eof())
     {
       shramko::Queue< std::string > temp_inf_expr;
->>>>>>> master
       inputInfix(in, temp_inf_expr);
       if (!temp_inf_expr.empty())
       {
@@ -92,15 +80,9 @@ namespace
     }
   }
 
-<<<<<<< HEAD
-  void convertInfToPost(shramko::Queue<std::string>& inf, shramko::Queue<std::string>& post_queue)
-  {
-    shramko::Stack<std::string> stack;
-=======
   void convertInfToPost(shramko::Queue< std::string >& inf, shramko::Queue< std::string >& post_queue)
   {
     shramko::Stack< std::string > stack;
->>>>>>> master
     while (!inf.empty())
     {
       std::string temp = inf.front();
@@ -223,21 +205,9 @@ namespace
     return false;
   }
 
-<<<<<<< HEAD
-  bool isOverflowedDivide(long long a, long long b)
-  {
-    const long long min = std::numeric_limits<long long>::min();
-    return (a == min && b == -1);
-  }
-
-  long long calculateExpr(shramko::Queue<std::string>& post)
-  {
-    shramko::Stack<long long> stack;
-=======
   long long calculateExpr(shramko::Queue< std::string >& post)
   {
     shramko::Stack< long long > stack;
->>>>>>> master
     while (!post.empty())
     {
       std::string temp = post.front();
@@ -321,13 +291,8 @@ namespace
 int main(int argc, const char* const* argv)
 {
   using namespace shramko;
-<<<<<<< HEAD
-  Queue<Queue<std::string>> inf_exprs;
-  Stack<long long> results;
-=======
   Queue< Queue< std::string > > inf_exprs;
   Stack< long long > results;
->>>>>>> master
   try
   {
     if (argc == 1)
@@ -346,13 +311,8 @@ int main(int argc, const char* const* argv)
     }
     while (!inf_exprs.empty())
     {
-<<<<<<< HEAD
-      shramko::Queue<std::string> temp_inf;
-      shramko::Queue<std::string>& front_ref = inf_exprs.front();
-=======
       Queue< std::string > temp_inf;
       Queue< std::string >& front_ref = inf_exprs.front();
->>>>>>> master
       while (!front_ref.empty())
       {
         temp_inf.push(front_ref.front());
@@ -361,11 +321,7 @@ int main(int argc, const char* const* argv)
       inf_exprs.pop();
       if (!temp_inf.empty())
       {
-<<<<<<< HEAD
-        shramko::Queue<std::string> temp_post;
-=======
         Queue< std::string > temp_post;
->>>>>>> master
         convertInfToPost(temp_inf, temp_post);
         results.push(calculateExpr(temp_post));
       }

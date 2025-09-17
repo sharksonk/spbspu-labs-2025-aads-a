@@ -6,12 +6,8 @@
 
 namespace shramko
 {
-<<<<<<< HEAD
-  void outputStack(std::ostream& out, Stack<long long>& stack)
-=======
   template< typename T >
   void outputStack(std::ostream& out, Stack< T >& stack)
->>>>>>> master
   {
     if (stack.empty())
     {
