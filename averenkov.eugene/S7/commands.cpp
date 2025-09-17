@@ -22,141 +22,30 @@ namespace
 
 void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std::istream& in)
 {
-   std::string name;
-    size_t edgeCount = 0;
-    while (in >> name >> edgeCount)
-    {
-        Graph currentGraph;
-        currentGraph.name = name;
-        for (size_t i = 0; i < edgeCount; ++i)
-        {
-            std::string from;
-            std::string to;
-            size_t weight;
-            if (!(in >> from >> to >> weight))
-            {
-                throw std::runtime_error("Invalid input format");
-            }
-            currentGraph.addEdge(from, to, weight);
-        }
-        graphs[name] = currentGraph;
-        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    if (!in.eof() && in.fail())
-    {
-        throw std::runtime_error("Error reading graph data");
-    }
-/*
-  std::string line;
-  while (std::getline(in, line))
+  std::string name;
+  size_t edgeCount = 0;
+  while (in >> name >> edgeCount)
   {
-    trim(line);
-    if (line.empty())
-    {
-      continue;
-    }
-
-    size_t pos = 0;
-    std::string graphName;
-    std::string edgeCountStr;
-
-    while (pos < line.size() && !std::isspace(line[pos]))
-    {
-      graphName += line[pos];
-      ++pos;
-    }
-    while (pos < line.size() && std::isspace(line[pos]))
-    {
-      ++pos;
-    }
-    while (pos < line.size() && !std::isspace(line[pos]))
-    {
-      edgeCountStr += line[pos];
-      ++pos;
-    }
-    if (graphName.empty() || edgeCountStr.empty())
-    {
-      continue;
-    }
-    size_t edgeCount = std::stoul(edgeCountStr);
-    Graph graph;
-    graph.name = graphName;
-
+    Graph currentGraph;
+    currentGraph.name = name;
     for (size_t i = 0; i < edgeCount; ++i)
     {
-      if (!std::getline(in, line))
-      {
-        throw std::runtime_error("Unexpected end of file");
-      }
-      trim(line);
-      if (line.empty())
-      {
-        --i;
-        continue;
-      }
-
-      pos = 0;
       std::string from;
       std::string to;
-      std::string weightStr;
-      while (pos < line.size() && !std::isspace(line[pos]))
+      size_t weight;
+      if (!(in >> from >> to >> weight))
       {
-        from += line[pos];
-        ++pos;
+        throw std::runtime_error("Invalid input format");
       }
-      while (pos < line.size() && std::isspace(line[pos]))
-      {
-        ++pos;
-      }
-      while (pos < line.size() && !std::isspace(line[pos]))
-      {
-        to += line[pos];
-        ++pos;
-      }
-      while (pos < line.size() && std::isspace(line[pos]))
-      {
-        ++pos;
-      }
-      while (pos < line.size() && !std::isspace(line[pos]))
-      {
-        weightStr += line[pos];
-        ++pos;
-      }
-      if (from.empty() || to.empty() || weightStr.empty())
-      {
-        throw std::runtime_error("Invalid edge format: " + line);
-      }
-      size_t weight = std::stoul(weightStr);
-
-      graph.vertices.insert({from, true});
-      graph.vertices.insert({to, true});
-
-      auto toMapIt = graph.edges.find(from);
-      if (toMapIt == graph.edges.end())
-      {
-        HashTable< std::string, Array< size_t > > newMap;
-        Array< size_t > weights;
-        weights.push_back(weight);
-        newMap.insert({to, weights});
-        graph.edges.insert({from, newMap});
-      }
-      else
-      {
-        auto weightsIt = toMapIt->second.find(to);
-        if (weightsIt == toMapIt->second.end())
-        {
-          Array< size_t > weights;
-          weights.push_back(weight);
-          toMapIt->second.insert({to, weights});
-        }
-        else
-        {
-          weightsIt->second.push_back(weight);
-        }
-      }
+      currentGraph.addEdge(from, to, weight);
     }
-    graphs.insert({graphName, graph});
-  }*/
+    graphs[name] = currentGraph;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  }
+  if (!in.eof() && in.fail())
+  {
+    throw std::runtime_error("Error reading graph data");
+  }
 }
 
 void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
@@ -324,39 +213,17 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
 
 void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
 {
-  std::string graphName, from, to;
+  std::string graphName;
+  std::string from;
+  std::string to;
   size_t weight;
   in >> graphName >> from >> to >> weight;
-  auto graphIt = graphs.find(graphName);
-  if (graphIt == graphs.end())
+  auto it = graphs.find(graphName);
+  if (it == graphs.end())
   {
-    throw std::invalid_argument("Graph not found");
+    throw std::invalid_argument("Invalid command");
   }
-  graphIt->second.vertices.insert({from, true});
-  graphIt->second.vertices.insert({to, true});
-  auto toMapIt = graphIt->second.edges.find(from);
-  if (toMapIt == graphIt->second.edges.end())
-  {
-    HashTable< std::string, Array< size_t > > newMap;
-    Array< size_t > weights;
-    weights.push_back(weight);
-    newMap.insert({to, weights});
-    graphIt->second.edges.insert({from, newMap});
-  }
-  else
-  {
-    auto weightsIt = toMapIt->second.find(to);
-    if (weightsIt == toMapIt->second.end())
-    {
-      Array< size_t > weights;
-      weights.push_back(weight);
-      toMapIt->second.insert({to, weights});
-    }
-    else
-    {
-      weightsIt->second.push_back(weight);
-    }
-  }
+  it->second.addEdge(from, to, weight);
 }
 
 void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
