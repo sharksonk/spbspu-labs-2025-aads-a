@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "UBST.hpp"
+#include <UBST.hpp>
 
 namespace shramko
 {
