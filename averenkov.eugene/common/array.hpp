@@ -46,7 +46,10 @@ namespace averenkov
     void resize(size_t capac);
     void resize();
     Array< T > copy(const Array& other, size_t capacity);
+
     explicit Array(size_t size);
+    T* copy_data(const Array& other, size_t capacity);
+
   };
 
   template< class T >
@@ -67,13 +70,11 @@ namespace averenkov
 
   template< class T >
   Array< T >::Array(const Array& rhs):
-    data_(nullptr),
-    last_(0),
-    capacity_(1),
-    first_(0)
-  {
-    *this = copy(rhs, rhs.capacity_);
-  }
+    data_(copy_data(rhs, rhs.capacity_)),
+    last_(rhs.last_),
+    capacity_(rhs.capacity_),
+    first_(rhs.first_)
+  {}
 
 
   template< class T >
@@ -243,6 +244,26 @@ namespace averenkov
       throw;
     }
     return new_array;
+  }
+
+  template< class T >
+  T* Array< T >::copy_data(const Array& other, size_t capacity)
+  {
+    T* new_data = nullptr;
+    try
+    {
+      new_data = new T[capacity];
+      for (size_t i = 0; i < other.last_; ++i)
+      {
+        new_data[i] = other.data_[i];
+      }
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
+    return new_data;
   }
 
 }
