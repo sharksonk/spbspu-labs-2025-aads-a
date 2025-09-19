@@ -21,7 +21,7 @@ std::cout << "FIRST\n";
   }
 }
 
-void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std::istream& in)
+void averenkov::loadGraphsFromFile(Tree< std::string, Graph >& graphs, std::istream& in)
 {
   std::string name;
   size_t edgeCount = 0;
@@ -44,7 +44,7 @@ std::cout << "SECOND\n";
   }
 }
 
-void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
+void averenkov::printGraphs(std::ostream& out, const Tree< std::string, Graph >& graphs)
 {
   Array< std::string > graphNames;
   for (auto it = graphs.begin(); it != graphs.end(); ++it)
@@ -67,7 +67,7 @@ void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Gra
   }
 }
 
-void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printVertices(std::ostream& out, std::istream& in, const Tree< std::string, Graph >& graphs)
 {
   std::string graphName;
   in >> graphName;
@@ -89,7 +89,7 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTab
   }
 }
 
-void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printOutbound(std::ostream& out, std::istream& in, const Tree< std::string, Graph >& graphs)
 {
   std::string graphName;
   std::string vertex;
@@ -107,7 +107,7 @@ std::cout << "FOURTH\n";
     return;
   }
   Array< std::string > targets;
-  HashTable< std::string, Array< size_t > > weightsMap;
+  Tree< std::string, Array< size_t > > weightsMap;
   for (auto it = edgesIt->second.begin(); it != edgesIt->second.end(); ++it)
   {
     targets.push_back(it->first);
@@ -146,7 +146,7 @@ std::cout << "FOURTH\n";
   }
 }
 
-void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
+void averenkov::printInbound(std::ostream& out, std::istream& in, const Tree< std::string, Graph >& graphs)
 {
   std::string graphName, vertex;
   in >> graphName >> vertex;
@@ -157,7 +157,7 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
     throw std::invalid_argument("Graph not found");
   }
   Array< std::string > sources;
-  HashTable< std::string, Array< size_t > > weightsMap;
+  Tree< std::string, Array< size_t > > weightsMap;
   for (auto fromIt = graphIt->second.edges.begin(); fromIt != graphIt->second.edges.end(); ++fromIt)
   {
     for (auto toIt = fromIt->second.begin(); toIt != fromIt->second.end(); ++toIt)
@@ -203,7 +203,7 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
   }
 }
 
-void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::bindEdge(std::istream& in, Tree< std::string, Graph >& graphs)
 {
   std::string graphName;
   std::string from;
@@ -219,7 +219,7 @@ void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& grap
   it->second.addEdge(from, to, weight);
 }
 
-void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::cutEdge(std::istream& in, Tree< std::string, Graph >& graphs)
 {
   std::string graphName, from, to;
   size_t weight;
@@ -267,7 +267,7 @@ void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graph
   }
 }
 
-void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::createGraph(std::istream& in, Tree< std::string, Graph >& graphs)
 {
   std::string graphName;
   in >> graphName;
@@ -292,7 +292,7 @@ void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& g
   graphs.insert({graphName, newGraph});
 }
 
-void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::mergeGraphs(std::istream& in, Tree< std::string, Graph >& graphs)
 {
   std::string newGraph, graph1, graph2;
   in >> newGraph >> graph1 >> graph2;
@@ -366,7 +366,7 @@ void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& g
   graphs.insert({newGraph, mergedGraph});
 }
 
-void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& graphs)
+void averenkov::extractGraph(std::istream& in, Tree< std::string, Graph >& graphs)
 {
   std::string newGraph, oldGraph;
   size_t count;
@@ -434,7 +434,7 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
   graphs.insert({newGraph, extractedGraph});
 }
 
-void averenkov::commandsInit(HashTable< std::string, std::function< void() > >& cmds, HashTable< std::string, Graph >& graphs)
+void averenkov::commandsInit(Tree< std::string, std::function< void() > >& cmds, Tree< std::string, Graph >& graphs)
 {
   cmds["graphs"] = std::bind(printGraphs, std::ref(std::cout), std::cref(graphs));
   cmds["vertexes"] = std::bind(printVertices, std::ref(std::cout), std::ref(std::cin), std::cref(graphs));
