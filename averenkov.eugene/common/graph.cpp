@@ -29,3 +29,10 @@ void averenkov::Graph::addEdge(const std::string& from, const std::string& to, s
   }
 }
 
+void averenkov::Graph::addVertex(const std::string& vertex)
+{
+  if (vertices.find(vertex) == vertices.end())
+  {
+    vertices.insert({vertex, true});
+  }
+}

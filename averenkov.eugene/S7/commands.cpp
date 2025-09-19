@@ -261,21 +261,24 @@ void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graph
 void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& graphs)
 {
   std::string graphName;
-  size_t count;
-  in >> graphName >> count;
+  in >> graphName;
   if (graphs.find(graphName) != graphs.end())
   {
-    throw std::invalid_argument("Graph already exists");
+    throw std::invalid_argument("Invalid command");
   }
-  Array< std::string > vertices;
-  readVertices(in, count, vertices);
-  Graph graph;
-  graph.name = graphName;
-  for (size_t i = 0; i < vertices.size(); ++i)
+  size_t vertexCount = 0;
+  in >> vertexCount;
+  Graph newGraph;
+  for (size_t i = 0; i < vertexCount; ++i)
   {
-    graph.vertices.insert({vertices[i], true});
+    std::string vertex;
+    if (!(in >> vertex))
+    {
+      throw std::invalid_argument("Invalid command");
+    }
+    newGraph.addVertex(vertex);
   }
-  graphs.insert({ graphName, graph });
+  graphs.insert({graphName, newGraph});
 }
 
 void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& graphs)
