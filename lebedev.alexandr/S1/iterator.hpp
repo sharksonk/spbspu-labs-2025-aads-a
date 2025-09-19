@@ -6,6 +6,9 @@
 namespace lebedev
 {
   template< class T >
+  struct List;
+
+  template< class T >
   struct Iterator: public std::iterator< std::bidirectional_iterator_tag, T >
   {
   public:
