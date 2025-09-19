@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <stdexcept>
-#include <vector>
 #include <stack>
 #include <queue>
 #include "node.hpp"
