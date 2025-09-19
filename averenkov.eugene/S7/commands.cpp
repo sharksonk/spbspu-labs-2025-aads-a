@@ -142,6 +142,11 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const Tree< s
       }
     }
   }
+  if (targets.empty())
+  {
+    out << "\n";
+    return;
+  }
   for (size_t i = 0; i < targets.size(); ++i)
   {
     auto weightsIt = weightsMap.find(targets[i]);
@@ -173,6 +178,10 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const Tree< st
   if (graphIt == graphs.end())
   {
     throw std::invalid_argument("Graph not found");
+  }
+  if (graphIt->second.vertices.find(vertex) == graphIt->second.vertices.end())
+  {
+    throw std::invalid_argument("Invalid command");
   }
   Array< std::string > sources;
   Tree< std::string, Array< size_t > > weightsMap;
