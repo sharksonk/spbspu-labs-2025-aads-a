@@ -36,3 +36,4 @@ void averenkov::Graph::addVertex(const std::string& vertex)
     vertices.insert({vertex, true});
   }
 }
+

@@ -88,27 +88,26 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTab
 
 void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTable< std::string, Graph >& graphs)
 {
-  std::string graphName, vertex;
+  std::string graphName;
+  std::string vertex;
   in >> graphName >> vertex;
-  auto graphIt = graphs.find(graphName);
-  if (graphIt == graphs.end())
+  auto it = graphs.find(graphName);
+  if (it == graphs.end() || it->second.vertices.find(vertex) == it->second.vertices.end())
   {
     throw std::invalid_argument("Invalid command");
   }
-  if (graphIt->second.vertices.find(vertex) == graphIt->second.vertices.end())
-  {
-    throw std::invalid_argument("Invalid command");
-  }
-  auto edgesIt = graphIt->second.edges.find(vertex);
-  if (edgesIt == graphIt->second.edges.end())
+  auto edgesIt = it->second.edges.find(vertex);
+  if (edgesIt == it->second.edges.end())
   {
     out << "\n";
     return;
   }
   Array< std::string > targets;
+  HashTable< std::string, Array< size_t > > weightsMap;
   for (auto it = edgesIt->second.begin(); it != edgesIt->second.end(); ++it)
   {
     targets.push_back(it->first);
+    weightsMap.insert({it->first, it->second});
   }
   for (size_t i = 0; i < targets.size(); ++i)
   {
@@ -122,7 +121,7 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
   }
   for (size_t i = 0; i < targets.size(); ++i)
   {
-    auto weightsIt = edgesIt->second.find(targets[i]);
+    auto weightsIt = weightsMap.find(targets[i]);
     out << targets[i];
     Array< size_t > weights = weightsIt->second;
     for (size_t j = 0; j < weights.size(); ++j)
