@@ -13,6 +13,7 @@ namespace
     {
       if (!(in >> vertex))
       {
+std::cout << "FIRST\n";
         throw std::invalid_argument("Not enough vertices");
       }
       vertices.push_back(vertex);
@@ -34,6 +35,7 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
       size_t weight;
       if (!(in >> from >> to >> weight))
       {
+std::cout << "SECOND\n";
         throw std::runtime_error("Invalid input format");
       }
       currentGraph.addEdge(from, to, weight);
@@ -71,7 +73,8 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTab
   in >> graphName;
   auto it = graphs.find(graphName);
   if (it == graphs.end())
-  {
+  {std::cout << "THIRD\n";
+
     throw std::invalid_argument("Invalid command");
   }
   const auto& vertices = it->second.vertices;
@@ -94,6 +97,7 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
   auto it = graphs.find(graphName);
   if (it == graphs.end() || it->second.vertices.find(vertex) == it->second.vertices.end())
   {
+std::cout << "FOURTH\n";
     throw std::invalid_argument("Invalid command");
   }
   auto edgesIt = it->second.edges.find(vertex);
@@ -148,7 +152,8 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const HashTabl
   in >> graphName >> vertex;
   auto graphIt = graphs.find(graphName);
   if (graphIt == graphs.end())
-  {
+  {std::cout << "FIFTH\n";
+
     throw std::invalid_argument("Graph not found");
   }
   Array< std::string > sources;
@@ -207,7 +212,8 @@ void averenkov::bindEdge(std::istream& in, HashTable< std::string, Graph >& grap
   in >> graphName >> from >> to >> weight;
   auto it = graphs.find(graphName);
   if (it == graphs.end())
-  {
+  {std::cout << "SIXTH\n";
+
     throw std::invalid_argument("Invalid command");
   }
   it->second.addEdge(from, to, weight);
@@ -220,17 +226,20 @@ void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graph
   in >> graphName >> from >> to >> weight;
   auto graphIt = graphs.find(graphName);
   if (graphIt == graphs.end())
-  {
+  {std::cout << "SEVENTH\n";
+
     throw std::invalid_argument("Graph not found");
   }
   auto fromIt = graphIt->second.edges.find(from);
   if (fromIt == graphIt->second.edges.end())
-  {
+  {std::cout << "EIGHT\n";
+
     throw std::invalid_argument("Edge not found");
   }
   auto toIt = fromIt->second.find(to);
   if (toIt == fromIt->second.end())
-  {
+  {std::cout << "NINETH\n";
+
     throw std::invalid_argument("Edge not found");
   }
   bool found = false;
@@ -248,7 +257,8 @@ void averenkov::cutEdge(std::istream& in, HashTable< std::string, Graph >& graph
     }
   }
   if (!found)
-  {
+  {std::cout << "TENTH\n";
+
     throw std::invalid_argument("Weight not found");
   }
   if (toIt->second.empty())
@@ -262,7 +272,8 @@ void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& g
   std::string graphName;
   in >> graphName;
   if (graphs.find(graphName) != graphs.end())
-  {
+  {std::cout << "ELEVEN\n";
+
     throw std::invalid_argument("Invalid command");
   }
   size_t vertexCount = 0;
@@ -272,7 +283,8 @@ void averenkov::createGraph(std::istream& in, HashTable< std::string, Graph >& g
   {
     std::string vertex;
     if (!(in >> vertex))
-    {
+    {std::cout << "TWELVE\n";
+
       throw std::invalid_argument("Invalid command");
     }
     newGraph.addVertex(vertex);
@@ -285,13 +297,15 @@ void averenkov::mergeGraphs(std::istream& in, HashTable< std::string, Graph >& g
   std::string newGraph, graph1, graph2;
   in >> newGraph >> graph1 >> graph2;
   if (graphs.find(newGraph) != graphs.end())
-  {
+  {std::cout << "THIRTEEN\n";
+
     throw std::invalid_argument("Graph already exists");
   }
   auto it1 = graphs.find(graph1);
   auto it2 = graphs.find(graph2);
   if (it1 == graphs.end() || it2 == graphs.end())
-  {
+  {std::cout << "FOURTEEN\n";
+
     throw std::invalid_argument("Graph not found");
   }
   Graph mergedGraph;
@@ -358,12 +372,14 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
   size_t count;
   in >> newGraph >> oldGraph >> count;
   if (graphs.find(newGraph) != graphs.end())
-  {
+  {std::cout << "FIFTEEN\n";
+
     throw std::invalid_argument("Graph already exists");
   }
   auto oldGraphIt = graphs.find(oldGraph);
   if (oldGraphIt == graphs.end())
-  {
+  {std::cout << "SIXTEEN\n";
+
     throw std::invalid_argument("Graph not found");
   }
   Array< std::string > vertices;
@@ -371,7 +387,8 @@ void averenkov::extractGraph(std::istream& in, HashTable< std::string, Graph >& 
   for (size_t i = 0; i < vertices.size(); ++i)
   {
     if (oldGraphIt->second.vertices.find(vertices[i]) == oldGraphIt->second.vertices.end())
-    {
+    {std::cout << "SEVENTEEN\n";
+
       throw std::invalid_argument("Vertex not found in source graph");
     }
   }
