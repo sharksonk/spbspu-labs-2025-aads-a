@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <functional>
-#include "commandProcessing.hpp"
+#include "command_processing.hpp"
 
 namespace
 {

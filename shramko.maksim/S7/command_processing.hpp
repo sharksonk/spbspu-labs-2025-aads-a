@@ -3,6 +3,7 @@
 
 #include <map>
 #include <iostream>
+#include "graph.hpp"
 
 namespace shramko
 {
