@@ -1,3 +1,4 @@
+#include <iostream>
 #include "commands.hpp"
 #include <algorithm>
 #include <cctype>
@@ -5,7 +6,6 @@
 
 namespace
 {
-
   void readVertices(std::istream& in, size_t count, averenkov::Array< std::string >& vertices)
   {
     std::string vertex;
@@ -27,7 +27,6 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
   while (in >> name >> edgeCount)
   {
     Graph currentGraph;
-    currentGraph.name = name;
     for (size_t i = 0; i < edgeCount; ++i)
     {
       std::string from;
@@ -41,6 +40,10 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
     }
     graphs[name] = currentGraph;
   }
+   std::cout << "\nСписок загруженных графов:\n";
+    for (const auto& graphPair : graphs) {
+      std::cout << "  - " << graphPair.first << "\n";
+    }
 }
 
 void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
