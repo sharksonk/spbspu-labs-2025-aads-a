@@ -40,10 +40,6 @@ void averenkov::loadGraphsFromFile(HashTable< std::string, Graph >& graphs, std:
     }
     graphs[name] = currentGraph;
   }
-   std::cout << "\nСписок загруженных графов:\n";
-    for (const auto& graphPair : graphs) {
-      std::cout << "  - " << graphPair.first << "\n";
-    }
 }
 
 void averenkov::printGraphs(std::ostream& out, const HashTable< std::string, Graph >& graphs)
@@ -73,29 +69,20 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const HashTab
 {
   std::string graphName;
   in >> graphName;
-  auto graphIt = graphs.find(graphName);
-  if (graphIt == graphs.end())
+  auto it = graphs.find(graphName);
+  if (it == graphs.end())
   {
-    throw std::invalid_argument("Graph not found");
+    throw std::invalid_argument("Invalid command");
   }
-  Array< std::string > vertices;
-  for (auto it = graphIt->second.vertices.begin(); it != graphIt->second.vertices.end(); ++it)
+  const auto& vertices = it->second.vertices;
+  if (vertices.empty())
   {
-    vertices.push_back(it->first);
+    out << "\n";
+    return;
   }
-  for (size_t i = 0; i < vertices.size(); ++i)
+  for (auto vit = vertices.begin(); vit != vertices.end(); ++vit)
   {
-    for (size_t j = i + 1; j < vertices.size(); ++j)
-    {
-      if (vertices[j] < vertices[i])
-      {
-        std::swap(vertices[i], vertices[j]);
-      }
-    }
-  }
-  for (size_t i = 0; i < vertices.size(); ++i)
-  {
-    out << vertices[i] << "\n";
+    out << vit->first << "\n";
   }
 }
 
@@ -106,19 +93,22 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
   auto graphIt = graphs.find(graphName);
   if (graphIt == graphs.end())
   {
-    throw std::invalid_argument("Graph not found");
+    throw std::invalid_argument("Invalid command");
+  }
+  if (graphIt->second.vertices.find(vertex) == graphIt->second.vertices.end())
+  {
+    throw std::invalid_argument("Invalid command");
   }
   auto edgesIt = graphIt->second.edges.find(vertex);
   if (edgesIt == graphIt->second.edges.end())
   {
-    throw std::invalid_argument("Vertex not found");
+    out << "\n";
+    return;
   }
   Array< std::string > targets;
-  HashTable< std::string, Array< size_t > > weightsMap;
   for (auto it = edgesIt->second.begin(); it != edgesIt->second.end(); ++it)
   {
     targets.push_back(it->first);
-    weightsMap.insert({it->first, it->second});
   }
   for (size_t i = 0; i < targets.size(); ++i)
   {
@@ -132,7 +122,8 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
   }
   for (size_t i = 0; i < targets.size(); ++i)
   {
-    auto weightsIt = weightsMap.find(targets[i]);
+    auto weightsIt = edgesIt->second.find(targets[i]);
+    out << targets[i];
     Array< size_t > weights = weightsIt->second;
     for (size_t j = 0; j < weights.size(); ++j)
     {
@@ -144,7 +135,6 @@ void averenkov::printOutbound(std::ostream& out, std::istream& in, const HashTab
         }
       }
     }
-    out << targets[i];
     for (size_t j = 0; j < weights.size(); ++j)
     {
       out << " " << weights[j];
