@@ -10,14 +10,14 @@ int main(int argc, char* argv[])
 
   if (argc != 3)
   {
-    std::cerr << "Invalid arguments\n";
+    std::cerr << "Invalid arguments" << std::endl;
     return 1;
   }
 
   std::ifstream file(argv[2]);
   if (!file.is_open())
   {
-    std::cerr << "File open failed\n";
+    std::cerr << "File open failed" << std::endl;
     return 1;
   }
 
@@ -28,15 +28,10 @@ int main(int argc, char* argv[])
   {
     dict[key] = value;
   }
-  if (!file.eof())
-  {
-    std::cerr << "Bad input file\n";
-    return 1;
-  }
 
   if (dict.empty())
   {
-    std::cout << "<EMPTY>\n";
+    std::cout << "<EMPTY>" << std::endl;
     return 0;
   }
 
@@ -58,18 +53,18 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cerr << "Invalid command\n";
+      std::cerr << "Invalid command" << std::endl;
       return 1;
     }
   }
   catch (const std::overflow_error& e)
   {
-    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "Error: " << e.what() << std::endl;
     return 1;
   }
   catch (const std::exception& e)
   {
-    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "Error: " << e.what() << std::endl;
     return 1;
   }
 
@@ -78,6 +73,6 @@ int main(int argc, char* argv[])
   {
     std::cout << " " << func.elems;
   }
-  std::cout << "\n";
+  std::cout << std::endl;
   return 0;
 }
