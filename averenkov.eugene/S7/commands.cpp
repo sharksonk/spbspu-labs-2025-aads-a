@@ -78,10 +78,6 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const Tree< s
   {
     throw std::invalid_argument("Invalid command");
   }
-  if (graphIt->second.vertices.find(vertex) == graphIt->second.vertices.end())
-  {
-    throw std::invalid_argument("Invalid command");
-  }
   Array< std::string > vertexNames;
   for (auto vit = it->second.vertices.begin(); vit != it->second.vertices.end(); ++vit)
   {
@@ -89,12 +85,17 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const Tree< s
   }
   for (size_t i = 0; i < vertexNames.size(); ++i)
   {
+    size_t minIndex = i;
     for (size_t j = i + 1; j < vertexNames.size(); ++j)
     {
-      if (vertexNames[j] < vertexNames[i])
+      if (vertexNames[j] < vertexNames[minIndex])
       {
-        std::swap(vertexNames[i], vertexNames[j]);
+        minIndex = j;
       }
+    }
+    if (minIndex != i)
+    {
+      std::swap(vertexNames[i], vertexNames[minIndex]);
     }
   }
   if (vertexNames.empty())
