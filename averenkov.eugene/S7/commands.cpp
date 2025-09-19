@@ -58,6 +58,11 @@ void averenkov::printGraphs(std::ostream& out, const Tree< std::string, Graph >&
       }
     }
   }
+  if (graphNames.empty())
+  {
+    out << "\n";
+    return;
+  }
   for (size_t i = 0; i < graphNames.size(); ++i)
   {
     out << graphNames[i] << "\n";
@@ -70,6 +75,10 @@ void averenkov::printVertices(std::ostream& out, std::istream& in, const Tree< s
   in >> graphName;
   auto it = graphs.find(graphName);
   if (it == graphs.end())
+  {
+    throw std::invalid_argument("Invalid command");
+  }
+  if (graphIt->second.vertices.find(vertex) == graphIt->second.vertices.end())
   {
     throw std::invalid_argument("Invalid command");
   }
@@ -162,7 +171,6 @@ void averenkov::printInbound(std::ostream& out, std::istream& in, const Tree< st
   auto graphIt = graphs.find(graphName);
   if (graphIt == graphs.end())
   {
-
     throw std::invalid_argument("Graph not found");
   }
   Array< std::string > sources;
