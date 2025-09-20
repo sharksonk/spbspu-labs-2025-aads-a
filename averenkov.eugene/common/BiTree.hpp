@@ -16,7 +16,6 @@ namespace averenkov
   class Tree
   {
   public:
-    using NodeType = detail::Node< Key, Value >;
     using iterator = Iterator< Key, Value, Compare >;
     using const_iterator = ConstIterator< Key, Value, Compare >;
 
@@ -71,6 +70,8 @@ namespace averenkov
     size_t size() const noexcept;
 
   private:
+    using NodeType = detail::Node< Key, Value >;
+
     NodeType* fake_root_;
     Compare comp_;
     size_t size_;
@@ -93,9 +94,6 @@ namespace averenkov
     template < typename IsIterator >
     IsIterator bound_impl(const Key& key, NodeType root, NodeType end, bool upp) const;
   };
-
-  template< class Key, class Value >
-  using NodeType = averenkov::detail::Node< Key, Value >;
 
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >::Tree():
