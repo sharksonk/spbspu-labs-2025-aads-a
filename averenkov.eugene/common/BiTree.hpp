@@ -112,6 +112,16 @@ namespace averenkov
     NodeType* copy_tree(NodeType* node, NodeType* parent);
     template < typename IsIterator >
     IsIterator bound_impl(const Key& key, NodeType root, NodeType end, bool upp) const;
+
+    template< class F >
+    F breadth_first_traversal(NodeType* root, F f) const;
+
+    template< class F >
+    F lnr_first_traversal(NodeType* root, F f) const;
+
+    template< class F >
+    F rnl_first_traversal(NodeType* root, F f) const;
+
   };
 
   template < class Key, class Value, class Compare >
@@ -848,10 +858,10 @@ namespace averenkov
 
 template < class Key, class Value, class Compare >
   template < typename F >
-  F Tree< Key, Value, Compare >::traverse_lnr(F f) const
+  F Tree< Key, Value, Compare >::lnr_first_traversal(NodeType* root, F f) const
   {
     Stack< NodeType* > stack;
-    NodeType* current = getRoot();
+    NodeType* current = root;
     while (current || !stack.empty())
     {
       while (current)
@@ -870,10 +880,10 @@ template < class Key, class Value, class Compare >
 
   template < class Key, class Value, class Compare >
   template < typename F >
-  F Tree< Key, Value, Compare >::traverse_rnl(F f) const
+  F Tree< Key, Value, Compare >::rnl_first_traversal(NodeType* root, F f) const
   {
     Stack< NodeType* > stack;
-    NodeType* current = getRoot();
+    NodeType* current = root;
     while (current || !stack.empty())
     {
       while (current)
@@ -889,16 +899,16 @@ template < class Key, class Value, class Compare >
     return f;
   }
 
-  template < class Key, class Value, class Compare >
+  template <class Key, class Value, class Compare>
   template < typename F >
-  F Tree< Key, Value, Compare >::traverse_breadth(F f) const
+  F Tree< Key, Value, Compare >::breadth_first_traversal(NodeType* root, F f) const
   {
-    if (!getRoot())
+    if (!root)
     {
       return f;
     }
     Queue< NodeType* > queue;
-    queue.push(getRoot());
+    queue.push(root);
     while (!queue.empty())
     {
       NodeType* current = queue.front();
@@ -916,28 +926,46 @@ template < class Key, class Value, class Compare >
     return f;
   }
 
-  template < class Key, class Value, class Compare >
-  template < typename F >
-  F Tree< Key, Value, Compare >::traverse_lnr(F f)
+  template <class Key, class Value, class Compare>
+  template <typename F>
+  F Tree<Key, Value, Compare>::traverse_lnr(F f) const
   {
-    const auto d = f;
-    return traverse_lnr(d);
+    return lnr_first_traversal(getRoot(), f);
+  }
+
+  template <class Key, class Value, class Compare>
+  template <typename F>
+  F Tree<Key, Value, Compare>::traverse_rnl(F f) const
+  {
+    return rnl_first_traversal(getRoot(), f);
   }
 
   template < class Key, class Value, class Compare >
   template < typename F >
-  F Tree< Key, Value, Compare >::traverse_rnl(F f)
+  F Tree<Key, Value, Compare>::traverse_breadth(F f) const
   {
-    const auto d = f;
-    return traverse_rnl(d);
+    return breadth_first_traversal(getRoot(), f);
   }
 
-  template < class Key, class Value, class Compare >
-  template < typename F >
-  F Tree< Key, Value, Compare >::traverse_breadth(F f)
+  template <class Key, class Value, class Compare>
+  template <typename F>
+  F Tree<Key, Value, Compare>::traverse_lnr(F f)
   {
-    const auto d = f;
-    return traverse_breadth(d);
+    return lnr_first_traversal(getRoot(), f);
+  }
+
+  template <class Key, class Value, class Compare>
+  template <typename F>
+  F Tree<Key, Value, Compare>::traverse_rnl(F f)
+  {
+    return rnl_first_traversal(getRoot(), f);
+  }
+
+  template <class Key, class Value, class Compare>
+  template <typename F>
+  F Tree<Key, Value, Compare>::traverse_breadth(F f)
+  {
+    return breadth_first_traversal(getRoot(), f);
   }
 
 }
