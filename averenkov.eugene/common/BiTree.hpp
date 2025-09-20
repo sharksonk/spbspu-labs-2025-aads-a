@@ -542,6 +542,7 @@ namespace averenkov
       delete NodeTypeo_erase;
       return end();
     }
+    delete NodeTypeo_erase;
     size_--;
     return iterator(parent);
   }
