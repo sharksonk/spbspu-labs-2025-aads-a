@@ -139,11 +139,17 @@ namespace averenkov
     comp_(cmp),
     size_(0)
   {
-    for (; first != last; ++first)
+    try
     {
-      insert(*first);
+      for (; first != last; ++first)
+      {
+        insert(*first);
+      }
     }
-    clear();
+    catch(...)
+    {
+      clear();
+    }
   }
 
   template < class Key, class Value, class Compare >
