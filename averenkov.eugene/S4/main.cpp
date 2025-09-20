@@ -21,7 +21,7 @@ namespace averenkov
     std::ifstream file(filename);
     if (!file)
     {
-      throw std::invalid_argument("file error\n");
+      throw std::invalid_argument("file error");
     }
     std::string line;
     while (std::getline(file, line))

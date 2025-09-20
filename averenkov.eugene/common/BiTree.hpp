@@ -12,11 +12,11 @@
 
 namespace averenkov
 {
+
   template < class Key, class Value, class Compare = std::less< Key > >
   class Tree
   {
   public:
-    using NodeType = Node< Key, Value >;
     using iterator = Iterator< Key, Value, Compare >;
     using const_iterator = ConstIterator< Key, Value, Compare >;
 
@@ -29,7 +29,7 @@ namespace averenkov
     Tree(InputIt first, InputIt last, const Compare& cmp = Compare{});
     ~Tree();
 
-    Tree& operator=(const Tree& other) noexcept;
+    Tree& operator=(const Tree& other);
     Tree& operator=(Tree&& other) noexcept;
 
     iterator begin();
@@ -89,6 +89,8 @@ namespace averenkov
     F traverse_breadth(F f);
 
   private:
+    using NodeType = detail::Node< Key, Value >;
+
     NodeType* fake_root_;
     Compare comp_;
     size_t size_;
@@ -111,9 +113,6 @@ namespace averenkov
     template < typename IsIterator >
     IsIterator bound_impl(const Key& key, NodeType root, NodeType end, bool upp) const;
   };
-
-  template< class Key, class Value >
-  using NodeType = Node< Key, Value >;
 
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >::Tree():
@@ -162,7 +161,6 @@ namespace averenkov
     {
       insert(*first);
     }
-    clear();
   }
 
   template < class Key, class Value, class Compare >
@@ -173,7 +171,7 @@ namespace averenkov
   }
 
   template < class Key, class Value, class Compare >
-  Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(const Tree& other) noexcept
+  Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(const Tree& other)
   {
     if (this != std::addressof(other))
     {
@@ -563,6 +561,7 @@ namespace averenkov
       delete NodeTypeo_erase;
       return end();
     }
+    delete NodeTypeo_erase;
     size_--;
     return iterator(parent);
   }
