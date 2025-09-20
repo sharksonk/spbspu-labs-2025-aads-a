@@ -19,7 +19,7 @@ namespace karnauhova
     friend class AvlTreeCIterator< Key, Value, Compare >;
   public:
     using this_t = AvlTreeIterator< Key, Value, Compare>;
-    using Node = AvlTreeNode< Key, Value >;
+    using Node = detail::AvlTreeNode< Key, Value >;
     AvlTreeIterator() noexcept;
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;

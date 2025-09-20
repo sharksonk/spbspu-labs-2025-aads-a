@@ -2,7 +2,7 @@
 #define AVLTREE_NODE_HPP
 #include <utility>
 
-namespace karnauhova
+namespace karnauhova::detail
 {
   template< typename Key, typename Value >
   struct AvlTreeNode
