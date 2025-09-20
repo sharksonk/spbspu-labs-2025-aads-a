@@ -24,9 +24,9 @@ namespace averenkov
     explicit Tree(const Compare& cmp);
     Tree(const Tree& other);
     Tree(Tree&& other) noexcept;
-    Tree(std::initializer_list< std::pair< const Key, Value > > init, const Compare& cmp);
+    Tree(std::initializer_list< std::pair< const Key, Value > > init, const Compare& cmp = Compare{});
     template< class InputIt >
-    Tree(InputIt first, InputIt last, const Compare& cmp);
+    Tree(InputIt first, InputIt last, const Compare& cmp = Compare{});
     ~Tree();
 
     Tree& operator=(const Tree& other) noexcept;
@@ -158,17 +158,11 @@ namespace averenkov
     comp_(cmp),
     size_(0)
   {
-    try
+    for (; first != last; ++first)
     {
-      for (; first != last; ++first)
-      {
-        insert(*first);
-      }
+      insert(*first);
     }
-    catch (...)
-    {
-      clear();
-    }
+    clear();
   }
 
   template < class Key, class Value, class Compare >
@@ -497,71 +491,78 @@ namespace averenkov
     NodeType* NodeTypeo_erase = pos.current;
     NodeType* parent = NodeTypeo_erase->parent;
     Stack< NodeType* > path;
-    if (NodeTypeo_erase->left == fake_root_ && NodeTypeo_erase->right == fake_root_)
+    try
     {
-      if (parent->left == NodeTypeo_erase)
+      if (NodeTypeo_erase->left == fake_root_ && NodeTypeo_erase->right == fake_root_)
       {
-        parent->left = fake_root_;
+        if (parent->left == NodeTypeo_erase)
+        {
+          parent->left = fake_root_;
+        }
+        else
+        {
+          parent->right = fake_root_;
+        }
+        path.push(parent);
+      }
+      else if (NodeTypeo_erase->left == fake_root_ || NodeTypeo_erase->right == fake_root_)
+      {
+        NodeType* child = nullptr;
+        if (NodeTypeo_erase->left == fake_root_)
+        {
+          child = NodeTypeo_erase->right;
+        }
+        else
+        {
+          child = NodeTypeo_erase->left;
+        }
+        if (parent->left == NodeTypeo_erase)
+        {
+          parent->left = child;
+        }
+        else
+        {
+          parent->right = child;
+        }
+        child->parent = parent;
+        path.push(parent);
       }
       else
       {
-        parent->right = fake_root_;
+        NodeType* min_right = NodeTypeo_erase->right;
+        while (min_right->left != fake_root_)
+        {
+          min_right = min_right->left;
+        }
+        NodeTypeo_erase = min_right;
+        parent = min_right->parent;
+        if (parent->left == min_right)
+        {
+          parent->left = (min_right->right != fake_root_) ? min_right->right : fake_root_;
+        }
+        else
+        {
+          parent->right = (min_right->right != fake_root_) ? min_right->right : fake_root_;
+        }
+        if (min_right->right != fake_root_)
+        {
+          min_right->right->parent = parent;
+        }
+        path.push(parent);
+        NodeTypeo_erase = min_right;
       }
-      path.push(parent);
+      NodeType* new_root = path.top();
+      if (new_root != nullptr)
+      {
+        fake_root_->left = new_root;
+        new_root->parent = fake_root_;
+      }
     }
-    else if (NodeTypeo_erase->left == fake_root_ || NodeTypeo_erase->right == fake_root_)
+    catch (...)
     {
-      NodeType* child = nullptr;
-      if (NodeTypeo_erase->left == fake_root_)
-      {
-        child = NodeTypeo_erase->right;
-      }
-      else
-      {
-        child = NodeTypeo_erase->left;
-      }
-      if (parent->left == NodeTypeo_erase)
-      {
-        parent->left = child;
-      }
-      else
-      {
-        parent->right = child;
-      }
-      child->parent = parent;
-      path.push(parent);
+      delete NodeTypeo_erase;
+      return end();
     }
-    else
-    {
-      NodeType* min_right = NodeTypeo_erase->right;
-      while (min_right->left != fake_root_)
-      {
-        min_right = min_right->left;
-      }
-      NodeTypeo_erase = min_right;
-      parent = min_right->parent;
-      if (parent->left == min_right)
-      {
-        parent->left = (min_right->right != fake_root_) ? min_right->right : fake_root_;
-      }
-      else
-      {
-        parent->right = (min_right->right != fake_root_) ? min_right->right : fake_root_;
-      }
-      if (min_right->right != fake_root_)
-      {
-        min_right->right->parent = parent;
-      }
-      path.push(parent);
-      NodeTypeo_erase = min_right;
-    }
-    NodeType* new_root = path.top();
-    if (new_root != nullptr)
-    {
-      fake_root_->left = new_root;
-      new_root->parent = fake_root_;
-    }
-    delete NodeTypeo_erase;
     size_--;
     return iterator(parent);
   }

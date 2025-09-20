@@ -3,19 +3,24 @@
 #include <utility>
 #include <cstddef>
 
-template< class Key, class Value >
-struct Node
+namespace averenkov
 {
-  std::pair< const Key, Value > data;
-  Node* left;
-  Node* right;
-  Node* parent;
-  size_t height;
-  Node(const Key& k, const Value& v, Node* p);
-};
+
+  template< class Key, class Value >
+  struct Node
+  {
+    std::pair< const Key, Value > data;
+    Node* left;
+    Node* right;
+    Node* parent;
+    size_t height;
+    Node(const Key& k, const Value& v, Node* p);
+  };
+
+}
 
 template < class Key, class Value >
-Node< Key, Value >::Node(const Key& k, const Value& v, Node* p):
+averenkov::Node< Key, Value >::Node(const Key& k, const Value& v, Node* p):
   data(std::make_pair(k, v)),
   left(nullptr),
   right(nullptr),
