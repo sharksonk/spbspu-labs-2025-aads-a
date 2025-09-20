@@ -2,6 +2,7 @@
 #include <fstream>
 #include <BiTree.hpp>
 #include "key_sum.hpp"
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cerr << "Error\n";
+      std::cerr << "Invalid command\n";
       return 1;
     }
 
@@ -62,9 +63,9 @@ int main(int argc, char* argv[])
     }
     std::cout << proc.sum_ << " " << proc.values_ << "\n";
   }
-  catch (...)
+  catch (std::exception& e)
   {
-    std::cerr << "Error\n";
+    std::cerr << e.what() << "\n";
     return 1;
   }
 

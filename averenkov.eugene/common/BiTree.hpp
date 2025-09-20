@@ -920,69 +920,21 @@ template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_lnr(F f)
   {
-    Stack< NodeType* > stack;
-    NodeType* current = getRoot();
-    while (current || !stack.empty())
-    {
-      while (current)
-      {
-        stack.push(current);
-        current = current->left;
-      }
-      current = stack.top();
-      stack.pop();
-      f(current->data);
-      current = current->right;
-    }
-    return f;
+    return traverse_lnr(f);
   }
 
   template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_rnl(F f)
   {
-    Stack< NodeType* > stack;
-    NodeType* current = getRoot();
-    while (current || !stack.empty())
-    {
-      while (current)
-      {
-        stack.push(current);
-        current = current->right;
-      }
-      current = stack.top();
-      stack.pop();
-      f(current->data);
-      current = current->left;
-    }
-    return f;
+    return traverse_rnl(f);
   }
 
   template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_breadth(F f)
   {
-    if (!getRoot())
-    {
-      return f;
-    }
-    Queue< NodeType* > queue;
-    queue.push(getRoot());
-    while (!queue.empty())
-    {
-      NodeType* current = queue.front();
-      queue.pop();
-      f(current->data);
-      if (current->left)
-      {
-        queue.push(current->left);
-      }
-      if (current->right)
-      {
-        queue.push(current->right);
-      }
-    }
-    return f;
+    return traverse_breadth(f);
   }
 
 }
