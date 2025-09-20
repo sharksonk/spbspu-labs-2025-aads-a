@@ -28,7 +28,7 @@ namespace averenkov
     Tree(InputIt first, InputIt last, const Compare& cmp = Compare{});
     ~Tree();
 
-    Tree& operator=(const Tree& other) noexcept;
+    Tree& operator=(const Tree& other);
     Tree& operator=(Tree&& other) noexcept;
 
     iterator begin();
@@ -139,16 +139,9 @@ namespace averenkov
     comp_(cmp),
     size_(0)
   {
-    try
+    for (; first != last; ++first)
     {
-      for (; first != last; ++first)
-      {
-        insert(*first);
-      }
-    }
-    catch(...)
-    {
-      clear();
+      insert(*first);
     }
   }
 
@@ -160,7 +153,7 @@ namespace averenkov
   }
 
   template < class Key, class Value, class Compare >
-  Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(const Tree& other) noexcept
+  Tree< Key, Value, Compare >& Tree< Key, Value, Compare >::operator=(const Tree& other)
   {
     if (this != std::addressof(other))
     {
