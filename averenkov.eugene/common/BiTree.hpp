@@ -11,11 +11,12 @@
 
 namespace averenkov
 {
+
   template < class Key, class Value, class Compare = std::less< Key > >
   class Tree
   {
   public:
-    using NodeType = Node< Key, Value >;
+    using NodeType = averenkovDetail::Node< Key, Value >;
     using iterator = Iterator< Key, Value, Compare >;
     using const_iterator = ConstIterator< Key, Value, Compare >;
 
@@ -94,7 +95,7 @@ namespace averenkov
   };
 
   template< class Key, class Value >
-  using NodeType = Node< Key, Value >;
+  using NodeType = averenkovDetail::Node< Key, Value >;
 
   template < class Key, class Value, class Compare >
   Tree< Key, Value, Compare >::Tree():

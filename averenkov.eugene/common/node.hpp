@@ -3,7 +3,7 @@
 #include <utility>
 #include <cstddef>
 
-namespace averenkov
+namespace averenkovDetail
 {
 
   template< class Key, class Value >
@@ -20,7 +20,7 @@ namespace averenkov
 }
 
 template < class Key, class Value >
-averenkov::Node< Key, Value >::Node(const Key& k, const Value& v, Node* p):
+averenkovDetail::Node< Key, Value >::Node(const Key& k, const Value& v, Node* p):
   data(std::make_pair(k, v)),
   left(nullptr),
   right(nullptr),
