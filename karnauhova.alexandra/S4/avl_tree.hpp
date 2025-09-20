@@ -14,13 +14,12 @@ namespace karnauhova
   class AvlTree
   {
   public:
-    using Node = detail::AvlTreeNode< Key, Value >;
     using Iter = AvlTreeIterator< Key, Value, Compare >;
     using CIter = AvlTreeCIterator< Key, Value, Compare >;
     using pairIter = std::pair< Iter, Iter >;
     using pairCIter = std::pair< CIter, CIter >;
 
-    AvlTree(Compare cmp = Compare{});
+    explicit AvlTree(Compare cmp = Compare{});
     AvlTree(const AvlTree< Key, Value, Compare >&, Compare cmp = Compare{});
     AvlTree(AvlTree< Key, Value, Compare >&&) noexcept;
     template< typename InputIt >
@@ -69,6 +68,7 @@ namespace karnauhova
     CIter find(const Key& key) const noexcept;
 
   private:
+    using Node = detail::AvlTreeNode< Key, Value >;
     Node* fake_;
     size_t size_;
     Compare comp_;
@@ -94,7 +94,7 @@ namespace karnauhova
 
   template< typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >::AvlTree(const AvlTree< Key, Value, Compare >& oth, Compare cmp):
-    AvlTree(oth.begin(), oth.end(), cmp)
+    AvlTree(oth.begin(), oth.end(), std::move(cmp))
   {}
 
   template< typename Key, typename Value, typename Compare >
@@ -107,7 +107,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   template< typename InputIt >
   AvlTree< Key, Value, Compare >::AvlTree(InputIt first, InputIt last, Compare cmp):
-    AvlTree(cmp)
+    AvlTree(std::move(cmp))
   {
     for (auto it = first; it != last; it++)
     {
@@ -117,7 +117,7 @@ namespace karnauhova
 
   template< typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >::AvlTree(std::initializer_list< std::pair< Iter, bool > > list, Compare cmp):
-    AvlTree(list.begin(), list.end(), cmp)
+    AvlTree(list.begin(), list.end(), std::move(cmp))
   {}
 
   template< typename Key, typename Value, typename Compare >
