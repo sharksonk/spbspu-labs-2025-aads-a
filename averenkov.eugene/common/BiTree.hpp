@@ -920,21 +920,24 @@ template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_lnr(F f)
   {
-    return traverse_lnr(f);
+    const auto d = f;
+    return traverse_lnr(d);
   }
 
   template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_rnl(F f)
   {
-    return traverse_rnl(f);
+    const auto d = f;
+    return traverse_rnl(d);
   }
 
   template < class Key, class Value, class Compare >
   template < typename F >
   F Tree< Key, Value, Compare >::traverse_breadth(F f)
   {
-    return traverse_breadth(f);
+    const auto d = f;
+    return traverse_breadth(d);
   }
 
 }
