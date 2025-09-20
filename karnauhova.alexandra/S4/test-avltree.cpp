@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
-#include "avl_tree.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include "avl_tree.hpp"
 
 using namespace karnauhova;
 

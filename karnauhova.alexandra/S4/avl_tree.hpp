@@ -1,6 +1,5 @@
 #ifndef AVL_TREE_HPP
 #define AVL_TREE_HPP
-
 #include <cstddef>
 #include <functional>
 #include <stdexcept>
@@ -8,6 +7,7 @@
 #include "avltree_node.hpp"
 #include "avltree_iterator.hpp"
 #include "avltree_citerator.hpp"
+
 namespace karnauhova
 {
   template< typename Key, typename Value, typename Compare = std::less< Key > >

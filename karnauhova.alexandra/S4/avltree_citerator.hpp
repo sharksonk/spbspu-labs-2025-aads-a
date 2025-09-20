@@ -3,6 +3,7 @@
 #include <functional>
 #include <cstddef>
 #include "avltree_node.hpp"
+
 namespace karnauhova
 {
   template<typename Key, typename Value, typename Compare >
