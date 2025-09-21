@@ -51,6 +51,10 @@ int main(int argc, char* argv[])
     averenkov::KeySum proc;
     auto method = methodMap.at(mode);
     proc = (bst.*method)(proc);
+    if (!proc.values_.empty())
+    {
+      proc.values_.pop_back();
+    }
     std::cout << proc.sum_ << " " << proc.values_ << "\n";
   }
   catch (std::exception& e)
