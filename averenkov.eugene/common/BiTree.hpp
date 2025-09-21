@@ -626,7 +626,7 @@ namespace averenkov
   {
     try
     {
-      auto val = at(key);
+      at(key);
     }
     catch (...)
     {
