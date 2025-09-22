@@ -51,13 +51,13 @@ namespace sharifullina
     ConstIterator cend() const noexcept;
 
   private:
-    detail::Node< T >* fakeNode_;
+    Node< T >* fakeNode_;
     std::size_t size_;
   };
 
   template< typename T >
   List< T >::List() :
-    fakeNode_(new detail::Node< T >(T())),
+    fakeNode_(new Node< T >(T())),
     size_(0)
   {
     fakeNode_->prev_ = fakeNode_;
@@ -133,7 +133,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushBack(const T & value)
   {
-    detail::Node< T >* newNode = new detail::Node< T >(value);
+    Node< T >* newNode = new Node< T >(value);
     newNode->prev_ = fakeNode_->prev_;
     newNode->next_ = fakeNode_;
 
@@ -146,7 +146,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushBack(T && value)
   {
-    detail::Node< T >* newNode = new detail::Node< T >(std::move(value));
+    Node< T >* newNode = new Node< T >(std::move(value));
     newNode->prev_ = fakeNode_->prev_;
     newNode->next_ = fakeNode_;
 
@@ -159,7 +159,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushFront(const T & value)
   {
-    detail::Node< T >* newNode = new detail::Node< T >(value);
+    Node< T >* newNode = new Node< T >(value);
     newNode->prev_ = fakeNode_;
     newNode->next_ = fakeNode_->next_;
 
@@ -172,7 +172,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushFront(T && value)
   {
-    detail::Node< T >* newNode = new detail::Node< T >(std::move(value));
+    Node< T >* newNode = new Node< T >(std::move(value));
     newNode->prev_ = fakeNode_;
     newNode->next_ = fakeNode_->next_;
 
@@ -190,7 +190,7 @@ namespace sharifullina
       return;
     }
 
-    detail::Node< T >* toDelete = fakeNode_->prev_;
+    Node< T >* toDelete = fakeNode_->prev_;
     toDelete->prev_->next_ = fakeNode_;
     fakeNode_->prev_ = toDelete->prev_;
 
@@ -206,7 +206,7 @@ namespace sharifullina
       return;
     }
 
-    detail::Node< T >* toDelete = fakeNode_->next_;
+    Node< T >* toDelete = fakeNode_->next_;
     toDelete->next_->prev_ = fakeNode_;
     fakeNode_->next_ = toDelete->next_;
 
