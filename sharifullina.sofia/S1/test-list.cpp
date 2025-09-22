@@ -1,5 +1,3 @@
-леш эти модульные тесты говно или пойдет?
-
 #include "list.hpp"
 #include <boost/test/included/unit_test.hpp>
 #include <sstream>
