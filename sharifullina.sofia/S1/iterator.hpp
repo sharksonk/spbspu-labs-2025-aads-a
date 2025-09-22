@@ -18,8 +18,8 @@ namespace sharifullina
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = T;
     using difference_type = std::ptrdiff_t;
-    using pointer = T*;
-    using reference = T&;
+    using pointer = T *;
+    using reference = T &;
 
     Iterator();
     Iterator(const Iterator &) = default;
@@ -43,10 +43,10 @@ namespace sharifullina
     bool operator!=(const ConstIterator< T > &) const;
 
   private:
-    Node< T >* node_;
+    Node< T > * node_;
     friend class List< T >;
 
-    explicit Iterator(Node< T >* node);
+    explicit Iterator(Node< T > * node);
   };
 
   template< typename T >
@@ -55,7 +55,7 @@ namespace sharifullina
   {}
 
   template< typename T >
-  Iterator< T >::Iterator(Node< T >* node) :
+  Iterator< T >::Iterator(Node< T > * node) :
     node_(node)
   {}
 
@@ -122,25 +122,25 @@ namespace sharifullina
   }
 
   template< typename T >
-  bool Iterator< T >::operator==(const Iterator& other) const
+  bool Iterator< T >::operator==(const Iterator & other) const
   {
     return node_ == other.node_;
   }
 
   template< typename T >
-  bool Iterator< T >::operator!=(const Iterator& other) const
+  bool Iterator< T >::operator!=(const Iterator & other) const
   {
     return !(*this == other);
   }
 
   template< typename T >
-  bool Iterator< T >::operator==(const ConstIterator< T >& other) const
+  bool Iterator< T >::operator==(const ConstIterator< T > & other) const
   {
     return node_ == other.node_;
   }
 
   template< typename T >
-  bool Iterator< T >::operator!=(const ConstIterator< T >& other) const
+  bool Iterator< T >::operator!=(const ConstIterator< T > & other) const
   {
     return !(*this == other);
   }

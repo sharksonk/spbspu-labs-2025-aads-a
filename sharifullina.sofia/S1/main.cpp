@@ -8,10 +8,10 @@ namespace
 {
   using listOfPairs = sharifullina::List< std::pair< std::string, sharifullina::List< unsigned long long > > >;
 
-  size_t getMaxListSize(const listOfPairs& lists)
+  size_t getMaxListSize(const listOfPairs & lists)
   {
     size_t maxSize = 0;
-    for (const auto& pair : lists)
+    for (const auto & pair : lists)
     {
       if (pair.second.size() > maxSize)
       {
@@ -21,7 +21,23 @@ namespace
     return maxSize;
   }
 
-  void printTransposed(std::ostream& out, const listOfPairs & lists)
+  void printNames(std::ostream & out, const listOfPairs & lists)
+  {
+    if (lists.empty())
+    {
+      return;
+    }
+    auto it = lists.begin();
+    out << it->first;
+    ++it;
+    for (; it != lists.end(); ++it)
+    {
+      out << " " << it->first;
+    }
+    out << "\n";
+  }
+
+  void printTransposed(std::ostream & out, const listOfPairs & lists)
   {
     const size_t maxSize = getMaxListSize(lists);
 
@@ -46,6 +62,14 @@ namespace
           out << *numIt;
           firstInRow = false;
         }
+        else
+        {
+          if (!firstInRow)
+          {
+            out << " ";
+          }
+          firstInRow = false;
+        }
       }
       out << "\n";
     }
@@ -68,6 +92,7 @@ namespace
     for (size_t i = 0; i < maxSize; ++i)
     {
       unsigned long long rowSum = 0;
+      bool hasValueInRow = false;
 
       for (auto listIt = lists.begin(); listIt != lists.end(); ++listIt)
       {
@@ -79,18 +104,23 @@ namespace
             ++numIt;
           }
           addWithCheck(rowSum, *numIt);
+          hasValueInRow = true;
         }
       }
-      sums.pushBack(rowSum);
+      if (hasValueInRow)
+      {
+        sums.pushBack(rowSum);
+      }
     }
 
     return sums;
   }
 
-  void printSums(std::ostream& out, const sharifullina::List< unsigned long long > & sums)
+  void printSums(std::ostream & out, const sharifullina::List< unsigned long long > & sums)
   {
     if (sums.empty())
     {
+      out << "0\n";
       return;
     }
 
@@ -119,19 +149,17 @@ int main()
     {
       List< unsigned long long > numbers;
       unsigned long long number;
+      std::string line;
 
-      while (std::cin >> number)
+      std::getline(std::cin, line);
+      std::istringstream iss(line);
+
+      while (iss >> number)
       {
         numbers.pushBack(number);
       }
 
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
-
-      if (!name.empty() && !numbers.empty())
-      {
-        sequences.pushBack(std::make_pair(name, numbers));
-      }
+      sequences.pushBack(std::make_pair(name, numbers));
     }
 
     if (sequences.empty())
@@ -140,17 +168,7 @@ int main()
       return 0;
     }
 
-    bool firstName = true;
-    for (const auto & pair : sequences)
-    {
-      if (!firstName)
-      {
-        std::cout << " ";
-      }
-      std::cout << pair.first;
-      firstName = false;
-    }
-    std::cout << "\n";
+    printNames(std::cout, sequences);
 
     printTransposed(std::cout, sequences);
 
@@ -158,6 +176,11 @@ int main()
     printSums(std::cout, sums);
 
     return 0;
+  }
+  catch (const std::overflow_error & e)
+  {
+    std::cerr << "Error: " << e.what() << "\n";
+    return 1;
   }
   catch (const std::exception & e)
   {

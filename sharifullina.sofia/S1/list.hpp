@@ -51,7 +51,7 @@ namespace sharifullina
     ConstIterator cend() const noexcept;
 
   private:
-    Node< T >* fakeNode_;
+    Node< T > * fakeNode_;
     std::size_t size_;
   };
 
@@ -65,7 +65,7 @@ namespace sharifullina
   }
 
   template< typename T >
-  List< T >::List(const List& other) :
+  List< T >::List(const List & other) :
     List()
   {
     for (const auto & item : other)
@@ -133,7 +133,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushBack(const T & value)
   {
-    Node< T >* newNode = new Node< T >(value);
+    Node< T > * newNode = new Node< T >(value);
     newNode->prev_ = fakeNode_->prev_;
     newNode->next_ = fakeNode_;
 
@@ -146,7 +146,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushBack(T && value)
   {
-    Node< T >* newNode = new Node< T >(std::move(value));
+    Node< T > * newNode = new Node< T >(std::move(value));
     newNode->prev_ = fakeNode_->prev_;
     newNode->next_ = fakeNode_;
 
@@ -159,7 +159,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushFront(const T & value)
   {
-    Node< T >* newNode = new Node< T >(value);
+    Node< T > * newNode = new Node< T >(value);
     newNode->prev_ = fakeNode_;
     newNode->next_ = fakeNode_->next_;
 
@@ -172,7 +172,7 @@ namespace sharifullina
   template< typename T >
   void List< T >::pushFront(T && value)
   {
-    Node< T >* newNode = new Node< T >(std::move(value));
+    Node< T > * newNode = new Node< T >(std::move(value));
     newNode->prev_ = fakeNode_;
     newNode->next_ = fakeNode_->next_;
 
@@ -190,7 +190,7 @@ namespace sharifullina
       return;
     }
 
-    Node< T >* toDelete = fakeNode_->prev_;
+    Node< T > * toDelete = fakeNode_->prev_;
     toDelete->prev_->next_ = fakeNode_;
     fakeNode_->prev_ = toDelete->prev_;
 
@@ -206,7 +206,7 @@ namespace sharifullina
       return;
     }
 
-    Node< T >* toDelete = fakeNode_->next_;
+    Node< T > * toDelete = fakeNode_->next_;
     toDelete->next_->prev_ = fakeNode_;
     fakeNode_->next_ = toDelete->next_;
 

@@ -18,10 +18,10 @@ namespace sharifullina
     using value_type = T;
     using difference_type = std::ptrdiff_t;
     using pointer = const T*;
-    using reference = const T&;
+    using reference = const T &;
 
     ConstIterator();
-    ConstIterator(const ConstIterator&) = default;
+    ConstIterator(const ConstIterator &) = default;
     ~ConstIterator() = default;
     ConstIterator & operator=(const ConstIterator &) = default;
 
@@ -31,17 +31,17 @@ namespace sharifullina
     ConstIterator & operator--();
     ConstIterator operator--(int);
 
-    reference operator*() const;
+    reference operator *() const;
     pointer operator->() const;
 
-    bool operator==(const ConstIterator&) const;
-    bool operator!=(const ConstIterator&) const;
+    bool operator==(const ConstIterator &) const;
+    bool operator!=(const ConstIterator &) const;
 
   private:
-    Node< T >* node_;
+    Node< T > * node_;
     friend class List< T >;
 
-    explicit ConstIterator(Node< T >* node);
+    explicit ConstIterator(Node< T > * node);
   };
 
   template< typename T >
@@ -50,7 +50,7 @@ namespace sharifullina
   {}
 
   template< typename T >
-  ConstIterator< T >::ConstIterator(Node< T >* node) :
+  ConstIterator< T >::ConstIterator(Node< T > * node) :
     node_(node)
   {}
 
@@ -103,13 +103,13 @@ namespace sharifullina
   }
 
   template< typename T >
-  bool ConstIterator< T >::operator==(const ConstIterator& other) const
+  bool ConstIterator< T >::operator==(const ConstIterator & other) const
   {
     return node_ == other.node_;
   }
 
   template< typename T >
-  bool ConstIterator< T >::operator!=(const ConstIterator& other) const
+  bool ConstIterator< T >::operator!=(const ConstIterator & other) const
   {
     return !(*this == other);
   }
