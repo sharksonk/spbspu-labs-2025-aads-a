@@ -34,7 +34,7 @@ namespace averenkov
     bool operator!=(const IteratorHash& other) const noexcept;
 
   private:
-    using BucketPtr = std::conditional_t< isConst, const Bucket< Key, Value >*, Bucket< Key, Value >* >;
+    using BucketPtr = std::conditional_t< isConst, const detail::Bucket< Key, Value >*, detail::Bucket< Key, Value >* >;
 
     BucketPtr current_;
     BucketPtr end_;
@@ -76,14 +76,15 @@ template < class Key, class Value, class Hash, class Equal, bool isConst >
 typename averenkov::IteratorHash< Key, Value, Hash, Equal, isConst >::value_type&
 averenkov::IteratorHash< Key, Value, Hash, Equal, isConst >::operator*() const noexcept
 {
-  return current_->data;
+  return std::make_pair(current_->key, current_->value);
 }
 
 template < class Key, class Value, class Hash, class Equal, bool isConst >
 typename averenkov::IteratorHash< Key, Value, Hash, Equal, isConst >::value_type*
 averenkov::IteratorHash< Key, Value, Hash, Equal, isConst >::operator->() const noexcept
 {
-  return std::addressof(current_->data);
+  auto pr_pair = std::make_pair(current_->key, current_->value);
+  return std::addressof(pr_pair);
 }
 
 template < class Key, class Value, class Hash, class Equal, bool isConst >
@@ -131,7 +132,7 @@ bool averenkov::IteratorHash< Key, Value, Hash, Equal, isConst >::is_valid_data(
   try
   {
     static Key dummy;
-    key_equal_(bucket->data.first, dummy);
+    key_equal_(bucket->key, dummy);
     return true;
   }
   catch (...)

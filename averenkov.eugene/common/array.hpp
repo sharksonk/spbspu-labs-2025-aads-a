@@ -10,15 +10,13 @@ namespace averenkov
   class Array
   {
 
-    template< typename Key, typename Value, typename Hash, typename Equal >
-    friend class HashTable;
-
   public:
     Array();
     Array(const Array &rhs);
     Array(Array &&rhs) noexcept;
     Array &operator=(const Array &rhs) noexcept;
     Array &operator=(Array &&rhs) noexcept;
+    explicit Array(size_t size);
     ~Array();
 
     bool empty() const noexcept;
@@ -38,6 +36,8 @@ namespace averenkov
     const T& operator[](size_t index) const;
     T& operator[](size_t index);
 
+    T* get_data() const;
+
   private:
     T* data_;
     size_t last_;
@@ -47,10 +47,15 @@ namespace averenkov
     void resize();
     Array< T > copy(const Array& other, size_t capacity);
 
-    explicit Array(size_t size);
     T* copy_data(const Array& other, size_t capacity);
 
   };
+
+  template< class T >
+  T* Array< T >::get_data() const
+  {
+    return data_;
+  }
 
   template< class T >
   Array< T >::Array():

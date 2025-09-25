@@ -76,7 +76,7 @@ namespace averenkov
     size_t probe(size_t hash, size_t i) const noexcept;
 
   private:
-    Array< Bucket< Key, Value > > table_;
+    Array< detail::Bucket< Key, Value > > table_;
     size_t size_ = 0;
     Hash hasher_;
     Equal key_equal_;
@@ -278,17 +278,18 @@ namespace averenkov
 
     while (table_[index].occupied || table_[index].deleted)
     {
-      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
+      if (table_[index].occupied && key_equal_(table_[index].key, key))
       {
         if (table_[index].deleted)
         {
-          table_[index].data = { key, value };
+          table_[index].key = key;
+          table_[index].value = value;
           table_[index].occupied = true;
           table_[index].deleted = false;
           ++size_;
-          return { iterator(table_.data_ + index, table_.data_ + table_.size()), true };
+          return { iterator(table_.get_data() + index, table_.get_data() + table_.size()), true };
         }
-        return { iterator(table_.data_ + index, table_.data_ + table_.size()), false };
+        return { iterator(table_.get_data() + index, table_.get_data() + table_.size()), false };
       }
       if (table_[index].deleted && first_deleted == table_.size())
       {
@@ -301,11 +302,12 @@ namespace averenkov
     {
       index = first_deleted;
     }
-    table_[index].data = { key, value };
+    table_[index].key = key;
+    table_[index].value = value;
     table_[index].occupied = true;
     table_[index].deleted = false;
     ++size_;
-    return { iterator(table_.data_ + index, table_.data_ + table_.size()), true };
+    return { iterator(table_.get_data() + index, table_.get_data() + table_.size()), true };
   }
 
   template < class Key, class Value, class Hash, class Equal >
@@ -440,9 +442,9 @@ namespace averenkov
 
     while (table_[index].occupied || table_[index].deleted)
     {
-      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
+      if (table_[index].occupied && key_equal_(table_[index].key, key))
       {
-        return iterator(table_.data_ + index, table_.data_ + table_.size());
+        return iterator(table_.get_data() + index, table_.get_data() + table_.size());
       }
       ++i;
       index = probe(hash, i);
@@ -468,9 +470,9 @@ namespace averenkov
 
     while (table_[index].occupied || table_[index].deleted)
     {
-      if (table_[index].occupied && key_equal_(table_[index].data.first, key))
+      if (table_[index].occupied && key_equal_(table_[index].key, key))
       {
-        return const_iterator(table_.data_ + index, table_.data_ + table_.size());
+        return const_iterator(table_.get_data() + index, table_.get_data() + table_.size());
       }
       ++i;
       index = probe(hash, i);
@@ -509,10 +511,10 @@ namespace averenkov
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t count)
   {
     count = next_prime(count);
-    Array< Bucket < Key, Value > > new_table(count);
+    Array< detail::Bucket < Key, Value > > new_table(count);
     for (size_t i = 0; i < count; ++i)
     {
-      new_table.push_back(Bucket< Key, Value >());
+      new_table.push_back(detail::Bucket< Key, Value >());
     }
 
     for (size_t i = 0; i < table_.size(); ++i)
@@ -520,7 +522,7 @@ namespace averenkov
       auto& bucket = table_[i];
       if (bucket.occupied && !bucket.deleted)
       {
-        size_t index = hasher_(bucket.data.first) % count;
+        size_t index = hasher_(bucket.key) % count;
         size_t j = 0;
 
         while (j < count)
@@ -528,7 +530,8 @@ namespace averenkov
           size_t current_index = (index + j * j) % count;
           if (!new_table[current_index].occupied)
           {
-            new_table[current_index].data = std::move(bucket.data);
+            new_table[current_index].key = std::move(bucket.key);
+            new_table[current_index].value = std::move(bucket.value);
             new_table[current_index].occupied = true;
             break;
           }
