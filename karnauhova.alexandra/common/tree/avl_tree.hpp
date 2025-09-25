@@ -1,6 +1,5 @@
 #ifndef AVL_TREE_HPP
 #define AVL_TREE_HPP
-
 #include <cstddef>
 #include <functional>
 #include <stdexcept>
@@ -16,11 +15,10 @@
 
 namespace karnauhova
 {
-  template< typename Key, typename Value, typename Compare = std::less< Key >>
+  template< typename Key, typename Value, typename Compare = std::less< Key > >
   class AvlTree
   {
   public:
-    using Node = AvlTreeNode< Key, Value >;
     using Iter = AvlTreeIterator< Key, Value, Compare >;
     using CIter = AvlTreeCIterator< Key, Value, Compare >;
     using pairIter = std::pair< Iter, Iter >;
@@ -30,19 +28,18 @@ namespace karnauhova
     using RnlIter = RnlIterator< Key, Value, Compare >;
     using CRnlIter = RnlIterator< Key, Value, Compare >;
 
-    AvlTree();
-    AvlTree(const AvlTree< Key, Value, Compare >&);
+    explicit AvlTree(Compare cmp = Compare{});
+    AvlTree(const AvlTree< Key, Value, Compare >&, Compare cmp = Compare{});
     AvlTree(AvlTree< Key, Value, Compare >&&) noexcept;
     template< typename InputIt >
-    AvlTree(InputIt, InputIt);
-    AvlTree(std::initializer_list< std::pair< Iter, bool > >);
+    AvlTree(InputIt, InputIt, Compare cmp = Compare{});
+    AvlTree(std::initializer_list< std::pair< Iter, bool > >, Compare cmp = Compare{});
     ~AvlTree();
 
     AvlTree< Key, Value, Compare >& operator=(const AvlTree< Key, Value, Compare >&);
     AvlTree< Key, Value, Compare >& operator=(AvlTree< Key, Value, Compare >&&) noexcept;
 
     Value& operator[](const Key&);
-    const Value& operator[](const Key&) const;
     Value& at(const Key&);
     const Value& at(const Key&) const;
 
@@ -93,11 +90,11 @@ namespace karnauhova
     template< typename F >
     F traverse_breadth(F f);
   private:
+    using Node = detail::AvlTreeNode< Key, Value >;
     Node* fake_;
     size_t size_;
     Compare comp_;
 
-    void clearRecursive(Node*) noexcept;
     void balance(Node*) noexcept;
     Node* balanceNode(Node*) noexcept;
     int bfactor(Node*) const noexcept;
@@ -111,24 +108,19 @@ namespace karnauhova
   };
 
   template< typename Key, typename Value, typename Compare >
-  AvlTree< Key, Value, Compare >::AvlTree():
+  AvlTree< Key, Value, Compare >::AvlTree(Compare cmp):
     fake_(reinterpret_cast< Node* >(new char[sizeof(Node)])),
     size_(0),
-    comp_()
+    comp_(std::move(cmp))
   {
     fake_->left = fake_->right = fake_;
     fake_->height = -1;
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTree< Key, Value, Compare >::AvlTree(const AvlTree< Key, Value, Compare >& oth):
-    AvlTree()
-  {
-    for (CIter it = oth.cbegin(); it != oth.cend(); ++it)
-    {
-      insert(*it);
-    }
-  }
+  AvlTree< Key, Value, Compare >::AvlTree(const AvlTree< Key, Value, Compare >& oth, Compare cmp):
+    AvlTree(oth.begin(), oth.end(), std::move(cmp))
+  {}
 
   template< typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >::AvlTree(AvlTree< Key, Value, Compare >&& oth) noexcept:
@@ -139,8 +131,8 @@ namespace karnauhova
 
   template< typename Key, typename Value, typename Compare >
   template< typename InputIt >
-  AvlTree< Key, Value, Compare >::AvlTree(InputIt first, InputIt last):
-    AvlTree()
+  AvlTree< Key, Value, Compare >::AvlTree(InputIt first, InputIt last, Compare cmp):
+    AvlTree(std::move(cmp))
   {
     for (auto it = first; it != last; it++)
     {
@@ -149,14 +141,9 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  AvlTree< Key, Value, Compare >::AvlTree(std::initializer_list< std::pair< Iter, bool > > list):
-    AvlTree()
-  {
-    for (auto it = list.begin(); it != list.end(); it++)
-    {
-      insert(*it);
-    }
-  }
+  AvlTree< Key, Value, Compare >::AvlTree(std::initializer_list< std::pair< Iter, bool > > list, Compare cmp):
+    AvlTree(list.begin(), list.end(), std::move(cmp))
+  {}
 
   template< typename Key, typename Value, typename Compare >
   AvlTree< Key, Value, Compare >& AvlTree< Key, Value, Compare >::operator=(const AvlTree< Key, Value, Compare >& rhs)
@@ -195,13 +182,6 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  const Value& AvlTree< Key, Value, Compare >::operator[](const Key& key) const
-  {
-    CIter it = find(key);
-    return it->second;
-  }
-
-  template< typename Key, typename Value, typename Compare >
   Value& AvlTree< Key, Value, Compare >::at(const Key& key)
   {
     return const_cast< Value& >(static_cast< const AvlTree< Key, Value, Compare >& >(*this).at(key));
@@ -222,52 +202,45 @@ namespace karnauhova
   std::pair< AvlTreeIterator< Key, Value, Compare >, bool > AvlTree< Key, Value, Compare >::insert(const std::pair< Key, Value >& val)
   {
     Node* newNode = nullptr;
-    try
+    newNode = new Node{val, fake_, fake_, nullptr, 0};
+    if (empty())
     {
-      newNode = new Node{val, fake_, fake_, nullptr, 0};
-      if (empty())
+      fake_->left = newNode;
+      newNode->parent = newNode->left = newNode->right = fake_;
+      size_ = 1;
+      return {Iter(newNode, fake_), true};
+    }
+    Node* tmp = fake_->left;
+    Node* parent = fake_;
+    while (tmp != fake_)
+    {
+      parent = tmp;
+      if (comp_(newNode->data.first, tmp->data.first))
       {
-        fake_->left = newNode;
-        newNode->parent = newNode->left = newNode->right = fake_;
-        size_ = 1;
-        return {Iter(newNode, fake_), true};
+        tmp = tmp->left;
       }
-      Node* tmp = fake_->left;
-      Node* parent = fake_;
-      while (tmp != fake_)
+      else if (comp_(tmp->data.first, newNode->data.first))
       {
-        parent = tmp;
-        if (comp_(newNode->data.first, tmp->data.first))
-        {
-          tmp = tmp->left;
-        }
-        else if (comp_(tmp->data.first, newNode->data.first))
-        {
-          tmp = tmp->right;
-        }
-        else
-        {
-          delete newNode;
-          return {Iter(tmp, fake_), false};
-        }
-      }
-      newNode->parent = parent;
-      if (comp_(parent->data.first, newNode->data.first))
-      {
-        parent->right = newNode;
+        tmp = tmp->right;
       }
       else
       {
-        parent->left = newNode;
+        delete newNode;
+        return {Iter(tmp, fake_), false};
       }
-      balance(fake_->left);
-      size_++;
-      return {Iter(newNode, fake_), true};
     }
-    catch (const std::exception& e)
+    newNode->parent = parent;
+    if (comp_(parent->data.first, newNode->data.first))
     {
-      throw;
+      parent->right = newNode;
     }
+    else
+    {
+      parent->left = newNode;
+    }
+    balance(fake_->left);
+    size_++;
+    return {Iter(newNode, fake_), true};
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -295,7 +268,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::Iter AvlTree< Key, Value, Compare >::erase(CIter it) noexcept
   {
-    if (it == cend() || it.node_ == fake_)
+    if (it == cend())
     {
       return end();
     }
@@ -540,10 +513,7 @@ namespace karnauhova
     {
       return;
     }
-    clearRecursive(fake_->left);
-    fake_->left = fake_;
-    fake_->right = fake_;
-    size_ = 0;
+    erase(begin(), end());
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -687,18 +657,6 @@ namespace karnauhova
       begin.node_ = begin.node_->left;
     }
     return helpTravers(begin, end, f);
-  }
-
-  template< typename Key, typename Value, typename Compare >
-  void AvlTree< Key, Value, Compare >::clearRecursive(Node* node) noexcept
-  {
-    if (node == fake_)
-    {
-      return;
-    }
-    clearRecursive(node->left);
-    clearRecursive(node->right);
-    delete node;
   }
 
   template< typename Key, typename Value, typename Compare >

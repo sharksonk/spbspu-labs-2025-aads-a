@@ -3,6 +3,7 @@
 #include <functional>
 #include <cstddef>
 #include "avltree_node.hpp"
+
 namespace karnauhova
 {
   template<typename Key, typename Value, typename Compare >
@@ -11,14 +12,14 @@ namespace karnauhova
   template<typename Key, typename Value, typename Compare >
   class AvlTreeIterator;
 
-  template< typename Key, typename Value, typename Compare = std::less< Key >>
+  template< typename Key, typename Value, typename Compare = std::less< Key > >
   struct AvlTreeCIterator
   {
     friend class AvlTree< Key, Value, Compare >;
     friend class AvlTreeIterator< Key, Value, Compare >;
   public:
     using this_t = AvlTreeCIterator< Key, Value, Compare>;
-    using Node = AvlTreeNode< Key, Value >;
+    using Node = detail::AvlTreeNode< Key, Value >;
     AvlTreeCIterator() noexcept;
     AvlTreeCIterator(const AvlTreeIterator< Key, Value, Compare >&) noexcept;
     this_t& operator++() noexcept;
