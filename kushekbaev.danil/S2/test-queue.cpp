@@ -7,26 +7,26 @@ BOOST_AUTO_TEST_SUITE(queueConstructors)
 
 BOOST_AUTO_TEST_CASE(queueCopyConstructor)
 {
-  Queue< int > Q;
-  Q.push(10);
-  Q.push(20);
-  Queue< int > Qcopy(Q);
+  Queue< int > queue;
+  queue.push(10);
+  queue.push(20);
+  Queue< int > Qcopy(queue);
   BOOST_TEST(Qcopy.front() == 10);
   BOOST_TEST(Qcopy.back() == 20);
   BOOST_TEST(Qcopy.size() == 2);
-  BOOST_TEST(Q.back() == Qcopy.back());
+  BOOST_TEST(queue.back() == Qcopy.back());
 }
 
 BOOST_AUTO_TEST_CASE(queueMoveConstructor)
 {
-  Queue< int > Q;
-  Q.push(10);
-  Q.push(20);
-  Queue< int > Qcopy(std::move(Q));
+  Queue< int > queue;
+  queue.push(10);
+  queue.push(20);
+  Queue< int > Qcopy(std::move(queue));
   BOOST_TEST(Qcopy.front() == 10);
   BOOST_TEST(Qcopy.back() == 20);
   BOOST_TEST(Qcopy.size() == 2);
-  BOOST_TEST(Q.empty());
+  BOOST_TEST(queue.empty());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -44,20 +44,20 @@ BOOST_AUTO_TEST_SUITE(queueElementAccess)
 
 BOOST_AUTO_TEST_CASE(queueFront)
 {
-  Queue< int > Q;
-  Q.push(10);
-  BOOST_TEST(Q.front() == 10);
-  Q.push(20);
-  BOOST_TEST(Q.front() == 10);
+  Queue< int > queue;
+  queue.push(10);
+  BOOST_TEST(queue.front() == 10);
+  queue.push(20);
+  BOOST_TEST(queue.front() == 10);
 }
 
 BOOST_AUTO_TEST_CASE(queueBack)
 {
-  Queue< int > Q;
-  Q.push(10);
-  BOOST_TEST(Q.back() == 10);
-  Q.push(20);
-  BOOST_TEST(Q.back() == 20);
+  Queue< int > queue;
+  queue.push(10);
+  BOOST_TEST(queue.back() == 10);
+  queue.push(20);
+  BOOST_TEST(queue.back() == 20);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -66,34 +66,34 @@ BOOST_AUTO_TEST_SUITE(queueCapacity)
 
 BOOST_AUTO_TEST_CASE(queueEmpty)
 {
-  Queue< int > Q;
-  BOOST_TEST(Q.empty());
-  Q.push(10);
-  BOOST_TEST(!Q.empty());
-  Q.pop();
-  BOOST_TEST(Q.empty());
+  Queue< int > queue;
+  BOOST_TEST(queue.empty());
+  queue.push(10);
+  BOOST_TEST(!queue.empty());
+  queue.pop();
+  BOOST_TEST(queue.empty());
 }
 
 BOOST_AUTO_TEST_CASE(queueSize)
 {
-  Queue< int > Q;
-  Q.push(10);
-  Q.push(20);
-  BOOST_TEST(Q.size() == 2);
-  Q.pop();
-  BOOST_TEST(Q.size() == 1);
+  Queue< int > queue;
+  queue.push(10);
+  queue.push(20);
+  BOOST_TEST(queue.size() == 2);
+  queue.pop();
+  BOOST_TEST(queue.size() == 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(queuePushPop)
 {
-  Queue< int > Q;
-  Q.push(10);
-  BOOST_TEST(Q.front() == 10);
-  Q.push(20);
-  BOOST_TEST(Q.back() == 20);
-  Q.pop();
-  Q.pop();
-  BOOST_TEST(Q.empty());
+  Queue< int > queue;
+  queue.push(10);
+  BOOST_TEST(queue.front() == 10);
+  queue.push(20);
+  BOOST_TEST(queue.back() == 20);
+  queue.pop();
+  queue.pop();
+  BOOST_TEST(queue.empty());
 }
