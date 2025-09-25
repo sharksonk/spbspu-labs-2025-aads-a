@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
-#include "UBST.hpp"
+#include "tree.hpp"
 
 using namespace kushekbaev;
-using dataset_t = UBST< size_t, std::string >;
+using dataset_t = Tree< size_t, std::string >;
 
 namespace
 {

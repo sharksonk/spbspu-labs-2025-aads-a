@@ -10,7 +10,7 @@
 namespace kushekbaev
 {
   template< typename Key, typename Value, typename Cmp = std::less< Key > >
-  struct UBST
+  struct Tree
   {
     template< typename InputIterator >
     using enableIf = std::enable_if_t< std::is_convertible< decltype(*std::declval< InputIterator >()), Value >::value >;
@@ -19,18 +19,18 @@ namespace kushekbaev
     using pairIt = std::pair< Iterator< Key, Value, Cmp >, Iterator< Key, Value, Cmp > >;
     using paircIt = std::pair< ConstIterator< Key, Value, Cmp >, ConstIterator< Key, Value, Cmp > >;
 
-    UBST();
-    UBST(const UBST< Key, Value, Cmp >& other);
-    UBST(UBST< Key, Value, Cmp >&& other);
+    Tree();
+    Tree(const Tree< Key, Value, Cmp >& other);
+    Tree(Tree< Key, Value, Cmp >&& other);
     template< typename InputIterator >
-    UBST(InputIterator first, InputIterator last);
-    explicit UBST(std::initializer_list< std::pair< Key, Value > > il);
-    ~UBST();
+    Tree(InputIterator first, InputIterator last);
+    explicit Tree(std::initializer_list< std::pair< Key, Value > > il);
+    ~Tree();
 
-    UBST< Key, Value, Cmp >& operator=(const UBST< Key, Value, Cmp >& other);
-    UBST< Key, Value, Cmp >& operator=(UBST< Key, Value, Cmp >&& other);
-    bool operator==(const UBST< Key, Value, Cmp >& other) const noexcept;
-    bool operator!=(const UBST< Key, Value, Cmp >& other) const noexcept;
+    Tree< Key, Value, Cmp >& operator=(const Tree< Key, Value, Cmp >& other);
+    Tree< Key, Value, Cmp >& operator=(Tree< Key, Value, Cmp >&& other);
+    bool operator==(const Tree< Key, Value, Cmp >& other) const noexcept;
+    bool operator!=(const Tree< Key, Value, Cmp >& other) const noexcept;
 
     It begin() noexcept;
     It end() noexcept;
@@ -49,7 +49,7 @@ namespace kushekbaev
 
     void clear() noexcept;
 
-    void swap(UBST& other);
+    void swap(Tree& other);
 
     std::pair< It, bool > insert(const std::pair< Key, Value >& value);
     std::pair< It, bool > insert(std::pair< Key, Value >&& value);
@@ -90,7 +90,7 @@ namespace kushekbaev
   };
 
   template< typename Key, typename Value, typename Cmp >
-  UBST< Key, Value, Cmp>::UBST():
+  Tree< Key, Value, Cmp>::Tree():
     fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
@@ -101,7 +101,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST< Key, Value, Cmp>::UBST(const UBST< Key, Value, Cmp >& other):
+  Tree< Key, Value, Cmp>::Tree(const Tree< Key, Value, Cmp >& other):
     fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
@@ -133,7 +133,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST< Key, Value, Cmp>::UBST(UBST< Key, Value, Cmp >&& other):
+  Tree< Key, Value, Cmp>::Tree(Tree< Key, Value, Cmp >&& other):
     fakeroot_(std::exchange(other.fakeroot_, nullptr)),
     root_(std::exchange(other.root_, nullptr)),
     size_(std::exchange(other.size_, 0)),
@@ -146,8 +146,8 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename InputIterator >
-  UBST< Key, Value, Cmp >::UBST(InputIterator first, InputIterator last):
-    UBST()
+  Tree< Key, Value, Cmp >::Tree(InputIterator first, InputIterator last):
+    Tree()
   {
     for (auto it = first; it != last; ++it)
     {
@@ -156,8 +156,8 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST< Key, Value, Cmp >::UBST(std::initializer_list< std::pair< Key, Value > > il):
-    UBST()
+  Tree< Key, Value, Cmp >::Tree(std::initializer_list< std::pair< Key, Value > > il):
+    Tree()
   {
     for (auto it = il.begin(); it != il.end(); ++it)
     {
@@ -166,30 +166,30 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST< Key, Value, Cmp >::~UBST()
+  Tree< Key, Value, Cmp >::~Tree()
   {
     clear();
     std::free(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST<Key, Value, Cmp >& UBST< Key, Value, Cmp >::operator=(const UBST< Key, Value, Cmp >& other)
+  Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(const Tree< Key, Value, Cmp >& other)
   {
-    UBST< Key, Value, Cmp > tmp(other);
+    Tree< Key, Value, Cmp > tmp(other);
     swap(tmp);
     return *this;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  UBST<Key, Value, Cmp >& UBST< Key, Value, Cmp >::operator=(UBST< Key, Value, Cmp >&& other)
+  Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(Tree< Key, Value, Cmp >&& other)
   {
-    UBST< Key, Value, Cmp > tmp(std::move(other));
+    Tree< Key, Value, Cmp > tmp(std::move(other));
     swap(tmp);
     return *this;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  bool UBST< Key, Value, Cmp >::operator==(const UBST< Key, Value, Cmp >& other) const noexcept
+  bool Tree< Key, Value, Cmp >::operator==(const Tree< Key, Value, Cmp >& other) const noexcept
   {
     if (size() != other.size())
     {
@@ -210,13 +210,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  bool UBST< Key, Value, Cmp >::operator!=(const UBST< Key, Value, Cmp >& other) const noexcept
+  bool Tree< Key, Value, Cmp >::operator!=(const Tree< Key, Value, Cmp >& other) const noexcept
   {
     return !(*this == other);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::begin() noexcept
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::begin() noexcept
   {
     if (empty())
     {
@@ -231,13 +231,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::end() noexcept
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::end() noexcept
   {
     return It(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::begin() const noexcept
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::begin() const noexcept
   {
     if (empty())
     {
@@ -252,13 +252,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::end() const noexcept
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::end() const noexcept
   {
     return cIt(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::cbegin() const noexcept
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::cbegin() const noexcept
   {
     if (empty())
     {
@@ -273,31 +273,31 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::cend() const noexcept
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::cend() const noexcept
   {
     return cIt(fakeroot_);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  size_t UBST< Key, Value, Cmp >::size() const noexcept
+  size_t Tree< Key, Value, Cmp >::size() const noexcept
   {
     return size_;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  bool UBST< Key, Value, Cmp >::empty() const noexcept
+  bool Tree< Key, Value, Cmp >::empty() const noexcept
   {
     return size_ == 0;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Value& UBST< Key, Value, Cmp >::at(const Key& key)
+  Value& Tree< Key, Value, Cmp >::at(const Key& key)
   {
-    return const_cast< Value& >(static_cast< const UBST* >(this)->at(key));
+    return const_cast< Value& >(static_cast< const Tree* >(this)->at(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const Value& UBST< Key, Value, Cmp >::at(const Key& key) const
+  const Value& Tree< Key, Value, Cmp >::at(const Key& key) const
   {
     auto current = find(key);
     if (current == cend())
@@ -308,7 +308,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Value& UBST< Key, Value, Cmp >::operator[](const Key& key)
+  Value& Tree< Key, Value, Cmp >::operator[](const Key& key)
   {
     auto it = find(key);
     if (it == end())
@@ -320,14 +320,14 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const Value& UBST< Key, Value, Cmp >::operator[](const Key& key) const
+  const Value& Tree< Key, Value, Cmp >::operator[](const Key& key) const
   {
     auto it = find(key);
     return it->second;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  void UBST< Key, Value, Cmp >::clear() noexcept
+  void Tree< Key, Value, Cmp >::clear() noexcept
   {
     killChildrenOf(root_);
     root_ = fakeroot_;
@@ -335,7 +335,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  void UBST< Key, Value, Cmp >::killChildrenOf(node_t* node)
+  void Tree< Key, Value, Cmp >::killChildrenOf(node_t* node)
   {
     if (!node || node == fakeroot_)
     {
@@ -347,7 +347,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  void UBST< Key, Value, Cmp >::swap(UBST& other)
+  void Tree< Key, Value, Cmp >::swap(Tree& other)
   {
     std::swap(fakeroot_, other.fakeroot_);
     std::swap(root_, other.root_);
@@ -356,22 +356,22 @@ namespace kushekbaev
   }
 
   template<typename Key, typename Value, typename Cmp>
-  std::pair< Iterator< Key, Value, Cmp >, bool> UBST< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
+  std::pair< Iterator< Key, Value, Cmp >, bool> Tree< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
   {
     return emplace(value);
   }
 
   template<typename Key, typename Value, typename Cmp>
-  std::pair< Iterator< Key, Value, Cmp >, bool> UBST< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
+  std::pair< Iterator< Key, Value, Cmp >, bool> Tree< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
   {
     return emplace(std::move(value));
   }
 
   template< typename Key, typename Value, typename Cmp >
   template< typename InputIterator >
-  void UBST< Key, Value, Cmp >::insert(InputIterator first, InputIterator last)
+  void Tree< Key, Value, Cmp >::insert(InputIterator first, InputIterator last)
   {
-    UBST< Key, Value, Cmp > tmp(*this);
+    Tree< Key, Value, Cmp > tmp(*this);
     while (first != last)
     {
       tmp.insert(*first);
@@ -381,19 +381,19 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::insert(cIt hint, const std::pair< Key, Value >& value)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::insert(cIt hint, const std::pair< Key, Value >& value)
   {
     return emplace_hint(hint, value);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::insert(It hint, const std::pair<Key, Value>& value)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::insert(It hint, const std::pair<Key, Value>& value)
   {
     return insert(ConstIterator<Key, Value, Cmp>(hint), value);
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(It position)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::erase(It position)
   {
     if (position == end())
     {
@@ -450,7 +450,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(cIt position)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::erase(cIt position)
   {
     if (position == cend())
     {
@@ -507,7 +507,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(It first, It last)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::erase(It first, It last)
   {
     for (auto it = first; it != last;)
     {
@@ -517,7 +517,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::erase(cIt first, cIt last)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::erase(cIt first, cIt last)
   {
     for (auto it = first; it != last;)
     {
@@ -527,7 +527,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  size_t UBST< Key, Value, Cmp >::erase(const Key& key)
+  size_t Tree< Key, Value, Cmp >::erase(const Key& key)
   {
     It it = find(key);
     if (it == end())
@@ -540,7 +540,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename... Args >
-  std::pair< Iterator< Key, Value, Cmp >, bool > UBST< Key, Value, Cmp >::emplace(Args&&... args)
+  std::pair< Iterator< Key, Value, Cmp >, bool > Tree< Key, Value, Cmp >::emplace(Args&&... args)
   {
     node_t* newNode = new node_t(std::forward< Args >(args)...);
     newNode->left = nullptr;
@@ -606,7 +606,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename... Args >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::emplace_hint(cIt hint, Args&&... args)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::emplace_hint(cIt hint, Args&&... args)
   {
     if (empty())
     {
@@ -632,7 +632,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::find(const Key& key) noexcept
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::find(const Key& key) noexcept
   {
     node_t* current = root_;
     while (current && current != fakeroot_)
@@ -654,7 +654,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::find(const Key& key) const noexcept
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::find(const Key& key) const noexcept
   {
     node_t* current = root_;
     while (current && current != fakeroot_)
@@ -676,25 +676,25 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  size_t UBST< Key, Value, Cmp >::count(const Key& key) const noexcept
+  size_t Tree< Key, Value, Cmp >::count(const Key& key) const noexcept
   {
     return (find(key) != cend());
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::pairIt UBST< Key, Value, Cmp >::equal_range(const Key& key)
+  typename Tree< Key, Value, Cmp >::pairIt Tree< Key, Value, Cmp >::equal_range(const Key& key)
   {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::paircIt UBST< Key, Value, Cmp >::equal_range(const Key& key) const
+  typename Tree< Key, Value, Cmp >::paircIt Tree< Key, Value, Cmp >::equal_range(const Key& key) const
   {
     return std::make_pair(lower_bound(key), upper_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::lower_bound(const Key& key)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::lower_bound(const Key& key)
   {
     node_t* current = root_;
     node_t* result = fakeroot_;
@@ -714,13 +714,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::lower_bound(const Key& key) const
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::lower_bound(const Key& key) const
   {
     return cIt(lower_bound(key));
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::It UBST< Key, Value, Cmp >::upper_bound(const Key& key)
+  typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::upper_bound(const Key& key)
   {
     node_t* current = root_;
     node_t* result = fakeroot_;
@@ -740,13 +740,13 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  typename UBST< Key, Value, Cmp >::cIt UBST< Key, Value, Cmp >::upper_bound(const Key& key) const
+  typename Tree< Key, Value, Cmp >::cIt Tree< Key, Value, Cmp >::upper_bound(const Key& key) const
   {
     return cIt(upper_bound(key));
   }
 
   template<typename Key, typename Value, typename Cmp>
-  TreeNode< Key, Value, Cmp >* UBST<Key, Value, Cmp>::copySubtree(node_t* node, node_t* parent)
+  TreeNode< Key, Value, Cmp >* Tree<Key, Value, Cmp>::copySubtree(node_t* node, node_t* parent)
   {
     if (!node)
     {

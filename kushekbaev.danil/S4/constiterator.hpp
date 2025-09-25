@@ -8,7 +8,7 @@
 namespace kushekbaev
 {
   template< typename Key, typename Value, typename Cmp >
-  struct UBST;
+  struct Tree;
 
   template< typename Key, typename Value, typename Cmp >
   struct Iterator;
@@ -40,7 +40,7 @@ namespace kushekbaev
     bool operator==(const this_t& other) const noexcept;
 
     private:
-      friend struct UBST< Key, Value, Cmp >;
+      friend struct Tree< Key, Value, Cmp >;
       friend struct Iterator< Key, Value, Cmp >;
       TreeNode< Key, Value, Cmp >* node_;
       explicit ConstIterator(TreeNode< Key, Value, Cmp >* node) noexcept;

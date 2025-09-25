@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <vector.hpp>
 
-using dataset_t = kushekbaev::UBST< size_t, std::string >;
-using dict_t = kushekbaev::UBST< std::string, dataset_t >;
+using dataset_t = kushekbaev::Tree< size_t, std::string >;
+using dict_t = kushekbaev::Tree< std::string, dataset_t >;
 
 void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
