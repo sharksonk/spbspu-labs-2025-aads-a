@@ -19,7 +19,7 @@ namespace averenkov
 
   public:
     using iterator_category = std::forward_iterator_tag;
-    using value_type = std::conditional_t< isConst, const Bucket< Key, Value >, Bucket< Key, Value > >;
+    using value_type = std::conditional_t< isConst, const detail::Bucket< Key, Value >, detail::Bucket< Key, Value > >;
     using difference_type = std::ptrdiff_t;
     using pointer = value_type*;
     using reference = value_type&;
@@ -36,7 +36,7 @@ namespace averenkov
     bool operator!=(const IteratorHash& other) const noexcept;
 
   private:
-    using BucketPtr = std::conditional_t< isConst, const Bucket< Key, Value >*, Bucket< Key, Value >* >;
+    using BucketPtr = std::conditional_t< isConst, const detail::Bucket< Key, Value >*, detail::Bucket< Key, Value >* >;
 
     BucketPtr current_;
     BucketPtr end_;

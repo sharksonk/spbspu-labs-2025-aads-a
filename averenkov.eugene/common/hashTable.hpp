@@ -76,7 +76,7 @@ namespace averenkov
     size_t probe(size_t hash, size_t i) const noexcept;
 
   private:
-    Array< Bucket< Key, Value > > table_;
+    Array< detail::Bucket< Key, Value > > table_;
     size_t size_ = 0;
     Hash hasher_;
     Equal key_equal_;
@@ -511,10 +511,10 @@ namespace averenkov
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t count)
   {
     count = next_prime(count);
-    Array< Bucket < Key, Value > > new_table(count);
+    Array< detail::Bucket < Key, Value > > new_table(count);
     for (size_t i = 0; i < count; ++i)
     {
-      new_table.push_back(Bucket< Key, Value >());
+      new_table.push_back(detail::Bucket< Key, Value >());
     }
 
     for (size_t i = 0; i < table_.size(); ++i)

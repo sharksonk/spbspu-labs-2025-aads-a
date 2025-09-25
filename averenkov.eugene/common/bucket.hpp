@@ -3,7 +3,7 @@
 
 #include <utility>
 
-namespace averenkov
+namespace averenkov::detail
 {
   template< class Key, class Value >
   struct Bucket
@@ -18,7 +18,7 @@ namespace averenkov
 }
 
 template< class Key, class Value >
-averenkov::Bucket< Key, Value >::Bucket():
+averenkov::detail::Bucket< Key, Value >::Bucket():
   key(Key{}),
   value(Value{}),
   occupied(false),
