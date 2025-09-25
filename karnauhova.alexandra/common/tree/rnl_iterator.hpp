@@ -13,7 +13,7 @@ namespace karnauhova
   {
     friend class AvlTree< Key, Value, Compare >;
   public:
-    using Node = AvlTreeNode< Key, Value >;
+    using Node = detail::AvlTreeNode< Key, Value >;
     using this_t = RnlIterator< Key, Value, Compare >;
     using data_t = std::pair< Key, Value >;
 
