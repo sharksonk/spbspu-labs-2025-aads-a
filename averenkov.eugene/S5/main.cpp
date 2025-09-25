@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     }
     std::cout << proc.sum_ << " " << proc.values_ << "\n";
   }
-  catch (std::exception& e)
+  catch (const std::exception& e)
   {
     std::cerr << e.what() << "\n";
     return 1;
