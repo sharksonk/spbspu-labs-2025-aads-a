@@ -9,37 +9,34 @@ namespace kushekbaev
   class Vector
   {
     public:
-      Vector();
+      Vector() noexcept;
       Vector(const Vector& other);
-      Vector(Vector&& other);
-      ~Vector();
+      Vector(Vector&& other) noexcept;
+      ~Vector() noexcept;
 
       Vector& operator=(const Vector& other);
+      Vector& operator=(Vector&& other) noexcept;
 
       T& front() noexcept;
       T& back() noexcept;
       const T& front() const noexcept;
       const T& back() const noexcept;
 
+      T& operator[](size_t index) noexcept;
+      const T& operator[](size_t index) const noexcept;
+
       bool empty() const noexcept;
       size_t size() const noexcept;
 
-      void push_back(const T& value);
-      void pop_front();
-      void pop_back();
-
-      T* begin() noexcept;
-      T* end() noexcept;
-      const T* begin() const noexcept;
-      const T* end() const noexcept;
-      const T* cbegin() const noexcept;
-      const T* cend() const noexcept;
+      void pushBack(const T& value);
+      void popFront();
+      void popBack() noexcept;
 
     private:
       T* data_;
       size_t size_;
       size_t capacity_;
-      void extend_vector();
+      void extendVector();
       class RAII
       {
         public:
@@ -63,7 +60,7 @@ namespace kushekbaev
   };
 
   template< typename T >
-  Vector< T >::Vector():
+  Vector< T >::Vector() noexcept:
     data_(new T[1]),
     size_(0),
     capacity_(1)
@@ -85,7 +82,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >::Vector(Vector&& other):
+  Vector< T >::Vector(Vector&& other) noexcept:
     data_(other.data_),
     size_(other.size_),
     capacity_(other.capacity_)
@@ -96,7 +93,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >::~Vector()
+  Vector< T >::~Vector() noexcept
   {
     delete[] data_;
   }
@@ -116,6 +113,18 @@ namespace kushekbaev
       newHolder.ptr = nullptr;
       capacity_ = other.capacity_;
       size_ = other.size_;
+    }
+    return *this;
+  }
+
+  template< typename T >
+  Vector< T >& Vector< T >::operator=(Vector&& other) noexcept
+  {
+    if (this != std::addressof(other))
+    {
+      std::swap(data_, other.data_);
+      std::swap(size_, other.size_);
+      std::swap(capacity_, other.capacity_);
     }
     return *this;
   }
@@ -151,23 +160,35 @@ namespace kushekbaev
   }
 
   template< typename T >
+  T& Vector< T >::operator[](size_t index) noexcept
+  {
+    return data_[index];
+  }
+
+  template< typename T >
+  const T& Vector< T >::operator[](size_t index) const noexcept
+  {
+    return data_[index];
+  }
+
+  template< typename T >
   const T& Vector< T >::back() const noexcept
   {
     return data_[size_ - 1];
   }
 
   template< typename T >
-  void Vector< T >::push_back(const T& value)
+  void Vector< T >::pushBack(const T& value)
   {
     if (size_ == capacity_)
     {
-      extend_vector();
+      extendVector();
     }
     data_[size_++] = value;
   }
 
   template< typename T >
-  void Vector< T >::pop_front()
+  void Vector< T >::popFront()
   {
     if (empty())
     {
@@ -181,7 +202,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::pop_back()
+  void Vector< T >::popBack() noexcept
   {
     if (!empty())
     {
@@ -190,7 +211,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::extend_vector()
+  void Vector< T >::extendVector()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
     RAII newHolder(new T[newCapacity]);
@@ -202,42 +223,6 @@ namespace kushekbaev
     data_ = newHolder.ptr;
     newHolder.ptr = nullptr;
     capacity_ = newCapacity;
-  }
-
-  template< typename T >
-  T* Vector< T >::begin() noexcept
-  {
-    return data_;
-  }
-
-  template< typename T >
-  T* Vector< T >::end() noexcept
-  {
-    return data_ + size_;
-  }
-
-  template< typename T >
-  const T* Vector< T >::begin() const noexcept
-  {
-    return data_;
-  }
-
-  template< typename T >
-  const T* Vector< T >::end() const noexcept
-  {
-    return data_ + size_;
-  }
-
-  template< typename T >
-  const T* Vector< T >::cbegin() const noexcept
-  {
-    return data_;
-  }
-
-  template< typename T >
-  const T* Vector< T >::cend() const noexcept
-  {
-    return data_ + size_;
   }
 }
 

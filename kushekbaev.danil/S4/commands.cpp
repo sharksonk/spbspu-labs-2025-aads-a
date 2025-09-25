@@ -23,13 +23,13 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   kushekbaev::Vector< std::pair < size_t, std::string > > sorted;
   for (const auto& elem: result)
   {
-    sorted.push_back(elem);
+    sorted.pushBack(elem);
   }
-  std::sort(sorted.begin(), sorted.end());
+  std::sort(std::addressof(sorted[0]), std::addressof(sorted[0]) + sorted.size());
   out << name;
-  for (const auto& elem: sorted)
+  for (size_t i = 0; i < sorted.size(); ++i)
   {
-    out << " " << elem.first << " " << elem.second;
+    out << " " << sorted[i].first << " " << sorted[i].second;
   }
   out << "\n";
 }
