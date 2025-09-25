@@ -119,18 +119,29 @@ namespace
     out << "\n";
   }
 
-  bool safeStringToULL(const std::string& str, unsigned long long& result)
+  bool isNumber(const std::string& str)
   {
-    result = 0;
-    for (char c : str) {
+    if (str.empty()) return false;
+    for (char c : str)
+    {
       if (c < '0' || c > '9') return false;
+    }
+    return true;
+  }
+
+  unsigned long long parseNumber(const std::string& str)
+  {
+    unsigned long long result = 0;
+    for (char c : str)
+    {
       unsigned long long digit = c - '0';
-      if (result > (std::numeric_limits<unsigned long long>::max() - digit) / 10) {
-        return false;
+      if (result > (std::numeric_limits<unsigned long long>::max() - digit) / 10)
+      {
+        throw std::overflow_error("Number too large");
       }
       result = result * 10 + digit;
     }
-    return true;
+    return result;
   }
 }
 
@@ -141,27 +152,42 @@ int main()
   try
   {
     listOfPairs sequences;
-    std::string name;
+    std::string line;
 
-    while (std::cin >> name)
+    while (std::getline(std::cin, line))
     {
-      List< unsigned long long > numbers;
-      std::string numStr;
-      while (std::cin >> numStr)
+      if (line.empty()) continue;
+
+      size_t pos = 0;
+      while (pos < line.length() && line[pos] == ' ') pos++;
+      if (pos >= line.length()) continue;
+
+      size_t nameStart = pos;
+      while (pos < line.length() && line[pos] != ' ') pos++;
+      std::string name = line.substr(nameStart, pos - nameStart);
+
+      List<unsigned long long> numbers;
+
+      while (pos < line.length())
       {
-        unsigned long long number;
-        if (safeStringToULL(numStr, number)) {
+        while (pos < line.length() && line[pos] == ' ') pos++;
+        if (pos >= line.length()) break;
+
+        size_t wordStart = pos;
+        while (pos < line.length() && line[pos] != ' ') pos++;
+        std::string word = line.substr(wordStart, pos - wordStart);
+
+        if (isNumber(word))
+        {
+          unsigned long long number = parseNumber(word);
           numbers.pushBack(number);
-        } else {
-          std::cin.putback(' ');
-          for (auto it = numStr.rbegin(); it != numStr.rend(); ++it) {
-            std::cin.putback(*it);
-          }
+        }
+        else
+        {
           break;
         }
       }
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
       sequences.pushBack(std::make_pair(name, numbers));
     }
 
@@ -170,10 +196,13 @@ int main()
       std::cout << "0\n";
       return 0;
     }
+
     printNames(std::cout, sequences);
     printTransposed(std::cout, sequences);
-    List< unsigned long long > sums = calculateSums(sequences);
+
+    List<unsigned long long> sums = calculateSums(sequences);
     printSums(std::cout, sums);
+
     return 0;
   }
   catch (const std::overflow_error& e)
