@@ -1,75 +1,79 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <stdexcept>
+#include <iterator>
 #include "list.hpp"
 
-namespace
-{
+namespace {
   using listOfPairs = sharifullina::List< std::pair< std::string, sharifullina::List< unsigned long long > > >;
 
-  size_t getMaxListSize(const listOfPairs& lists)
+  size_t getMaxListSize(const listOfPairs & lists)
   {
     size_t maxSize = 0;
-    for (auto it = lists.begin(); it != lists.end(); ++it)
+    for (const auto & pair : lists)
     {
-      if (it->second.size() > maxSize)
+      if (pair.second.size() > maxSize)
       {
-        maxSize = it->second.size();
+        maxSize = pair.second.size();
       }
     }
     return maxSize;
   }
 
-  void printNames(std::ostream& out, const listOfPairs& lists)
+  void printNames(std::ostream& out, const listOfPairs & lists)
   {
-    if (lists.empty()) return;
-    auto it = lists.begin();
-    out << it->first;
-    ++it;
-    for (; it != lists.end(); ++it)
+    if (lists.empty())
     {
-      out << " " << it->first;
+      return;
+    }
+    bool isFirst = true;
+    for (const auto & pair : lists)
+    {
+      if (!isFirst)
+      {
+        out << " ";
+      }
+      out << pair.first;
+      isFirst = false;
     }
     out << "\n";
   }
 
-  void printTransposed(std::ostream& out, const listOfPairs& lists)
+  void printTransposed(std::ostream & out, const listOfPairs & lists)
   {
     size_t maxSize = getMaxListSize(lists);
     for (size_t i = 0; i < maxSize; ++i)
     {
-      bool firstInRow = true;
-      for (auto listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      bool isFirstInRow = true;
+      for (const auto & pair : lists)
       {
-        if (i < listIt->second.size())
+        if (i < pair.second.size())
         {
-          auto numIt = listIt->second.begin();
-          for (size_t j = 0; j < i; ++j)
-          {
-            ++numIt;
-          }
-          if (!firstInRow)
+          auto it = pair.second.cbegin();
+          std::advance(it, i);
+          if (!isFirstInRow)
           {
             out << " ";
           }
-          out << *numIt;
-          firstInRow = false;
+          out << *it;
+          isFirstInRow = false;
         }
       }
       out << "\n";
     }
   }
 
-  void addWithCheck(unsigned long long& sum, unsigned long long value)
+  void addWithCheck(unsigned long long & sum, unsigned long long value)
   {
     if (std::numeric_limits< unsigned long long >::max() - value < sum)
     {
-      throw std::overflow_error("Overflow detected in sum calculation");
+      throw std::overflow_error("overflow");
     }
     sum += value;
   }
 
-  sharifullina::List< unsigned long long > calculateSums(const listOfPairs& lists)
+  sharifullina::List< unsigned long long > calculateSums(const listOfPairs & lists)
   {
     sharifullina::List< unsigned long long > sums;
     size_t maxSize = getMaxListSize(lists);
@@ -77,16 +81,13 @@ namespace
     {
       unsigned long long rowSum = 0;
       bool hasValue = false;
-      for (auto listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      for (const auto& pair : lists)
       {
-        if (i < listIt->second.size())
+        if (i < pair.second.size())
         {
-          auto numIt = listIt->second.begin();
-          for (size_t j = 0; j < i; ++j)
-          {
-            ++numIt;
-          }
-          addWithCheck(rowSum, *numIt);
+          auto it = pair.second.cbegin();
+          std::advance(it, i);
+          addWithCheck(rowSum, *it);
           hasValue = true;
         }
       }
@@ -98,20 +99,21 @@ namespace
     return sums;
   }
 
-  void printSums(std::ostream& out, const sharifullina::List< unsigned long long >& sums)
+  void printSums(std::ostream & out, const sharifullina::List< unsigned long long > & sums)
   {
     if (sums.empty())
     {
-      out << "0\n";
       return;
     }
-    auto it = sums.begin();
-    out << *it;
-    ++it;
-
-    for (; it != sums.end(); ++it)
+    bool isFirst = true;
+    for (const auto & sum : sums)
     {
-      out << " " << *it;
+      if (!isFirst)
+      {
+        out << " ";
+      }
+      out << sum;
+      isFirst = false;
     }
     out << "\n";
   }
@@ -133,19 +135,17 @@ int main()
       {
         numbers.pushBack(number);
       }
-      if (std::cin.fail())
-      {
-        std::cin.clear();
-      }
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
       sequences.pushBack(std::make_pair(name, numbers));
     }
+
     if (sequences.empty())
     {
       std::cout << "0\n";
       return 0;
     }
+
     printNames(std::cout, sequences);
     printTransposed(std::cout, sequences);
 
@@ -154,12 +154,12 @@ int main()
 
     return 0;
   }
-  catch (const std::overflow_error& e)
+  catch (const std::overflow_error & e)
   {
-    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "Formed lists with exit code 1 and error message in standard error because of " << e.what() << "\n";
     return 1;
   }
-  catch (const std::exception& e)
+  catch (const std::exception & e)
   {
     std::cerr << "Error: " << e.what() << "\n";
     return 1;
