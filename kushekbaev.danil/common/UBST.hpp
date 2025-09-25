@@ -79,6 +79,42 @@ namespace kushekbaev
     It upper_bound(const Key& key);
     cIt upper_bound(const Key& key) const;
 
+    template< typename F >
+    F traverse_lnr(F f) const
+    {
+      
+    }
+
+    template< typename F >
+    F traverse_rnl(F f) const
+    {
+
+    }
+
+    template< typename F >
+    F traverse_breadth(F f) const
+    {
+
+    }
+
+    template< typename F >
+    F traverse_lnr(F f)
+    {
+
+    }
+
+    template< typename F >
+    F traverse_rnl(F f)
+    {
+
+    }
+
+    template< typename F >
+    F traverse_breadth(F f)
+    {
+
+    }
+
     private:
       using node_t = kushekbaev::TreeNode< Key, Value, Cmp >;
       node_t* fakeroot_;

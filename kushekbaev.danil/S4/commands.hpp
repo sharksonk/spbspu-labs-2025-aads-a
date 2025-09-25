@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include "UBST.hpp"
+#include <UBST.hpp>
 
 using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
 using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
