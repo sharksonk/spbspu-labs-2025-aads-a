@@ -12,7 +12,7 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
     rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::find_hint_pair(const K1& key) const
 {
   const_iterator hint = lower_bound_impl(key).first;
-  if (IsMulti || (hint.pointed_ >= hint.node_->size()) || compare_with_key(key, *hint))
+  if (IsMulti || (hint.pointed_ >= hint.node_->size()) || compare_keys(key, get_key(*hint)))
   {
     return {hint, true};
   }
@@ -29,13 +29,13 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
     return {end(), true};
   }
   bool correct = false;
-  const bool right_order = (hint != end()) && !compare_with_key(key, *hint);
+  const bool right_order = (hint != end()) && !compare_keys(key, (*hint));
   if (hint == end())
   {
     --hint;
-    if (!compare_with_key(key, *hint))
+    if (!compare_keys(key, get_key(*hint)))
     {
-      bool need_insert = IsMulti || !compare_with_key(*hint, key);
+      bool need_insert = IsMulti || !compare_keys(get_key(*hint), key);
       hint.pointed_++;
       return {hint, need_insert};
     }
@@ -46,7 +46,7 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
   }
   while (true)
   {
-    if (compare_with_key(key, *hint))
+    if (compare_keys(key, get_key(*hint)))
     {
       if (hint.node_->isleaf())
       {
@@ -56,7 +56,7 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
       hint.pointed_ = 0;
       correct = true;
     }
-    else if (!compare_with_key(*hint, key))
+    else if (!compare_keys(get_key(*hint), key))
     {
       if (!hint.node_->isleaf())
       {
@@ -101,7 +101,7 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
   bool correct = false;
   while (true)
   {
-    if (compare_with_key(*hint, key))
+    if (compare_keys(get_key(*hint), key))
     {
       if (hint.node_->isleaf())
       {
@@ -111,7 +111,7 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::const_iterat
       hint.pointed_ = hint.node_->size() - 1;
       correct = true;
     }
-    else if (!compare_with_key(key, *hint))
+    else if (!compare_keys(key, get_key(*hint)))
     {
       if (!hint.node_->isleaf())
       {
@@ -197,7 +197,8 @@ typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::transparent_compare_key
 template< class K, class T, class C, size_t N, bool IsSet, bool IsMulti >
 template< bool IsSet2, class... Args >
 std::enable_if_t< !IsSet && !IsSet2, typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::iterator >
-    rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::try_emplace(const_iterator hint, const key_type& key, Args&&... args)
+    rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::try_emplace
+    (const_iterator hint, const key_type& key, Args&&... args)
 {
   return emplace_hint_impl(correct_hint(hint, key), key, std::forward< Args >(args)...).first;
 }
@@ -232,7 +233,8 @@ std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::iterator, bo
 }
 template< class K, class T, class C, size_t N, bool IsSet, bool IsMulti >
 template< class V >
-std::enable_if_t< std::is_constructible< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::value_type, V&& >::value,
+std::enable_if_t< std::is_constructible
+      < typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::value_type, V&& >::value,
       std::pair< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::iterator, bool > >
     rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::insert(V&& value)
 {
@@ -252,7 +254,8 @@ typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::iterator
 }
 template< class K, class T, class C, size_t N, bool IsSet, bool IsMulti >
 template< class V >
-std::enable_if_t< std::is_constructible< typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::value_type, V&& >::value,
+std::enable_if_t< std::is_constructible
+      < typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::value_type, V&& >::value,
       typename rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::iterator >
     rychkov::MapBase< K, T, C, N, IsSet, IsMulti >::insert(const_iterator hint, V&& value)
 {
