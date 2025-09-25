@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <cassert>
+#include <iostream>
 #include "node.hpp"
 #include "constIterator.hpp"
 
@@ -42,12 +43,29 @@ namespace sharifullina
     bool operator==(const ConstIterator< T > &) const;
     bool operator!=(const ConstIterator< T > &) const;
 
+    template<typename U>
+    friend std::ostream& operator<<(std::ostream& os, const Iterator<U>& it);
+
   private:
     Node< T > * node_;
     friend class List< T >;
 
     explicit Iterator(Node< T > * node);
   };
+
+  template<typename T>
+  std::ostream& operator<<(std::ostream& os, const Iterator<T>& it)
+  {
+    if (it.node_ != nullptr)
+    {
+      os << "Iterator(" << it.node_->data_ << ")";
+    }
+    else
+    {
+      os << "Iterator(nullptr)";
+    }
+    return os;
+  }
 
   template< typename T >
   Iterator< T >::Iterator() :

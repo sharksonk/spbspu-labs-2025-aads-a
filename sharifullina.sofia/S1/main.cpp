@@ -55,10 +55,6 @@ namespace
           out << *numIt;
           firstInRow = false;
         }
-        else if (!firstInRow)
-        {
-          out << " ";
-        }
       }
       out << "\n";
     }
