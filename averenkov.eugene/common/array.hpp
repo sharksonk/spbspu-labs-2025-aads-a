@@ -67,11 +67,12 @@ namespace averenkov
 
   template< typename T >
   Array< T >::Array(size_t size):
-    data_(new T[size]),
+    data_(new T[size]()),
     last_(size),
     capacity_(size),
     first_(0)
-  {}
+  {
+  }
 
   template< class T >
   Array< T >::Array(const Array& rhs):
