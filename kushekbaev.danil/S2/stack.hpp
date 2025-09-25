@@ -11,11 +11,11 @@ namespace kushekbaev
   {
     public:
       Stack() = default;
-      Stack(const Stack& other) noexcept;
+      Stack(const Stack& other);
       Stack(Stack&& other) noexcept;
       ~Stack() = default;
 
-      Stack& operator=(const Stack& other) noexcept;
+      Stack& operator=(const Stack& other);
       Stack& operator=(Stack&& other) noexcept;
 
       bool empty() const noexcept;
@@ -24,7 +24,7 @@ namespace kushekbaev
       T& top() noexcept;
       const T& top() const noexcept;
 
-      void push(const T& value) noexcept;
+      void push(const T& value);
       void pop();
 
     private:
@@ -32,7 +32,7 @@ namespace kushekbaev
   };
 
   template< typename T, typename Sequence >
-  Stack< T, Sequence >::Stack(const Stack& other) noexcept:
+  Stack< T, Sequence >::Stack(const Stack& other):
     sequence_(other.sequence_)
   {}
 
@@ -42,7 +42,7 @@ namespace kushekbaev
   {}
 
   template< typename T, typename Sequence >
-  Stack< T, Sequence >& Stack< T, Sequence >::operator=(const Stack& other) noexcept
+  Stack< T, Sequence >& Stack< T, Sequence >::operator=(const Stack& other)
   {
     if (this != std::addressof(other))
     {
@@ -86,7 +86,7 @@ namespace kushekbaev
   }
 
   template< typename T, typename Sequence >
-  void Stack< T, Sequence >::push(const T& value) noexcept
+  void Stack< T, Sequence >::push(const T& value)
   {
     return sequence_.pushBack(value);
   }

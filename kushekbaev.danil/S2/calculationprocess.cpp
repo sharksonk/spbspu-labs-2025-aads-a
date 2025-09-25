@@ -35,10 +35,12 @@ namespace
     {
       throw std::runtime_error("Addition overflow!");
     }
+
     if ((operand2 < 0) && (operand1 < (MIN - operand2)))
     {
       throw std::runtime_error("Addition underflow!");
     }
+
     return operand1 + operand2;
   }
 
@@ -48,10 +50,12 @@ namespace
     {
       throw std::runtime_error("Subtraction underflow!");
     }
+
     if ((operand2 < 0) && (operand1 > (MAX + operand2)))
     {
       throw std::runtime_error("Subtraction overflow!");
     }
+
     return operand1 - operand2;
   }
 
@@ -61,10 +65,12 @@ namespace
     {
       throw std::runtime_error("Division by zero!");
     }
+
     if ((operand1 == MIN) && (operand2 == -1))
     {
       throw std::runtime_error("Division overflow!");
     }
+
     return operand1 / operand2;
   }
 
@@ -79,55 +85,54 @@ namespace
 
   long long int multiplicate(long long int operand1, long long int operand2)
   {
-    if (operand1 > 0)
+    if (operand1 == 0 || operand2 == 0)
     {
-      if (operand2 > 0)
-      {
-        if (operand1 > MAX / operand2)
-        {
-          throw std::runtime_error("Multiplication overflow!");
-        }
-        else if (operand2 < MIN / operand1)
-        {
-          throw std::runtime_error("Multiplication underflow!");
-        }
-      }
-      else if (operand2 < 0)
-      {
-        if (operand1 > MIN / operand2)
-        {
-          throw std::runtime_error("Multiplication overflow!");
-        }
-        else if (operand2 > MAX / operand1)
-        {
-          throw std::runtime_error("Multiplication underflow!");
-        }
-      }
+      return 0;
     }
-    else if (operand1 < 0)
+
+    if (operand1 > 0 && operand2 > 0)
     {
-      if (operand2 > 0)
+      if (operand1 > MAX / operand2)
       {
-        if (operand1 < MIN / operand2)
-        {
-          throw std::runtime_error("Multiplication underflow!");
-        }
-        else if (operand2 != 0 && operand1 > MAX / operand2)
-        {
-          throw std::runtime_error("Multiplication overflow!");
-        }
+        throw std::runtime_error("Multiplication overflow!");
       }
-      else if (operand2 < 0)
+      return operand1 * operand2;
+    }
+
+    if (operand1 > 0 && operand2 < 0)
+    {
+      if (operand1 > MIN / operand2)
       {
-        if (operand1 < MAX / operand2)
-        {
-          throw std::runtime_error("Multiplication underflow!");
-        }
-        else if (operand2 != 0 && operand1 > MIN / operand2)
-        {
-          throw std::runtime_error("Multiplication overflow!");
-        }
+        throw std::runtime_error("Multiplication overflow!");
       }
+      if (operand2 > MAX / operand1)
+      {
+        throw std::runtime_error("Multiplication underflow!");
+      }
+      return operand1 * operand2;
+    }
+
+    if (operand1 < 0 && operand2 > 0)
+    {
+      if (operand1 < MIN / operand2)
+      {
+        throw std::runtime_error("Multiplication underflow!");
+      }
+      if (operand1 > MAX / operand2)
+      {
+        throw std::runtime_error("Multiplication overflow!");
+      }
+      return operand1 * operand2;
+    }
+
+    if (operand1 < MAX / operand2)
+    {
+      throw std::runtime_error("Multiplication underflow!");
+    }
+
+    if (operand1 > MIN / operand2)
+    {
+      throw std::runtime_error("Multiplication overflow!");
     }
     return operand1 * operand2;
   }
@@ -140,12 +145,9 @@ namespace
       {
         throw std::runtime_error("Undefined power!");
       }
-      else
-      {
-        return 0;
-      }
+      return 0;
     }
-    else if (power == 0)
+    if (power == 0)
     {
       return 1;
     }
@@ -203,14 +205,14 @@ namespace
   }
 }
 
-kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string >& Q)
+kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string >& queue)
 {
-  Queue< std::string > postfixQ;
+  Queue< std::string > postfixQueue;
   Stack< std::string > stack;
   std::string symbol;
-  while (!Q.empty())
+  while (!queue.empty())
   {
-    symbol = Q.front();
+    symbol = queue.front();
     if (symbol == "(")
     {
       stack.push(symbol);
@@ -220,7 +222,7 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
       int priority = calculatePriority(symbol);
       while (!stack.empty() && priority <= calculatePriority(stack.top()))
       {
-        postfixQ.push(stack.top());
+        postfixQueue.push(stack.top());
         stack.pop();
       }
       stack.push(symbol);
@@ -229,7 +231,7 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     {
       while (!stack.empty() && stack.top() != "(")
       {
-        postfixQ.push(stack.top());
+        postfixQueue.push(stack.top());
         stack.pop();
       }
       if (!stack.empty() && stack.top() == "(")
@@ -243,25 +245,25 @@ kushekbaev::Queue< std::string > kushekbaev::convertToPostfix(Queue< std::string
     }
     else
     {
-      postfixQ.push(symbol);
+      postfixQueue.push(symbol);
     }
-    Q.pop();
+    queue.pop();
   }
   while (!stack.empty())
   {
-    postfixQ.push(stack.top());
+    postfixQueue.push(stack.top());
     stack.pop();
   }
-  return postfixQ;
+  return postfixQueue;
 }
 
-long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQ)
+long long int kushekbaev::calculatePostfix(Queue< std::string > postfixQueue)
 {
   Stack< long long int > stack;
-  while (!postfixQ.empty())
+  while (!postfixQueue.empty())
   {
-    std::string symbol = postfixQ.front();
-    postfixQ.pop();
+    std::string symbol = postfixQueue.front();
+    postfixQueue.pop();
     if (isOperator(symbol))
     {
       if (stack.size() < 2)

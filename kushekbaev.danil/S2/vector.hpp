@@ -10,11 +10,11 @@ namespace kushekbaev
   {
     public:
       Vector() noexcept;
-      Vector(const Vector& other) noexcept;
+      Vector(const Vector& other);
       Vector(Vector&& other) noexcept;
       ~Vector() noexcept;
 
-      Vector& operator=(const Vector& other) noexcept;
+      Vector& operator=(const Vector& other);
       Vector& operator=(Vector&& other) noexcept;
 
       T& front() noexcept;
@@ -25,7 +25,7 @@ namespace kushekbaev
       bool empty() const noexcept;
       size_t size() const noexcept;
 
-      void pushBack(const T& value) noexcept;
+      void pushBack(const T& value);
       void popFront();
       void popBack() noexcept;
 
@@ -33,7 +33,7 @@ namespace kushekbaev
       T* data_;
       size_t size_;
       size_t capacity_;
-      void extendVector() noexcept;
+      void extendVector();
       class RAII
       {
         public:
@@ -64,7 +64,7 @@ namespace kushekbaev
   {}
 
   template< typename T >
-  Vector< T >::Vector(const Vector& other) noexcept:
+  Vector< T >::Vector(const Vector& other):
     data_(nullptr),
     size_(other.size_),
     capacity_(other.capacity_)
@@ -96,7 +96,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >& Vector< T >::operator=(const Vector& other) noexcept
+  Vector< T >& Vector< T >::operator=(const Vector& other)
   {
     if (this != std::addressof(other))
     {
@@ -119,16 +119,9 @@ namespace kushekbaev
   {
     if (this != std::addressof(other))
     {
-      RAII newHolder(new T[other.capacity_]);
-      for (size_t i = 0; i < other.size_; ++i)
-      {
-        newHolder.ptr[i] = std::move(other.data_[i]);
-      }
-      delete[] data_;
-      data_ = std::move(newHolder.ptr);
-      newHolder.ptr = nullptr;
-      capacity_ = std::move(other.capacity_);
-      size_ = std::move(other.size_);
+      std::swap(data_, other.data_);
+      std::swap(size_, other.size_);
+      std::swap(capacity_, other.capacity_);
     }
     return *this;
   }
@@ -170,7 +163,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::pushBack(const T& value) noexcept
+  void Vector< T >::pushBack(const T& value)
   {
     if (size_ == capacity_)
     {
@@ -203,7 +196,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::extendVector() noexcept
+  void Vector< T >::extendVector()
   {
     size_t newCapacity = (capacity_ == 0) ? 1 : capacity_ * 2;
     RAII newHolder(new T[newCapacity]);

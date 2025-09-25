@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(AssignmentOperator)
     Vector< int > v3;
     v3 = std::move(v1);
     BOOST_TEST(v3.size() == 2);
-    BOOST_TEST(v1.size() == 2);
+    BOOST_TEST(v1.size() == 0);
 }
 
 BOOST_AUTO_TEST_SUITE(ElementAccess)
