@@ -46,7 +46,7 @@ namespace sharifullina
     std::size_t size_;
   };
   template< typename T >
-  List< T >::List() :
+  List< T >::List():
     fakeNode_(new Node< T >(T())),
     size_(0)
   {
@@ -54,20 +54,31 @@ namespace sharifullina
     fakeNode_->next_ = fakeNode_;
   }
   template< typename T >
-  List< T >::List(const List & other) :
+  List< T >::List(const List & other):
     List()
   {
-    for (const auto & item : other)
+    try
     {
-      pushBack(item);
+      for (ConstIterator< T > it = other.begin(); it != other.end(); ++it)
+      {
+        pushBack(*it);
+      }
+    }
+    catch (...)
+    {
+      clear();
+      delete fakeNode_;
+      throw;
     }
   }
   template< typename T >
-  List< T >::List(List && other) noexcept :
+  List< T >::List(List && other) noexcept:
     fakeNode_(other.fakeNode_),
     size_(other.size_)
   {
-    other.fakeNode_ = nullptr;
+    other.fakeNode_ = new Node< T >(T());
+    other.fakeNode_->prev_ = other.fakeNode_;
+    other.fakeNode_->next_ = other.fakeNode_;
     other.size_ = 0;
   }
   template< typename T >
@@ -98,7 +109,9 @@ namespace sharifullina
       delete fakeNode_;
       fakeNode_ = other.fakeNode_;
       size_ = other.size_;
-      other.fakeNode_ = nullptr;
+      other.fakeNode_ = new Node< T >(T());
+      other.fakeNode_->prev_ = other.fakeNode_;
+      other.fakeNode_->next_ = other.fakeNode_;
       other.size_ = 0;
     }
     return *this;
