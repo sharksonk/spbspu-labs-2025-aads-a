@@ -36,7 +36,8 @@ namespace averenkov
     const T& operator[](size_t index) const;
     T& operator[](size_t index);
 
-    T* get_data() const;
+    T* get_data();
+    const T* get_data() const;
 
   private:
     T* data_;
@@ -52,7 +53,13 @@ namespace averenkov
   };
 
   template< class T >
-  T* Array< T >::get_data() const
+  T* Array< T >::get_data()
+  {
+    return data_;
+  }
+
+  template< class T >
+  const T* Array< T >::get_data() const
   {
     return data_;
   }
