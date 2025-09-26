@@ -7,12 +7,13 @@
 
 namespace
 {
-  void inputExpressions(std::istream & in, guseynov::Queue< guseynov::Queue< std::string > > & expressionsQueue)
+  using namespace guseynov;
+  void inputExpressions(std::istream & in, Queue< Queue< std::string > > & expressionsQueue)
   {
     std::string line;
     while (std::getline(in, line))
     {
-      guseynov::Queue< std::string > infixExpression;
+      Queue< std::string > infixExpression;
       if (line.empty())
       {
         continue;
@@ -59,15 +60,15 @@ namespace
     return getOperatorPriority(op1) >= getOperatorPriority(op2);
   }
 
-  guseynov::Queue< guseynov::Queue< std::string > > convertInfixToPostfix(guseynov::Queue< guseynov::Queue< std::string > > & expressionsQueue)
+  Queue< Queue< std::string > > convertInfixToPostfix(Queue< Queue< std::string > > & expressionsQueue)
   {
-    guseynov::Queue< guseynov::Queue< std::string > > postfixQueue;
+    Queue< Queue< std::string > > postfixQueue;
     while (!expressionsQueue.empty())
     {
-      guseynov::Queue< std::string > infixExpression = expressionsQueue.front();
+      Queue< std::string > infixExpression = expressionsQueue.front();
       expressionsQueue.pop();
-      guseynov::Queue< std::string > postfixExpression;
-      guseynov::Stack< std::string > operatorStack;
+      Queue< std::string > postfixExpression;
+      Stack< std::string > operatorStack;
       while (!infixExpression.empty())
       {
         std::string token = infixExpression.front();
@@ -98,7 +99,7 @@ namespace
           }
           else if (isOperator(token))
           {
-            while (!operatorStack.empty() && operatorStack.top() != "(" && 
+            while (!operatorStack.empty() && operatorStack.top() != "(" &&
                    hasHigherOrEqualPriority(token, operatorStack.top()))
             {
               postfixExpression.push(operatorStack.top());
@@ -201,14 +202,14 @@ namespace
     }
   }
 
-  guseynov::Stack< long long > evaluateExpressions(guseynov::Queue< guseynov::Queue< std::string > > & postfixQueue)
+  Stack< long long > evaluateExpressions(Queue< Queue< std::string > > & postfixQueue)
   {
-    guseynov::Stack< long long > results;
+    Stack< long long > results;
     while (!postfixQueue.empty())
     {
-      guseynov::Queue< std::string > postfixExpression = postfixQueue.front();
+      Queue< std::string > postfixExpression = postfixQueue.front();
       postfixQueue.pop();
-      guseynov::Stack< long long > operandStack;
+      Stack< long long > operandStack;
       while (!postfixExpression.empty())
       {
         std::string token = postfixExpression.front();
@@ -232,7 +233,7 @@ namespace
     return results;
   }
 
-  void outputResults(std::ostream & out, guseynov::Stack< long long > & results)
+  void outputResults(std::ostream & out, Stack< long long > & results)
   {
     if (!results.empty())
     {
