@@ -25,7 +25,8 @@ int main(int argc, char* argv[])
   }
   if (tree.empty())
   {
-    std::cout << "The data structure is empty!\n";
+    std::cout << "<EMPTY>\n";
+    return 0;
   }
   using TraverseMode = KeySum(Tree< long long int, std::string, std::less< long long int > >::*)(KeySum);
   Tree< std::string, TraverseMode > commands;
