@@ -11,7 +11,7 @@ namespace kushekbaev
   {
     void operator()(const std::pair< const long long int, std::string >& keyValue);
     long long int sum = 0;
-    std::string value;
+    std::string value = "";
   };
 
   void KeySum::operator()(const std::pair< const long long int, std::string >& keyValue)

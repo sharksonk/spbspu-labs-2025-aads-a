@@ -62,3 +62,12 @@ BOOST_AUTO_TEST_CASE(BreadthTraverseTest)
   BOOST_TEST(constks.value == "eight four one three ");
   BOOST_TEST(constks.sum == 16);
 }
+
+BOOST_AUTO_TEST_CASE(EmptyTreeTraverseTest)
+{
+  Tree< long long int, std::string, std::less< long long int > > emptyTree;
+  KeySum ks;
+  ks = emptyTree.traverse_lnr(ks);
+  BOOST_TEST(ks.sum == 0);
+  BOOST_TEST(ks.value == "");
+}

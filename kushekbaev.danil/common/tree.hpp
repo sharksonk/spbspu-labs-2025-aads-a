@@ -763,6 +763,10 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_lnr(F f) const
   {
+    if (empty() || root_ == fakeroot_)
+    {
+      return f;
+    }
     Stack< const node_t* > stack;
     const node_t* current = root_;
     while (current || !stack.empty())
@@ -784,6 +788,10 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_rnl(F f) const
   {
+    if (empty() || root_ == fakeroot_)
+    {
+      return f;
+    }
     Stack< const node_t* > stack;
     const node_t* current = root_;
     while (current || !stack.empty())
@@ -805,7 +813,7 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_breadth(F f) const
   {
-    if (!root_)
+    if (empty() || root_ == fakeroot_)
     {
       return f;
     }
@@ -832,6 +840,10 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_lnr(F f)
   {
+    if (empty() || root_ == fakeroot_)
+    {
+      return f;
+    }
     Stack< node_t* > stack;
     node_t* current = root_;
     while (current || !stack.empty())
@@ -853,6 +865,10 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_rnl(F f)
   {
+    if (empty() || root_ == fakeroot_)
+    {
+      return f;
+    }
     Stack< node_t* > stack;
     node_t* current = root_;
     while (current || !stack.empty())
@@ -874,7 +890,7 @@ namespace kushekbaev
   template< typename F >
   F Tree< Key, Value, Cmp>::traverse_breadth(F f)
   {
-    if (!root_)
+    if (empty() || root_ == fakeroot_)
     {
       return f;
     }
