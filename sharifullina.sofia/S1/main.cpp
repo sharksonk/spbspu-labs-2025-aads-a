@@ -159,7 +159,7 @@ namespace
     }
     return result;
   }
-
+}
 int main()
 {
   using namespace sharifullina;
