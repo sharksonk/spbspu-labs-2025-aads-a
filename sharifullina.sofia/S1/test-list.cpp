@@ -152,6 +152,9 @@ BOOST_AUTO_TEST_CASE(TestCopyConstructor)
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
+    BOOST_TEST(list1.size() == 3);
+    BOOST_TEST(list1.front() == 1);
+    BOOST_TEST(list1.back() == 3);
 }
 
 BOOST_AUTO_TEST_CASE(TestMoveConstructor)
@@ -162,8 +165,13 @@ BOOST_AUTO_TEST_CASE(TestMoveConstructor)
     list1.pushBack(3);
 
     List<int> list2(std::move(list1));
-    BOOST_TEST(list1.empty());
     BOOST_TEST(list2.size() == 3);
+    BOOST_TEST(list2.front() == 1);
+    BOOST_TEST(list2.back() == 3);
+    
+    // После перемещения list1 должен быть в валидном состоянии (обычно пустой)
+    // НЕ вызываем list1.empty() если он может быть в невалидном состоянии
+    BOOST_TEST(list1.size() == 0); // или проверяем, что он пуст
 }
 
 BOOST_AUTO_TEST_CASE(TestCopyAssignment)
@@ -178,6 +186,8 @@ BOOST_AUTO_TEST_CASE(TestCopyAssignment)
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
+    list2 = list2;
+    BOOST_TEST(list2.size() == 3);
 }
 
 BOOST_AUTO_TEST_CASE(TestMoveAssignment)
@@ -189,8 +199,10 @@ BOOST_AUTO_TEST_CASE(TestMoveAssignment)
 
     List<int> list2;
     list2 = std::move(list1);
-    BOOST_TEST(list1.empty());
     BOOST_TEST(list2.size() == 3);
+    BOOST_TEST(list2.front() == 1);
+    BOOST_TEST(list2.back() == 3);
+    BOOST_TEST(list1.size() == 0);
 }
 
 BOOST_AUTO_TEST_CASE(TestSwap)
