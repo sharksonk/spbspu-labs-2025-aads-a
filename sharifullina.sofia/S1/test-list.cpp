@@ -168,10 +168,7 @@ BOOST_AUTO_TEST_CASE(TestMoveConstructor)
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
-    
-    // После перемещения list1 должен быть в валидном состоянии (обычно пустой)
-    // НЕ вызываем list1.empty() если он может быть в невалидном состоянии
-    BOOST_TEST(list1.size() == 0); // или проверяем, что он пуст
+    BOOST_TEST(list1.size() == 0);
 }
 
 BOOST_AUTO_TEST_CASE(TestCopyAssignment)
