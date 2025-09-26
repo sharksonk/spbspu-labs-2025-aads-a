@@ -10,7 +10,8 @@ std::string listToString(const List< T > & list)
 {
   std::ostringstream oss;
   bool first = true;
-
+  typename List< T >::ConstIterator it = list.begin();
+  typename List< T >::ConstIterator end = list.end();
   for (; it != end; ++it)
   {
     if (!first)
