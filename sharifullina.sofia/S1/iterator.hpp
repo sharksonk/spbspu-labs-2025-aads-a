@@ -54,7 +54,7 @@ namespace sharifullina
   };
 
   template< typename T >
-  std::ostream& operator<<(std::ostream & os, const Iterator< T > & it)
+  std::ostream & operator<<(std::ostream & os, const Iterator< T > & it)
   {
     if (it.node_ != nullptr)
     {
@@ -68,12 +68,12 @@ namespace sharifullina
   }
 
   template< typename T >
-  Iterator< T >::Iterator() :
+  Iterator< T >::Iterator():
     node_(nullptr)
   {}
 
   template< typename T >
-  Iterator< T >::Iterator(Node< T > * node) :
+  Iterator< T >::Iterator(Node< T > * node):
     node_(node)
   {}
 

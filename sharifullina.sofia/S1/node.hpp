@@ -15,14 +15,14 @@ namespace sharifullina
   };
 
   template< typename T >
-  Node< T >::Node(const T & data, Node< T > * prev, Node< T > * next) :
+  Node< T >::Node(const T & data, Node< T > * prev, Node< T > * next):
     data_(data),
     prev_(prev),
     next_(next)
   {}
 
   template< typename T >
-  Node< T >::Node() :
+  Node< T >::Node():
     data_(T()),
     prev_(nullptr),
     next_(nullptr)
