@@ -7,7 +7,7 @@ namespace
 {
   using listOfPairs = sharifullina::List< std::pair< std::string, sharifullina::List< unsigned long long > > >;
 
-  size_t getMaxListSize(const listOfPairs& lists)
+  size_t getMaxListSize(const listOfPairs & lists)
   {
     size_t maxSize = 0;
     for (auto it = lists.begin(); it != lists.end(); ++it)
@@ -20,9 +20,12 @@ namespace
     return maxSize;
   }
 
-  void printNames(std::ostream& out, const listOfPairs& lists)
+  void printNames(std::ostream & out, const listOfPairs & lists)
   {
-    if (lists.empty()) return;
+    if (lists.empty())
+    {
+      return;
+    }
     auto it = lists.begin();
     out << it->first;
     ++it;
@@ -33,7 +36,7 @@ namespace
     out << "\n";
   }
 
-  void printTransposed(std::ostream& out, const listOfPairs& lists)
+  void printTransposed(std::ostream & out, const listOfPairs & lists)
   {
     size_t maxSize = getMaxListSize(lists);
     for (size_t i = 0; i < maxSize; ++i)
@@ -60,7 +63,7 @@ namespace
     }
   }
 
-  void addWithCheck(unsigned long long& sum, unsigned long long value)
+  void addWithCheck(unsigned long long & sum, unsigned long long value)
   {
     if (std::numeric_limits< unsigned long long >::max() - value < sum)
     {
@@ -69,7 +72,7 @@ namespace
     sum += value;
   }
 
-  sharifullina::List< unsigned long long > calculateSums(const listOfPairs& lists)
+  sharifullina::List< unsigned long long > calculateSums(const listOfPairs & lists)
   {
     sharifullina::List< unsigned long long > sums;
     size_t maxSize = getMaxListSize(lists);
@@ -98,7 +101,7 @@ namespace
     return sums;
   }
 
-  void printSums(std::ostream& out, const sharifullina::List< unsigned long long >& sums)
+  void printSums(std::ostream & out, const sharifullina::List< unsigned long long > & sums)
   {
     if (sums.empty())
     {
@@ -115,23 +118,26 @@ namespace
     out << "\n";
   }
 
-  bool isNumber(const std::string& str)
+  bool isNumber(const std::string & str)
   {
     if (str.empty()) return false;
     for (char c : str)
     {
-      if (c < '0' || c > '9') return false;
+      if (c < '0' || c > '9')
+      {
+        return false;
+      }
     }
     return true;
   }
 
-  unsigned long long parseNumber(const std::string& str)
+  unsigned long long parseNumber(const std::string & str)
   {
     unsigned long long result = 0;
     for (char c : str)
     {
       unsigned long long digit = c - '0';
-      if (result > (std::numeric_limits<unsigned long long>::max() - digit) / 10)
+      if (result > (std::numeric_limits< unsigned long long >::max() - digit) / 10)
       {
         throw std::overflow_error("Number too large");
       }
@@ -162,7 +168,7 @@ int main()
       while (pos < line.length() && line[pos] != ' ') pos++;
       std::string name = line.substr(nameStart, pos - nameStart);
 
-      List<unsigned long long> numbers;
+      List< unsigned long long > numbers;
 
       while (pos < line.length())
       {
@@ -196,17 +202,17 @@ int main()
     printNames(std::cout, sequences);
     printTransposed(std::cout, sequences);
 
-    List<unsigned long long> sums = calculateSums(sequences);
+    List< unsigned long long > sums = calculateSums(sequences);
     printSums(std::cout, sums);
 
     return 0;
   }
-  catch (const std::overflow_error& e)
+  catch (const std::overflow_error & e)
   {
     std::cerr << "Error: " << e.what() << "\n";
     return 1;
   }
-  catch (const std::exception& e)
+  catch (const std::exception & e)
   {
     std::cerr << "Error: " << e.what() << "\n";
     return 1;

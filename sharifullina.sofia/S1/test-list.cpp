@@ -1,18 +1,19 @@
-#include "list.hpp"
+\#include "list.hpp"
 #include <boost/test/unit_test.hpp>
 #include <sstream>
 #include <string>
 
 using sharifullina::List;
 
-template<typename T>
-std::string listToString(const List<T>& list)
+template< typename T >
+std::string listToString(const List< T > & list)
 {
     std::ostringstream oss;
     bool first = true;
     for (auto it = list.begin(); it != list.end(); ++it)
     {
-        if (!first) {
+        if (!first)
+        {
             oss << " ";
         }
         oss << *it;
@@ -23,14 +24,14 @@ std::string listToString(const List<T>& list)
 
 BOOST_AUTO_TEST_CASE(TestDefaultConstructor)
 {
-    List<int> list;
+    List< int > list;
     BOOST_TEST(list.empty());
     BOOST_TEST(list.size() == 0);
 }
 
 BOOST_AUTO_TEST_CASE(TestPushBack)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     BOOST_TEST(!list.empty());
     BOOST_TEST(list.size() == 1);
@@ -45,7 +46,7 @@ BOOST_AUTO_TEST_CASE(TestPushBack)
 
 BOOST_AUTO_TEST_CASE(TestPushFront)
 {
-    List<int> list;
+    List< int > list;
     list.pushFront(1);
     BOOST_TEST(!list.empty());
     BOOST_TEST(list.size() == 1);
@@ -60,7 +61,7 @@ BOOST_AUTO_TEST_CASE(TestPushFront)
 
 BOOST_AUTO_TEST_CASE(TestPopBack)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     list.pushBack(2);
     list.pushBack(3);
@@ -79,7 +80,7 @@ BOOST_AUTO_TEST_CASE(TestPopBack)
 
 BOOST_AUTO_TEST_CASE(TestPopFront)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     list.pushBack(2);
     list.pushBack(3);
@@ -98,7 +99,7 @@ BOOST_AUTO_TEST_CASE(TestPopFront)
 
 BOOST_AUTO_TEST_CASE(TestClear)
 {
-    List<int> list;
+    List< int > list;
     for (int i = 0; i < 5; ++i) {
         list.pushBack(i);
     }
@@ -110,7 +111,7 @@ BOOST_AUTO_TEST_CASE(TestClear)
 
 BOOST_AUTO_TEST_CASE(TestFrontBack)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     BOOST_TEST(list.front() == 1);
     BOOST_TEST(list.back() == 1);
@@ -126,7 +127,7 @@ BOOST_AUTO_TEST_CASE(TestFrontBack)
 
 BOOST_AUTO_TEST_CASE(TestIterators)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     list.pushBack(2);
     list.pushBack(3);
@@ -143,12 +144,12 @@ BOOST_AUTO_TEST_CASE(TestIterators)
 
 BOOST_AUTO_TEST_CASE(TestCopyConstructor)
 {
-    List<int> list1;
+    List< int > list1;
     list1.pushBack(1);
     list1.pushBack(2);
     list1.pushBack(3);
 
-    List<int> list2(list1);
+    List< int > list2(list1);
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
@@ -159,12 +160,12 @@ BOOST_AUTO_TEST_CASE(TestCopyConstructor)
 
 BOOST_AUTO_TEST_CASE(TestMoveConstructor)
 {
-    List<int> list1;
+    List< int > list1;
     list1.pushBack(1);
     list1.pushBack(2);
     list1.pushBack(3);
 
-    List<int> list2(std::move(list1));
+    List< int > list2(std::move(list1));
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
@@ -173,12 +174,12 @@ BOOST_AUTO_TEST_CASE(TestMoveConstructor)
 
 BOOST_AUTO_TEST_CASE(TestCopyAssignment)
 {
-    List<int> list1;
+    List< int > list1;
     list1.pushBack(1);
     list1.pushBack(2);
     list1.pushBack(3);
 
-    List<int> list2;
+    List< int > list2;
     list2 = list1;
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
@@ -189,12 +190,12 @@ BOOST_AUTO_TEST_CASE(TestCopyAssignment)
 
 BOOST_AUTO_TEST_CASE(TestMoveAssignment)
 {
-    List<int> list1;
+    List< int > list1;
     list1.pushBack(1);
     list1.pushBack(2);
     list1.pushBack(3);
 
-    List<int> list2;
+    List< int > list2;
     list2 = std::move(list1);
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
@@ -204,11 +205,11 @@ BOOST_AUTO_TEST_CASE(TestMoveAssignment)
 
 BOOST_AUTO_TEST_CASE(TestSwap)
 {
-    List<int> list1;
+    List< int > list1;
     list1.pushBack(1);
     list1.pushBack(2);
 
-    List<int> list2;
+    List< int > list2;
     list2.pushBack(3);
     list2.pushBack(4);
     list2.pushBack(5);
@@ -222,7 +223,7 @@ BOOST_AUTO_TEST_CASE(TestSwap)
 
 BOOST_AUTO_TEST_CASE(TestListOutput)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     list.pushBack(2);
     list.pushBack(3);
@@ -232,7 +233,7 @@ BOOST_AUTO_TEST_CASE(TestListOutput)
 
 BOOST_AUTO_TEST_CASE(TestComplexOperations)
 {
-    List<int> list;
+    List< int > list;
     list.pushBack(1);
     list.pushFront(0);
     list.pushBack(2);
