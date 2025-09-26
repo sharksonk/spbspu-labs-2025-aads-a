@@ -5,17 +5,14 @@
 #include <iostream>
 #include <UBST.hpp>
 
-using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
-using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
+using dataset_t = kushekbaev::Tree< size_t, std::string >;
+using dict_t = kushekbaev::Tree< std::string, dataset_t >;
 
 namespace kushekbaev
 {
   void print(std::ostream& out, std::istream& in, const dict_t& dictionary);
-
   void complement(std::istream& in, dict_t& dictionary);
-
   void intersect(std::istream& in, dict_t& dictionary);
-
   void unification(std::istream& in, dict_t& dictionary);
 }
 

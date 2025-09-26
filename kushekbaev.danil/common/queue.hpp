@@ -1,4 +1,3 @@
-
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
@@ -11,11 +10,11 @@ namespace kushekbaev
   {
     public:
       Queue() = default;
-      Queue(const Queue& other) noexcept;
+      Queue(const Queue& other);
       Queue(Queue&& other) noexcept;
       ~Queue() = default;
 
-      Queue& operator=(const Queue& other) noexcept;
+      Queue& operator=(const Queue& other);
       Queue& operator=(Queue&& other) noexcept;
 
       T& front() noexcept;
@@ -35,7 +34,7 @@ namespace kushekbaev
   };
 
   template < typename T, typename Sequence >
-  Queue< T, Sequence >::Queue(const Queue& other) noexcept:
+  Queue< T, Sequence >::Queue(const Queue& other):
     sequence_(other.sequence_)
   {}
 
@@ -45,7 +44,7 @@ namespace kushekbaev
   {}
 
   template < typename T, typename Sequence >
-  Queue< T, Sequence >& Queue< T, Sequence >::operator=(const Queue& other) noexcept
+  Queue< T, Sequence >& Queue< T, Sequence >::operator=(const Queue& other)
   {
     if (this != std::addressof(other))
     {
@@ -103,7 +102,7 @@ namespace kushekbaev
   template < typename T, typename Sequence >
   void Queue< T, Sequence >::push(const T& value)
   {
-    sequence_.push_back(value);
+    sequence_.pushBack(value);
   }
 
   template < typename T, typename Sequence >
@@ -113,7 +112,7 @@ namespace kushekbaev
     {
       throw std::out_of_range("The vector in the queue is empty!");
     }
-    sequence_.pop_front();
+    sequence_.popFront();
   }
 
   template < typename T, typename Sequence >

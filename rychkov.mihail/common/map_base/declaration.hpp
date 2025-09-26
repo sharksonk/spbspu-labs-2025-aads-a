@@ -2,8 +2,8 @@
 #define MAP_BASE_DECLARATION_HPP
 
 #include <utility>
-#include <type_traits>
 #include <memory>
+#include <type_traits.hpp>
 #include "node.hpp"
 #include "iterator.hpp"
 #include "heavy_iterator.hpp"
@@ -23,14 +23,6 @@ namespace rychkov
     auto clear_p = const_cast< Member* >(std::addressof(fake_member));
     return reinterpret_cast< Base* >(reinterpret_cast< char* >(clear_p) - offset);
   }
-  template< class Cmp, class = void >
-  struct is_transparent: std::false_type
-  {};
-  template< class Cmp >
-  struct is_transparent< Cmp, void_t< typename Cmp::is_transparent > >: std::true_type
-  {};
-  template< class Cmp >
-  constexpr bool is_transparent_v = is_transparent< Cmp >::value;
   namespace details
   {
     template< class R, class K1, class C, class... Exclude >
@@ -266,16 +258,10 @@ namespace rychkov
     std::enable_if_t< IsSet && IsSet2, std::pair< iterator, bool > > emplace_impl
         (const_iterator hint, K1&& key, Args&&... args);
 
-    template< bool IsSet2 = IsSet >
-    bool compare_with_key (std::enable_if_t< !IsSet && !IsSet2, const value_type >& lhs,
-          const key_type& rhs) const;
-    template< bool IsSet2 = IsSet >
-    bool compare_with_key(const key_type& lhs,
-          std::enable_if_t< !IsSet && !IsSet2, const value_type >& rhs) const;
-    template< bool IsSet2 = IsSet >
-    std::enable_if_t< IsSet && IsSet2, bool > compare_with_key(const key_type& lhs, const key_type& rhs) const;
-    template< bool IsSet2 = IsSet >
-    std::enable_if_t< !IsSet && !IsSet2, bool > compare_with_key(const key_type& lhs, const key_type& rhs) const;
+    template< bool IsSet2 = IsSet, class K1 = key_type, class K2 = key_type >
+    std::enable_if_t< IsSet && IsSet2, bool > compare_keys(const K1& lhs, const K2& rhs) const;
+    template< bool IsSet2 = IsSet, class K1 = key_type, class K2 = key_type >
+    std::enable_if_t< !IsSet && !IsSet2, bool > compare_keys(const K1& lhs, const K2& rhs) const;
 
     template< class V = value_type >
     static const key_type& get_key(const V& value);

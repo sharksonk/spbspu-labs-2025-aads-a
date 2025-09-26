@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <vector.hpp>
 
-using dataset_t = kushekbaev::UBST< size_t, std::string >; //ЭТО СТРОКА!!
-using dict_t = kushekbaev::UBST< std::string, dataset_t >; //ЭТО СЛОВАРЬ ИЗ СТРОК!!
+using dataset_t = kushekbaev::Tree< size_t, std::string >;
+using dict_t = kushekbaev::Tree< std::string, dataset_t >;
 
 void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictionary)
 {
@@ -23,13 +23,13 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   kushekbaev::Vector< std::pair < size_t, std::string > > sorted;
   for (const auto& elem: result)
   {
-    sorted.push_back(elem);
+    sorted.pushBack(elem);
   }
-  std::sort(sorted.begin(), sorted.end());
+  std::sort(std::addressof(sorted[0]), std::addressof(sorted[0]) + sorted.size());
   out << name;
-  for (const auto& elem: sorted)
+  for (size_t i = 0; i < sorted.size(); ++i)
   {
-    out << " " << elem.first << " " << elem.second;
+    out << " " << sorted[i].first << " " << sorted[i].second;
   }
   out << "\n";
 }
