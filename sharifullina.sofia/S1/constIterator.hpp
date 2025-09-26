@@ -18,7 +18,7 @@ namespace sharifullina
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = T;
     using difference_type = std::ptrdiff_t;
-    using pointer = const T*;
+    using pointer = const T *;
     using reference = const T &;
 
     ConstIterator();
