@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <cstring>
 #include <cctype>
 #include "list.hpp"
 
@@ -130,22 +131,6 @@ namespace
     {
       unsigned char c = static_cast< unsigned char >(str[i]);
       if (std::strchr(digits, c) == nullptr)
-      {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  {
-    if (str.empty())
-    {
-      return false;
-    }
-    for (size_t i = 0; i < str.length(); ++i)
-    {
-      unsigned char c = static_cast< unsigned char >(str[i]);
-      if (!std::isdigit(c))
       {
         return false;
       }
