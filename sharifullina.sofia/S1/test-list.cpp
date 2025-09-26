@@ -1,12 +1,14 @@
-#include "list.hpp"
+k#include "list.hpp"
 #include <boost/test/included/unit_test.hpp>
 #include <sstream>
 #include <string>
 
+#define BOOST_TEST_MODULE ListTests
+
 namespace sharifullina
 {
-  template<typename T>
-  std::string listToString(const List<T>& list)
+  template< typename T >
+  std::string listToString(const List< T > & list)
   {
     std::ostringstream oss;
     for (auto it = list.begin(); it != list.end(); ++it)
@@ -86,7 +88,7 @@ namespace sharifullina
     BOOST_TEST(list.empty());
     BOOST_TEST(list.size() == 0);
 
-    list.popBack(); // Should not crash
+    list.popBack();
     BOOST_TEST(list.empty());
   }
 
@@ -109,7 +111,7 @@ namespace sharifullina
     BOOST_TEST(list.empty());
     BOOST_TEST(list.size() == 0);
 
-    list.popFront(); // Should not crash
+    list.popFront();
     BOOST_TEST(list.empty());
   }
 
@@ -126,7 +128,7 @@ namespace sharifullina
     BOOST_TEST(list.empty());
     BOOST_TEST(list.size() == 0);
 
-    list.clear(); // Should not crash
+    list.clear();
     BOOST_TEST(list.empty());
   }
 
