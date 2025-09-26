@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <cctype>
 #include "list.hpp"
 
 namespace
@@ -10,7 +11,7 @@ namespace
   size_t getMaxListSize(const listOfPairs & lists)
   {
     size_t maxSize = 0;
-    for (auto it = lists.begin(); it != lists.end(); ++it)
+    for (typename listOfPairs::ConstIterator it = lists.begin(); it != lists.end(); ++it)
     {
       if (it->second.size() > maxSize)
       {
@@ -26,7 +27,7 @@ namespace
     {
       return;
     }
-    auto it = lists.begin();
+    typename listOfPairs::ConstIterator it = lists.begin();
     out << it->first;
     ++it;
     for (; it != lists.end(); ++it)
@@ -42,11 +43,11 @@ namespace
     for (size_t i = 0; i < maxSize; ++i)
     {
       bool firstInRow = true;
-      for (auto listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      for (typename listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
       {
         if (i < listIt->second.size())
         {
-          auto numIt = listIt->second.begin();
+          typename sharifullina::List<unsigned long long>::ConstIterator numIt = listIt->second.begin();
           for (size_t j = 0; j < i; ++j)
           {
             ++numIt;
@@ -80,11 +81,11 @@ namespace
     {
       unsigned long long rowSum = 0;
       bool hasValue = false;
-      for (auto listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      for (typename listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
       {
         if (i < listIt->second.size())
         {
-          auto numIt = listIt->second.begin();
+          typename sharifullina::List< unsigned long long >::ConstIterator numIt = listIt->second.begin();
           for (size_t j = 0; j < i; ++j)
           {
             ++numIt;
@@ -108,7 +109,7 @@ namespace
       out << "0\n";
       return;
     }
-    auto it = sums.begin();
+    typename sharifullina::List< unsigned long long >::ConstIterator it = sums.begin();
     out << *it;
     ++it;
     for (; it != sums.end(); ++it)
@@ -120,10 +121,14 @@ namespace
 
   bool isNumber(const std::string & str)
   {
-    if (str.empty()) return false;
-    for (char c : str)
+    if (str.empty())
     {
-      if (c < '0' || c > '9')
+      return false;
+    }
+    for (size_t i = 0; i < str.length(); ++i)
+    {
+      unsigned char c = static_cast< unsigned char >(str[i]);
+      if (!std::isdigit(c))
       {
         return false;
       }
@@ -134,8 +139,9 @@ namespace
   unsigned long long parseNumber(const std::string & str)
   {
     unsigned long long result = 0;
-    for (char c : str)
+    for (size_t i = 0; i < str.length(); ++i)
     {
+      unsigned char c = static_cast<unsigned char>(str[i]);
       unsigned long long digit = c - '0';
       if (result > (std::numeric_limits< unsigned long long >::max() - digit) / 10)
       {
@@ -158,27 +164,42 @@ int main()
 
     while (std::getline(std::cin, line))
     {
-      if (line.empty()) continue;
-
+      if (line.empty())
+      {
+         continue;
+      }
       size_t pos = 0;
-      while (pos < line.length() && line[pos] == ' ') pos++;
-      if (pos >= line.length()) continue;
-
+      while (pos < line.length() && line[pos] == ' ')
+      {
+        pos++;
+      }
+      if (pos >= line.length())
+      {
+        continue;
+      }
       size_t nameStart = pos;
-      while (pos < line.length() && line[pos] != ' ') pos++;
+      while (pos < line.length() && line[pos] != ' ')
+      {
+        pos++;
+      }
       std::string name = line.substr(nameStart, pos - nameStart);
-
       List< unsigned long long > numbers;
-
       while (pos < line.length())
       {
-        while (pos < line.length() && line[pos] == ' ') pos++;
-        if (pos >= line.length()) break;
-
+        while (pos < line.length() && line[pos] == ' ')
+        {
+          pos++;
+        }
+        if (pos >= line.length())
+        {
+          break;
+        }
         size_t wordStart = pos;
-        while (pos < line.length() && line[pos] != ' ') pos++;
+        while (pos < line.length() && line[pos] != ' ')
+        {
+          pos++;
+        }
         std::string word = line.substr(wordStart, pos - wordStart);
-
         if (isNumber(word))
         {
           unsigned long long number = parseNumber(word);
@@ -206,11 +227,6 @@ int main()
     printSums(std::cout, sums);
 
     return 0;
-  }
-  catch (const std::overflow_error & e)
-  {
-    std::cerr << "Error: " << e.what() << "\n";
-    return 1;
   }
   catch (const std::exception & e)
   {

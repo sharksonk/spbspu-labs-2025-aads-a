@@ -2,7 +2,7 @@
 #define ITERATOR_HPP
 
 #include <iterator>
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include "node.hpp"
 #include "constIterator.hpp"
@@ -80,7 +80,10 @@ namespace sharifullina
   template< typename T >
   Iterator< T > & Iterator< T >::operator++()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to increment null iterator");
+    }
     node_ = node_->next_;
     return *this;
   }
@@ -88,7 +91,6 @@ namespace sharifullina
   template< typename T >
   Iterator< T > Iterator< T >::operator++(int)
   {
-    assert(node_ != nullptr);
     Iterator temp(*this);
     ++(*this);
     return temp;
@@ -97,7 +99,10 @@ namespace sharifullina
   template< typename T >
   Iterator< T > & Iterator< T >::operator--()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to decrement null iterator");
+    }
     node_ = node_->prev_;
     return *this;
   }
@@ -105,7 +110,6 @@ namespace sharifullina
   template< typename T >
   Iterator< T > Iterator< T >::operator--(int)
   {
-    assert(node_ != nullptr);
     Iterator temp(*this);
     --(*this);
     return temp;
@@ -114,28 +118,36 @@ namespace sharifullina
   template< typename T >
   typename Iterator< T >::reference Iterator< T >::operator*()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to dereference null iterator");
+    }
     return node_->data_;
   }
 
   template< typename T >
   typename Iterator< T >::pointer Iterator< T >::operator->()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to dereference null iterator");
+    }
     return &node_->data_;
   }
 
   template< typename T >
   typename Iterator< T >::reference Iterator< T >::operator*() const
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to dereference null iterator");
+    }
     return node_->data_;
   }
 
   template< typename T >
   typename Iterator< T >::pointer Iterator< T >::operator->() const
   {
-    assert(node_ != nullptr);
     return &node_->data_;
   }
 
