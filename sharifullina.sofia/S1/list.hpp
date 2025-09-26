@@ -59,7 +59,7 @@ namespace sharifullina
   {
     try
     {
-      for (ConstIterator< T > it = other.begin(); it != other.end(); ++it)
+      for (ConstIterator it = other.begin(); it != other.end(); ++it)
       {
         pushBack(*it);
       }

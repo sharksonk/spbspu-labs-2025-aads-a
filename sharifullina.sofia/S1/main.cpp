@@ -11,7 +11,7 @@ namespace
   size_t getMaxListSize(const listOfPairs & lists)
   {
     size_t maxSize = 0;
-    for (typename listOfPairs::ConstIterator it = lists.begin(); it != lists.end(); ++it)
+    for (listOfPairs::ConstIterator it = lists.begin(); it != lists.end(); ++it)
     {
       if (it->second.size() > maxSize)
       {
@@ -27,7 +27,7 @@ namespace
     {
       return;
     }
-    typename listOfPairs::ConstIterator it = lists.begin();
+    listOfPairs::ConstIterator it = lists.begin();
     out << it->first;
     ++it;
     for (; it != lists.end(); ++it)
@@ -43,11 +43,11 @@ namespace
     for (size_t i = 0; i < maxSize; ++i)
     {
       bool firstInRow = true;
-      for (typename listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      for (listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
       {
         if (i < listIt->second.size())
         {
-          typename sharifullina::List<unsigned long long>::ConstIterator numIt = listIt->second.begin();
+          sharifullina::List< unsigned long long >::ConstIterator numIt = listIt->second.begin();
           for (size_t j = 0; j < i; ++j)
           {
             ++numIt;
@@ -81,11 +81,11 @@ namespace
     {
       unsigned long long rowSum = 0;
       bool hasValue = false;
-      for (typename listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
+      for (listOfPairs::ConstIterator listIt = lists.begin(); listIt != lists.end(); ++listIt)
       {
         if (i < listIt->second.size())
         {
-          typename sharifullina::List< unsigned long long >::ConstIterator numIt = listIt->second.begin();
+          sharifullina::List< unsigned long long >::ConstIterator numIt = listIt->second.begin();
           for (size_t j = 0; j < i; ++j)
           {
             ++numIt;
@@ -109,7 +109,7 @@ namespace
       out << "0\n";
       return;
     }
-    typename sharifullina::List< unsigned long long >::ConstIterator it = sums.begin();
+    sharifullina::List< unsigned long long >::ConstIterator it = sums.begin();
     out << *it;
     ++it;
     for (; it != sums.end(); ++it)
