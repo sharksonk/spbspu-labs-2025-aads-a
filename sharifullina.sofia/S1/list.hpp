@@ -73,8 +73,11 @@ namespace sharifullina
   template< typename T >
   List< T >::~List()
   {
-    clear();
-    delete fakeNode_;
+    if (fakeNode_)
+    {
+      clear();
+      delete fakeNode_;
+    }
   }
   template< typename T >
   List< T > & List< T >::operator=(const List & other)
