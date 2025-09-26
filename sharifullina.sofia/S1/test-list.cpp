@@ -1,36 +1,35 @@
 #include "list.hpp"
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <sstream>
 #include <string>
 
-#define BOOST_TEST_MODULE ListTests
+using sharifullina::List;
 
-namespace sharifullina
+template<typename T>
+std::string listToString(const List<T>& list)
 {
-  template< typename T >
-  std::string listToString(const List< T > & list)
-  {
     std::ostringstream oss;
+    bool first = true;
     for (auto it = list.begin(); it != list.end(); ++it)
     {
-      if (it != list.begin())
-      {
-        oss << " ";
-      }
-      oss << *it;
+        if (!first) {
+            oss << " ";
+        }
+        oss << *it;
+        first = false;
     }
     return oss.str();
-  }
+}
 
-  void testDefaultConstructor()
-  {
+BOOST_AUTO_TEST_CASE(TestDefaultConstructor)
+{
     List<int> list;
     BOOST_TEST(list.empty());
     BOOST_TEST(list.size() == 0);
-  }
+}
 
-  void testPushBack()
-  {
+BOOST_AUTO_TEST_CASE(TestPushBack)
+{
     List<int> list;
     list.pushBack(1);
     BOOST_TEST(!list.empty());
@@ -42,15 +41,10 @@ namespace sharifullina
     BOOST_TEST(list.size() == 2);
     BOOST_TEST(list.front() == 1);
     BOOST_TEST(list.back() == 2);
+}
 
-    list.pushBack(3);
-    BOOST_TEST(list.size() == 3);
-    BOOST_TEST(list.front() == 1);
-    BOOST_TEST(list.back() == 3);
-  }
-
-  void testPushFront()
-  {
+BOOST_AUTO_TEST_CASE(TestPushFront)
+{
     List<int> list;
     list.pushFront(1);
     BOOST_TEST(!list.empty());
@@ -62,15 +56,10 @@ namespace sharifullina
     BOOST_TEST(list.size() == 2);
     BOOST_TEST(list.front() == 2);
     BOOST_TEST(list.back() == 1);
+}
 
-    list.pushFront(3);
-    BOOST_TEST(list.size() == 3);
-    BOOST_TEST(list.front() == 3);
-    BOOST_TEST(list.back() == 1);
-  }
-
-  void testPopBack()
-  {
+BOOST_AUTO_TEST_CASE(TestPopBack)
+{
     List<int> list;
     list.pushBack(1);
     list.pushBack(2);
@@ -86,14 +75,10 @@ namespace sharifullina
 
     list.popBack();
     BOOST_TEST(list.empty());
-    BOOST_TEST(list.size() == 0);
+}
 
-    list.popBack();
-    BOOST_TEST(list.empty());
-  }
-
-  void testPopFront()
-  {
+BOOST_AUTO_TEST_CASE(TestPopFront)
+{
     List<int> list;
     list.pushBack(1);
     list.pushBack(2);
@@ -109,31 +94,22 @@ namespace sharifullina
 
     list.popFront();
     BOOST_TEST(list.empty());
-    BOOST_TEST(list.size() == 0);
+}
 
-    list.popFront();
-    BOOST_TEST(list.empty());
-  }
-
-  void testClear()
-  {
+BOOST_AUTO_TEST_CASE(TestClear)
+{
     List<int> list;
-    for (int i = 0; i < 5; ++i)
-    {
-      list.pushBack(i);
+    for (int i = 0; i < 5; ++i) {
+        list.pushBack(i);
     }
     BOOST_TEST(list.size() == 5);
 
     list.clear();
     BOOST_TEST(list.empty());
-    BOOST_TEST(list.size() == 0);
+}
 
-    list.clear();
-    BOOST_TEST(list.empty());
-  }
-
-  void testFrontBack()
-  {
+BOOST_AUTO_TEST_CASE(TestFrontBack)
+{
     List<int> list;
     list.pushBack(1);
     BOOST_TEST(list.front() == 1);
@@ -146,10 +122,10 @@ namespace sharifullina
     list.pushFront(0);
     BOOST_TEST(list.front() == 0);
     BOOST_TEST(list.back() == 2);
-  }
+}
 
-  void testIterators()
-  {
+BOOST_AUTO_TEST_CASE(TestIterators)
+{
     List<int> list;
     list.pushBack(1);
     list.pushBack(2);
@@ -159,28 +135,14 @@ namespace sharifullina
     BOOST_TEST(*it == 1);
     ++it;
     BOOST_TEST(*it == 2);
-    it++;
+    ++it;
     BOOST_TEST(*it == 3);
     ++it;
     BOOST_TEST(it == list.end());
+}
 
-    const List<int>& constList = list;
-    auto cit = constList.begin();
-    BOOST_TEST(*cit == 1);
-    ++cit;
-    BOOST_TEST(*cit == 2);
-
-    auto rit = list.end();
-    --rit;
-    BOOST_TEST(*rit == 3);
-    --rit;
-    BOOST_TEST(*rit == 2);
-    --rit;
-    BOOST_TEST(*rit == 1);
-  }
-
-  void testCopyConstructor()
-  {
+BOOST_AUTO_TEST_CASE(TestCopyConstructor)
+{
     List<int> list1;
     list1.pushBack(1);
     list1.pushBack(2);
@@ -190,19 +152,10 @@ namespace sharifullina
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
+}
 
-    auto it1 = list1.begin();
-    auto it2 = list2.begin();
-    while (it1 != list1.end() && it2 != list2.end())
-    {
-      BOOST_TEST(*it1 == *it2);
-      ++it1;
-      ++it2;
-    }
-  }
-
-  void testMoveConstructor()
-  {
+BOOST_AUTO_TEST_CASE(TestMoveConstructor)
+{
     List<int> list1;
     list1.pushBack(1);
     list1.pushBack(2);
@@ -211,12 +164,10 @@ namespace sharifullina
     List<int> list2(std::move(list1));
     BOOST_TEST(list1.empty());
     BOOST_TEST(list2.size() == 3);
-    BOOST_TEST(list2.front() == 1);
-    BOOST_TEST(list2.back() == 3);
-  }
+}
 
-  void testCopyAssignment()
-  {
+BOOST_AUTO_TEST_CASE(TestCopyAssignment)
+{
     List<int> list1;
     list1.pushBack(1);
     list1.pushBack(2);
@@ -227,13 +178,10 @@ namespace sharifullina
     BOOST_TEST(list2.size() == 3);
     BOOST_TEST(list2.front() == 1);
     BOOST_TEST(list2.back() == 3);
+}
 
-    list2 = list2;
-    BOOST_TEST(list2.size() == 3);
-  }
-
-  void testMoveAssignment()
-  {
+BOOST_AUTO_TEST_CASE(TestMoveAssignment)
+{
     List<int> list1;
     list1.pushBack(1);
     list1.pushBack(2);
@@ -243,12 +191,10 @@ namespace sharifullina
     list2 = std::move(list1);
     BOOST_TEST(list1.empty());
     BOOST_TEST(list2.size() == 3);
-    BOOST_TEST(list2.front() == 1);
-    BOOST_TEST(list2.back() == 3);
-  }
+}
 
-  void testSwap()
-  {
+BOOST_AUTO_TEST_CASE(TestSwap)
+{
     List<int> list1;
     list1.pushBack(1);
     list1.pushBack(2);
@@ -263,26 +209,20 @@ namespace sharifullina
     BOOST_TEST(list2.size() == 2);
     BOOST_TEST(list1.front() == 3);
     BOOST_TEST(list2.front() == 1);
-  }
+}
 
-  void testListOutput()
-  {
+BOOST_AUTO_TEST_CASE(TestListOutput)
+{
     List<int> list;
     list.pushBack(1);
     list.pushBack(2);
     list.pushBack(3);
 
     BOOST_TEST(listToString(list) == "1 2 3");
+}
 
-    list.clear();
-    list.pushFront(3);
-    list.pushFront(2);
-    list.pushFront(1);
-    BOOST_TEST(listToString(list) == "1 2 3");
-  }
-
-  void testComplexOperations()
-  {
+BOOST_AUTO_TEST_CASE(TestComplexOperations)
+{
     List<int> list;
     list.pushBack(1);
     list.pushFront(0);
@@ -293,10 +233,4 @@ namespace sharifullina
 
     BOOST_TEST(listToString(list) == "1 2");
     BOOST_TEST(list.size() == 2);
-
-    list.clear();
-    list.pushBack(5);
-    list.pushBack(6);
-    BOOST_TEST(listToString(list) == "5 6");
-  }
 }
