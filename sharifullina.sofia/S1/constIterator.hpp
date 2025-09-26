@@ -39,7 +39,7 @@ namespace sharifullina
     bool operator!=(const ConstIterator &) const;
 
     template< typename U >
-    friend std::ostream& operator<<(std::ostream& os, const ConstIterator<U>& it);
+    friend std::ostream & operator<<(std::ostream & os, const ConstIterator< U > & it);
 
   private:
     Node< T > * node_;
@@ -48,8 +48,8 @@ namespace sharifullina
     explicit ConstIterator(Node< T > * node);
   };
 
-  template<typename T>
-  std::ostream& operator<<(std::ostream& os, const ConstIterator<T>& it)
+  template< typename T >
+  std::ostream& operator<<(std::ostream & os, const ConstIterator< T > & it)
   {
     if (it.node_ != nullptr)
     {
