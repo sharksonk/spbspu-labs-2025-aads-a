@@ -121,6 +121,23 @@ namespace
 
   bool isNumber(const std::string & str)
   {
+  if (str.empty())
+    {
+      return false;
+    }
+    const char digits[] = "0123456789";
+    for (size_t i = 0; i < str.length(); ++i)
+    {
+      unsigned char c = static_cast< unsigned char >(str[i]);
+      if (std::strchr(digits, c) == nullptr)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  {
     if (str.empty())
     {
       return false;
@@ -139,10 +156,16 @@ namespace
   unsigned long long parseNumber(const std::string & str)
   {
     unsigned long long result = 0;
+    const char digits[] = "0123456789";
     for (size_t i = 0; i < str.length(); ++i)
     {
       unsigned char c = static_cast< unsigned char >(str[i]);
-      unsigned long long digit = c - '0';
+      const char * pos = std::strchr(digits, c);
+      if (pos == nullptr)
+      {
+        throw std::invalid_argument("Invalid digit in number");
+      }
+      unsigned long long digit = pos - digits;
       if (result > (std::numeric_limits< unsigned long long >::max() - digit) / 10)
       {
         throw std::overflow_error("Number too large");
@@ -151,7 +174,6 @@ namespace
     }
     return result;
   }
-}
 
 int main()
 {
