@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "calculation_stack.hpp"
+#include "calculation-stack.hpp"
 
 BOOST_AUTO_TEST_CASE(stack_constructors_and_assignment_operators)
 {

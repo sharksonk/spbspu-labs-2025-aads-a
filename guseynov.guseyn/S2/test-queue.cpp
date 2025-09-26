@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "expression_queue.hpp"
+#include "expression-queue.hpp"
 
 BOOST_AUTO_TEST_CASE(queue_constructors_and_assignment_operators)
 {
