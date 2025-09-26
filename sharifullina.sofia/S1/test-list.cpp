@@ -10,14 +10,15 @@ std::string listToString(const List< T > & list)
 {
   std::ostringstream oss;
   bool first = true;
-  for (auto it = list.begin(); it != list.end(); ++it)
+
+  for (; it != end; ++it)
   {
-  if (!first)
-  {
-    oss << " ";
-  }
-  oss << *it;
-  first = false;
+    if (!first)
+    {
+      oss << " ";
+    }
+    oss << *it;
+    first = false;
   }
   return oss.str();
 }

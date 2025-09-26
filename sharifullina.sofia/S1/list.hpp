@@ -3,7 +3,7 @@
 #include <iterator>
 #include <cstddef>
 #include <utility>
-#include <cassert>
+#include <stdexcept>
 #include "node.hpp"
 #include "iterator.hpp"
 #include "constIterator.hpp"
@@ -209,25 +209,37 @@ namespace sharifullina
   template< typename T >
   T & List< T >::front()
   {
-    assert(!empty());
+    if (empty())
+    {
+      throw std::runtime_error("Attempt to access front of empty list");
+    }
     return fakeNode_->next_->data_;
   }
   template< typename T >
   const T & List< T >::front() const
   {
-    assert(!empty());
+    if (empty())
+    {
+      throw std::runtime_error("Attempt to access front of empty list");
+    }
     return fakeNode_->next_->data_;
   }
   template< typename T >
   T & List< T >::back()
   {
-    assert(!empty());
+    if (empty())
+    {
+      throw std::runtime_error("Attempt to access front of empty list");
+    }
     return fakeNode_->prev_->data_;
   }
   template< typename T >
   const T & List< T >::back() const
   {
-    assert(!empty());
+    if (empty())
+    {
+      throw std::runtime_error("Attempt to access front of empty list");
+    }
     return fakeNode_->prev_->data_;
   }
   template< typename T >

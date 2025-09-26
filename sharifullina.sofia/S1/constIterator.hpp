@@ -2,7 +2,6 @@
 #define CONST_ITERATOR_HPP
 
 #include <iterator>
-#include <cassert>
 #include <iostream>
 #include "node.hpp"
 
@@ -75,7 +74,10 @@ namespace sharifullina
   template< typename T >
   ConstIterator< T > & ConstIterator< T >::operator++()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to increment null iterator");
+    }
     node_ = node_->next_;
     return *this;
   }
@@ -83,7 +85,6 @@ namespace sharifullina
   template< typename T >
   ConstIterator< T > ConstIterator< T >::operator++(int)
   {
-    assert(node_ != nullptr);
     ConstIterator temp(*this);
     ++(*this);
     return temp;
@@ -92,7 +93,10 @@ namespace sharifullina
   template< typename T >
   ConstIterator< T > & ConstIterator< T >::operator--()
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to decrement null iterator");
+    }
     node_ = node_->prev_;
     return *this;
   }
@@ -100,7 +104,6 @@ namespace sharifullina
   template< typename T >
   ConstIterator< T > ConstIterator< T >::operator--(int)
   {
-    assert(node_ != nullptr);
     ConstIterator temp(*this);
     --(*this);
     return temp;
@@ -109,14 +112,20 @@ namespace sharifullina
   template< typename T >
   typename ConstIterator< T >::reference ConstIterator< T >::operator*() const
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to dereference null iterator");
+    }
     return node_->data_;
   }
 
   template< typename T >
   typename ConstIterator< T >::pointer ConstIterator< T >::operator->() const
   {
-    assert(node_ != nullptr);
+    if (node_ == nullptr)
+    {
+      throw std::runtime_error("Attempt to dereference null iterator");
+    }
     return &node_->data_;
   }
 
