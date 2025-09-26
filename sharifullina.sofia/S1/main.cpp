@@ -141,7 +141,7 @@ namespace
     unsigned long long result = 0;
     for (size_t i = 0; i < str.length(); ++i)
     {
-      unsigned char c = static_cast<unsigned char>(str[i]);
+      unsigned char c = static_cast< unsigned char >(str[i]);
       unsigned long long digit = c - '0';
       if (result > (std::numeric_limits< unsigned long long >::max() - digit) / 10)
       {
