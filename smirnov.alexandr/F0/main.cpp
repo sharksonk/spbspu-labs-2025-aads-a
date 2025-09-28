@@ -1,2 +1,34 @@
+#include <functional>
+#include <limits>
+#include "commands.hpp"
+#include "dictionary.hpp"
+
 int main()
-{}
+{
+  using namespace smirnov;
+  Dicts dicts;
+  HashTable< std::string, std::function< void(std::istream &) > > commands;
+  using namespace std::placeholders;
+  commands["create"] = std::bind(createCommand, std::ref(dicts), _1, std::ref(std::cout));
+  commands["add"] = std::bind(addCommand, std::ref(dicts), _1, std::ref(std::cout));
+  commands["translate"] = std::bind(translateCommand, std::ref(dicts), _1, std::ref(std::cout));
+  commands["remove"] = std::bind(removeCommand, std::ref(dicts), _1, std::ref(std::cout));
+  std::string cmd;
+  while (std::cin >> cmd)
+  {
+    try
+    {
+      commands.at(cmd)(std::cin);
+    }
+    catch (const std::out_of_range &)
+    {
+      std::cout << "<INVALID COMMAND>\n";
+    }
+    catch (const std::exception &)
+    {
+      std::cout << "<INVALID COMMAND>\n";
+    }
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+  }
+}
