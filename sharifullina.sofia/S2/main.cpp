@@ -7,7 +7,8 @@
 
 namespace
 {
-  void inputExprs(std::istream & in, sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
+  void inputExprs(std::istream & in,
+    sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
   {
     std::string line;
     while (std::getline(in, line))
@@ -59,7 +60,8 @@ namespace
     return getPriority(op1) >= getPriority(op2);
   }
 
-  sharifullina::Queue< sharifullina::Queue< std::string > > convertInfToPost(sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
+  sharifullina::Queue< sharifullina::Queue< std::string > > convertInfToPost(
+    sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
   {
     sharifullina::Queue< sharifullina::Queue< std::string > > newQueue;
     while (!queue.empty())
@@ -98,7 +100,8 @@ namespace
           }
           else if (isOperation(token))
           {
-            while (!stack.empty() && stack.top() != "(" && isHighPriority(stack.top(), token))
+            while (!stack.empty() && stack.top() != "(" &&
+              isHighPriority(stack.top(), token))
             {
               postExpr.push(stack.top());
               stack.pop();
@@ -242,7 +245,8 @@ namespace
     }
   }
 
-  sharifullina::Stack< long long > calculateExprs(sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
+  sharifullina::Stack< long long > calculateExprs(
+    sharifullina::Queue< sharifullina::Queue< std::string > > & queue)
   {
     sharifullina::Stack< long long > res;
     while (!queue.empty())
