@@ -11,7 +11,7 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   class IteratorHash;
   template< class Key, class Value, class Hash = std::hash< Key >, class Equal = std::equal_to< Key > >
-  class ConstIteratorHash : public std::iterator< std::forward_iterator_tag, std::pair< const Key, Value > >
+  class ConstIteratorHash: public std::iterator< std::forward_iterator_tag, std::pair< const Key, Value > >
   {
     friend class HashTable< Key, Value, Hash, Equal >;
     friend class IteratorHash< Key, Value, Hash, Equal >;

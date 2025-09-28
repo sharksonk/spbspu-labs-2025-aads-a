@@ -283,7 +283,7 @@ namespace smirnov
       {
         first_deleted = index;
       }
-     if (!bucket.occupied && !bucket.deleted)
+      if (!bucket.occupied && !bucket.deleted)
       {
         break;
       }
@@ -354,7 +354,7 @@ namespace smirnov
     {
       index = probe(hash_value, attempt);
       auto & bucket = buckets_[index];
-      if (bucket.occupied &&  !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         bucket.occupied = false;
         bucket.deleted = true;

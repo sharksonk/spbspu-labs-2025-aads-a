@@ -199,7 +199,6 @@ void smirnov::create(GraphCollection & graphs, std::istream & in)
     graph->addVertex(vertex);
   }
 }
-
 void smirnov::merge(GraphCollection & graphs, std::istream & in)
 {
   std::string newName, name1, name2;
