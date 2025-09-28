@@ -10,70 +10,68 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   class HashTable;
   template< class Key, class Value, class Hash, class Equal >
-  class IteratorHash
+  class ConstIteratorHash;
+  template< class Key, class Value, class Hash = std::hash< Key >, class Equal = std::equal_to< Key > >
+  class IteratorHash: public std::iterator< std::forward_iterator_tag, std::pair< const Key, Value > >
   {
     friend class HashTable< Key, Value, Hash, Equal >;
+    friend class ConstIteratorHash< Key, Value, Hash, Equal >;
   public:
     IteratorHash();
     ~IteratorHash() = default;
-    std::pair< Key, Value > & operator*() const;
-    std::pair< Key, Value > * operator->() const;
+    std::pair< Key, Value > & operator*();
+    std::pair< Key, Value > * operator->();
     IteratorHash & operator++();
     IteratorHash operator++(int);
     bool operator!=(const IteratorHash & rhs) const;
     bool operator==(const IteratorHash & rhs) const;
   private:
-    std::vector< Bucket< Key, Value > > * buckets_;
-    size_t current_index_;
-    explicit IteratorHash(std::vector< Bucket< Key, Value > > * buckets, size_t index);
-    void skipInvalidBuckets();
+    HashTable< Key, Value, Hash, Equal > * table_;
+    size_t index_;
+    explicit IteratorHash(HashTable< Key, Value, Hash, Equal > * table, size_t index);
+    void advanceToOccupied();
   };
 
   template< class Key, class Value, class Hash, class Equal >
   IteratorHash< Key, Value, Hash, Equal >::IteratorHash():
-    buckets_(nullptr),
-    current_index_(0)
+    table_(nullptr),
+    index_(0)
   {}
 
   template< class Key, class Value, class Hash, class Equal >
-  IteratorHash< Key, Value, Hash, Equal >::IteratorHash(std::vector< Bucket< Key, Value > > * buckets, size_t index):
-    buckets_(buckets),
-    current_index_(index)
+  IteratorHash< Key, Value, Hash, Equal >::IteratorHash(HashTable< Key, Value, Hash, Equal > * table, size_t index):
+    table_(table),
+    index_(index)
   {
-    skipInvalidBuckets();
+    advanceToOccupied();
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  std::pair< Key, Value > & IteratorHash< Key, Value, Hash, Equal >::operator*() const
+  std::pair< Key, Value > & IteratorHash< Key, Value, Hash, Equal >::operator*()
   {
-    return (*buckets_)[current_index_].data;
+    return table_->buckets_[index_].data;
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  std::pair< Key, Value > * IteratorHash< Key, Value, Hash, Equal >::operator->() const
+  std::pair< Key, Value > * IteratorHash< Key, Value, Hash, Equal >::operator->()
   {
-    return std::addressof(this->operator*());
+    return std::addressof(table_->buckets_[index_].data);
   }
 
   template < class Key, class Value, class Hash, class Equal >
-  void IteratorHash<Key, Value, Hash, Equal>::skipInvalidBuckets()
+  void IteratorHash< Key, Value, Hash, Equal >::advanceToOccupied()
   {
-    while (buckets_ && current_index_ < buckets_->size())
+    while (index_ < table_->buckets_.size() && (!table_->buckets_[index_].occupied || table_->buckets_[index_].deleted))
     {
-      auto & bucket = (*buckets_)[current_index_];
-      if (bucket.occupied && !bucket.deleted)
-      {
-        break;
-      }
-      ++current_index_;
+      ++index_;
     }
   }
 
   template< class Key, class Value, class Hash, class Equal >
   IteratorHash< Key, Value, Hash, Equal > & IteratorHash< Key, Value, Hash, Equal >::operator++()
   {
-    ++current_index_;
-    skipInvalidBuckets();
+    ++index_;
+    advanceToOccupied();
     return *this;
   }
 
@@ -88,7 +86,7 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   bool IteratorHash< Key, Value, Hash, Equal >::operator==(const IteratorHash & rhs) const
   {
-    return buckets_ == rhs.buckets_ && current_index_ == rhs.current_index_;
+    return table_ == rhs.table_ && index_ == rhs.index_;
   }
 
   template< class Key, class Value, class Hash, class Equal >

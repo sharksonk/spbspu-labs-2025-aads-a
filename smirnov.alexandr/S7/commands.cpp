@@ -26,12 +26,12 @@ void smirnov::vertexes(const GraphCollection & graphs, std::istream & in, std::o
   {
     throw std::invalid_argument("Invalid command");
   }
-  const Graph * g = graphs.getGraph(graphName);
-  if (!g)
+  const Graph * graph = graphs.getGraph(graphName);
+  if (!graph)
   {
     throw std::invalid_argument("Invalid command");
   }
-  auto vertices = g->getVertices();
+  auto vertices = graph->getVertices();
   if (vertices.empty())
   {
     out << "\n";
@@ -52,12 +52,12 @@ void smirnov::outbound(const GraphCollection & graphs, std::istream & in, std::o
   {
     throw std::invalid_argument("Invalid command\n");
   }
-  const Graph * g = graphs.getGraph(graphName);
-  if (!g || !g->hasVertex(vertexName))
+  const Graph * graph = graphs.getGraph(graphName);
+  if (!graph || !graph->hasVertex(vertexName))
   {
     throw std::invalid_argument("Invalid command\n");
   }
-  std::vector< std::pair< std::string, size_t > > edges = g->getOutboundEdges(vertexName);
+  std::vector< std::pair< std::string, size_t > > edges = graph->getOutboundEdges(vertexName);
   if (edges.empty())
   {
     out << "\n";
@@ -96,12 +96,12 @@ void smirnov::inbound(const GraphCollection & graphs, std::istream & in, std::os
   {
     throw std::invalid_argument("Invalid command\n");
   }
-  const Graph * g = graphs.getGraph(graphName);
-  if (!g || !g->hasVertex(vertexName))
+  const Graph * graph = graphs.getGraph(graphName);
+  if (!graph || !graph->hasVertex(vertexName))
   {
     throw std::invalid_argument("Invalid command\n");
   }
-  std::vector< std::pair< std::string, size_t > > edges = g->getInboundEdges(vertexName);
+  std::vector< std::pair< std::string, size_t > > edges = graph->getInboundEdges(vertexName);
   if (edges.empty())
   {
     out << "\n";
@@ -141,12 +141,12 @@ void smirnov::bind(GraphCollection & graphs, std::istream & in)
   {
     throw std::invalid_argument("Invalid command");
   }
-  Graph * g = graphs.getGraph(graphName);
-  if (!g)
+  Graph * graph = graphs.getGraph(graphName);
+  if (!graph)
   {
     throw std::invalid_argument("Invalid command");
   }
-  g->addEdge(from, to, weight);
+  graph->addEdge(from, to, weight);
 }
 
 void smirnov::cut(GraphCollection & graphs, std::istream & in)
@@ -157,12 +157,12 @@ void smirnov::cut(GraphCollection & graphs, std::istream & in)
   {
     throw std::invalid_argument("Invalid command");
   }
-  Graph * g = graphs.getGraph(graphName);
-  if (!g)
+  Graph * graph = graphs.getGraph(graphName);
+  if (!graph)
   {
     throw std::invalid_argument("Invalid command");
   }
-  if (!g->removeEdge(from, to, weight))
+  if (!graph->removeEdge(from, to, weight))
   {
     throw std::invalid_argument("Invalid command");
   }
@@ -179,8 +179,8 @@ void smirnov::create(GraphCollection & graphs, std::istream & in)
   {
     throw std::invalid_argument("Invalid command");
   }
-  Graph * g = graphs.getGraph(graphName);
-  if (!g)
+  Graph * graph = graphs.getGraph(graphName);
+  if (!graph)
   {
     throw std::invalid_argument("Invalid command");
   }
@@ -196,10 +196,9 @@ void smirnov::create(GraphCollection & graphs, std::istream & in)
     {
       throw std::invalid_argument("Invalid command");
     }
-    g->addVertex(vertex);
+    graph->addVertex(vertex);
   }
 }
-
 void smirnov::merge(GraphCollection & graphs, std::istream & in)
 {
   std::string newName, name1, name2;
@@ -211,27 +210,27 @@ void smirnov::merge(GraphCollection & graphs, std::istream & in)
   {
     throw std::invalid_argument("Invalid command");
   }
-  Graph * g1 = graphs.getGraph(name1);
-  Graph * g2 = graphs.getGraph(name2);
-  if (!g1 || !g2)
+  Graph * graph1 = graphs.getGraph(name1);
+  Graph * graph2 = graphs.getGraph(name2);
+  if (!graph1 || !graph2)
   {
     throw std::invalid_argument("Invalid command");
   }
   Graph mergedGraph(newName);
-  auto vertices1 = g1->getVertices();
+  auto vertices1 = graph1->getVertices();
   for (size_t i = 0; i < vertices1.size(); ++i)
   {
     mergedGraph.addVertex(vertices1[i]);
   }
   for (size_t i = 0; i < vertices1.size(); ++i)
   {
-    auto edges = g1->getOutboundEdges(vertices1[i]);
+    auto edges = graph1->getOutboundEdges(vertices1[i]);
     for (size_t j = 0; j < edges.size(); ++j)
     {
       mergedGraph.addEdge(vertices1[i], edges[j].first, edges[j].second);
     }
   }
-  auto vertices2 = g2->getVertices();
+  auto vertices2 = graph2->getVertices();
   for (size_t i = 0; i < vertices2.size(); ++i)
   {
     if (!mergedGraph.hasVertex(vertices2[i]))
@@ -241,7 +240,7 @@ void smirnov::merge(GraphCollection & graphs, std::istream & in)
   }
   for (size_t i = 0; i < vertices2.size(); ++i)
   {
-    auto edges = g2->getOutboundEdges(vertices2[i]);
+    auto edges = graph2->getOutboundEdges(vertices2[i]);
     for (size_t j = 0; j < edges.size(); ++j)
     {
       mergedGraph.addEdge(vertices2[i], edges[j].first, edges[j].second);

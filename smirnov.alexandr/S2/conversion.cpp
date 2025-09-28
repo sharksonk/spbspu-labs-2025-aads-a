@@ -24,13 +24,13 @@ smirnov::Queue< std::string > smirnov::infixToPostfix(const std::string & infix)
       }
       if (opStack.empty())
       {
-        throw std::invalid_argument("Mismatched parentheses\n");
+        throw std::invalid_argument("Mismatched parentheses");
       }
       opStack.pop();
     }
     else if (isOperator(token))
     {
-      while (!opStack.empty() && opStack.top() != "(" && comparePriority(opStack.top(), token))
+      while (!opStack.empty() && opStack.top() != "(" && !comparePriority(opStack.top(), token))
       {
         output.push(opStack.top());
         opStack.pop();
@@ -46,11 +46,11 @@ smirnov::Queue< std::string > smirnov::infixToPostfix(const std::string & infix)
       }
       catch (const std::exception &)
       {
-        throw std::invalid_argument("Invalid token\n");
+        throw std::invalid_argument("Invalid token");
       }
       if (pos != token.length())
       {
-        throw std::invalid_argument("Invalid token\n");
+        throw std::invalid_argument("Invalid token");
       }
       output.push(token);
     }
@@ -59,7 +59,7 @@ smirnov::Queue< std::string > smirnov::infixToPostfix(const std::string & infix)
   {
     if (opStack.top() == "(")
     {
-      throw std::invalid_argument("Mismatched parentheses\n");
+      throw std::invalid_argument("Mismatched parentheses");
     }
     output.push(opStack.top());
     opStack.pop();
@@ -85,7 +85,7 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     }
     catch (const std::out_of_range &)
     {
-      throw std::out_of_range("Number out of range\n");
+      throw std::out_of_range("Number out of range");
     }
     catch (...)
     {
@@ -98,11 +98,11 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     }
     if (!isOperator(token))
     {
-      throw std::invalid_argument("Unknown operator\n");
+      throw std::invalid_argument("Unknown operator");
     }
     if (values.size() < 2)
     {
-      throw std::invalid_argument("Not enough operands for operator\n");
+      throw std::invalid_argument("Not enough operands for operator");
     }
     long long b = values.top(); values.pop();
     long long a = values.top(); values.pop();
@@ -111,7 +111,7 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     {
       if ((a > 0 && b > max_val - a) || (a < 0 && b < min_val - a))
       {
-        throw std::overflow_error("Addition overflow\n");
+        throw std::overflow_error("Addition overflow");
       }
       result = a + b;
     }
@@ -119,7 +119,7 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     {
       if ((b > 0 && a < min_val + b) || (b < 0 && a > max_val + b))
       {
-        throw std::overflow_error("Subtraction overflow\n");
+        throw std::overflow_error("Subtraction overflow");
       }
       result = a - b;
     }
@@ -129,22 +129,22 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
       {
         if (b > 0 && a > max_val / b)
         {
-          throw std::overflow_error("Multiplication overflow\n");
+          throw std::overflow_error("Multiplication overflow");
         }
         if (b < 0 && b < min_val / a)
         {
-          throw std::overflow_error("Multiplication underflow\n");
+          throw std::overflow_error("Multiplication underflow");
         }
       }
       else
       {
         if (b > 0 && a < min_val / b)
         {
-          throw std::overflow_error("Multiplication underflow\n");
+          throw std::overflow_error("Multiplication underflow");
         }
         if (b < 0 && a != 0 && b < max_val / a)
         {
-          throw std::overflow_error("Multiplication overflow\n");
+          throw std::overflow_error("Multiplication overflow");
         }
       }
       result = a * b;
@@ -153,11 +153,11 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     {
       if (b == 0)
       {
-        throw std::runtime_error("Division by zero\n");
+        throw std::runtime_error("Division by zero");
       }
       if (a == min_val && b == -1)
       {
-        throw std::overflow_error("Division overflow\n");
+        throw std::overflow_error("Division overflow");
       }
       result = a / b;
     }
@@ -165,7 +165,7 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
     {
       if (b == 0)
       {
-        throw std::runtime_error("Modulo by zero\n");
+        throw std::runtime_error("Modulo by zero");
       }
       result = a % b;
       if (result < 0)
@@ -177,13 +177,13 @@ long long smirnov::evaluatePostfix(Queue< std::string > & postfix)
   }
   if (values.empty())
   {
-    throw std::invalid_argument("No result\n");
+    throw std::invalid_argument("No result");
   }
   long long result = values.top();
   values.pop();
   if (!values.empty())
   {
-    throw std::invalid_argument("Too many operands\n");
+    throw std::invalid_argument("Too many operands");
   }
   return result;
 }

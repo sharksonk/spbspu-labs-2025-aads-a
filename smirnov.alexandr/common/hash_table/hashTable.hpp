@@ -12,6 +12,8 @@ namespace smirnov
   template< class Key, class Value, class Hash = std::hash< Key >, class Equal = std::equal_to< Key > >
   class HashTable
   {
+    friend class ConstIteratorHash< Key, Value, Hash, Equal >;
+    friend class IteratorHash< Key, Value, Hash, Equal >;
   public:
     using iterator = IteratorHash< Key, Value, Hash, Equal >;
     using const_iterator = ConstIteratorHash< Key, Value, Hash, Equal >;
@@ -79,13 +81,8 @@ namespace smirnov
 
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(std::initializer_list< std::pair< Key, Value > > list):
-    HashTable()
-  {
-    for (const auto & p : list)
-    {
-      insert(p.first, p.second);
-    }
-  }
+    HashTable(list.begin(), list.end())
+  {}
 
   template< class Key, class Value, class Hash, class Equal >
   template< class InputIt >
@@ -143,13 +140,13 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   IteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin()
   {
-    return iterator(std::addressof(buckets_), 0);
+    return iterator{this, 0};
   }
 
   template< class Key, class Value, class Hash, class Equal >
   IteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end()
   {
-    return iterator(std::addressof(buckets_), buckets_.size());
+    return iterator{this, buckets_.size()};
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -168,7 +165,7 @@ namespace smirnov
       auto & bucket = buckets_[index];
       if (bucket.occupied && key_equal_(bucket.data.first, key))
       {
-        return iterator(std::addressof(buckets_), index);
+        return iterator{this, index};
       }
       if (!bucket.occupied && !bucket.deleted)
       {
@@ -182,13 +179,13 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cbegin() const
   {
-    return const_iterator(std::addressof(buckets_), 0);
+    return const_iterator{this, 0};
   }
 
   template< class Key, class Value, class Hash, class Equal >
   ConstIteratorHash< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::cend() const
   {
-    return const_iterator(std::addressof(buckets_), buckets_.size());
+    return const_iterator{this, buckets_.size()};
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -207,7 +204,7 @@ namespace smirnov
       const auto & bucket = buckets_[index];
       if (bucket.occupied && key_equal_(bucket.data.first, key))
       {
-        return const_iterator(std::addressof(buckets_), index);
+        return const_iterator{this, index};
       }
       if (!bucket.occupied && !bucket.deleted)
       {
@@ -256,9 +253,9 @@ namespace smirnov
   template< class InputIt >
   void HashTable< Key, Value, Hash, Equal >::insert(InputIt first, InputIt last)
   {
-    for (; first != last; ++first)
+    for (auto it = first; it != last; ++it)
     {
-      insert(first->first, first->second);
+      insert(*it);
     }
   }
 
@@ -280,7 +277,7 @@ namespace smirnov
       auto & bucket = buckets_[index];
       if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
-        return {iterator(std::addressof(buckets_), index), false};
+        return {iterator{this, index}, false};
       }
       if (bucket.deleted && first_deleted == buckets_.size())
       {
@@ -300,7 +297,7 @@ namespace smirnov
     buckets_[index].occupied = true;
     buckets_[index].deleted = false;
     ++size_;
-    return {iterator(std::addressof(buckets_), index), true};
+    return {iterator{this, index}, true};
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -340,7 +337,7 @@ namespace smirnov
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::swap(HashTable & other) noexcept
   {
-    buckets_.swap(other.buckets_);
+    std::swap(buckets_, other.buckets_);
     std::swap(size_, other.size_);
     std::swap(hasher_, other.hasher_);
     std::swap(key_equal_, other.key_equal_);
@@ -357,7 +354,7 @@ namespace smirnov
     {
       index = probe(hash_value, attempt);
       auto & bucket = buckets_[index];
-      if (bucket.occupied &&  !bucket.deleted && key_equal_(bucket.data.first, key))
+      if (bucket.occupied && !bucket.deleted && key_equal_(bucket.data.first, key))
       {
         bucket.occupied = false;
         bucket.deleted = true;
