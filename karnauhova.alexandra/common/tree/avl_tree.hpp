@@ -76,6 +76,16 @@ namespace karnauhova
     Iter find(const Key& key) noexcept;
     CIter find(const Key& key) const noexcept;
 
+    LnrIter lnrBegin() const noexcept;
+    LnrIter lnrEnd() const noexcept;
+    CLnrIter clnrBegin() const noexcept;
+    CLnrIter clnrEnd() const noexcept;
+
+    RnlIter rnlBegin() const noexcept;
+    RnlIter rnlEnd() const noexcept;
+    CRnlIter crnlBegin() const noexcept;
+    CRnlIter crnlEnd() const noexcept;
+
     template< typename F >
     F traverse_lnr(F f) const;
     template< typename F >
@@ -589,7 +599,17 @@ namespace karnauhova
   template< typename F >
   F AvlTree< Key, Value, Compare >::traverse_breadth(F f)
   {
-    return static_cast< const AvlTree& >(*this).traverse_breadth(f);
+    Queue< Node* > queue;
+    Node* tmp = fake_->left;
+    while (tmp != fake_)
+    {
+      queue.push(tmp->left);
+      queue.push(tmp->right);
+      f(tmp->data);
+      tmp = queue.front();
+      queue.pop();
+    }
+    return f;
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -604,59 +624,91 @@ namespace karnauhova
   }
 
   template< typename Key, typename Value, typename Compare >
-  template< typename F >
-  F AvlTree< Key, Value, Compare >::traverse_rnl(F f) const
+  typename AvlTree< Key, Value, Compare >::LnrIter AvlTree< Key, Value, Compare >::lnrBegin() const noexcept
   {
-    auto end = CRnlIter(fake_, fake_);
-    auto begin = CRnlIter(fake_->left, fake_);
-    while (begin.node_->right != fake_)
-    {
-      begin.stack_.push(begin.node_);
-      begin.node_ = begin.node_->right;
-    }
-    return helpTravers(begin, end, f);
-  }
-
-  template< typename Key, typename Value, typename Compare >
-  template< typename F >
-  F AvlTree< Key, Value, Compare >::traverse_rnl(F f)
-  {
-    auto end = RnlIter(fake_, fake_);
-    auto begin = RnlIter(fake_->left, fake_);
-    while (begin.node_->right != fake_)
-    {
-      begin.stack_.push(begin.node_);
-      begin.node_ = begin.node_->right;
-    }
-    return helpTravers(begin, end, f);
-  }
-
-  template< typename Key, typename Value, typename Compare >
-  template< typename F >
-  F AvlTree< Key, Value, Compare >::traverse_lnr(F f) const
-  {
-    auto end = CLnrIter(fake_, fake_);
-    auto begin = CLnrIter(fake_->left, fake_);
-    while (begin.node_->left != fake_)
-    {
-      begin.stack_.push(begin.node_);
-      begin.node_ = begin.node_->left;
-    }
-    return helpTravers(begin, end, f);
-  }
-
-  template< typename Key, typename Value, typename Compare >
-  template< typename F >
-  F AvlTree< Key, Value, Compare >::traverse_lnr(F f)
-  {
-    auto end = LnrIter(fake_, fake_);
     auto begin = LnrIter(fake_->left, fake_);
     while (begin.node_->left != fake_)
     {
       begin.stack_.push(begin.node_);
       begin.node_ = begin.node_->left;
     }
-    return helpTravers(begin, end, f);
+    return begin;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CLnrIter AvlTree< Key, Value, Compare >::clnrBegin() const noexcept
+  {
+    return lnrBegin()
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::LnrIter AvlTree< Key, Value, Compare >::lnrEnd() const noexcept
+  {
+    return LnrIter(fake_, fake_);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CLnrIter AvlTree< Key, Value, Compare >::clnrEnd() const noexcept
+  {
+    return lnrEnd();
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::RnlIter AvlTree< Key, Value, Compare >::rnlBegin() const noexcept
+  {
+    auto begin = RnlIter(fake_->left, fake_);
+    while (begin.node_->right != fake_)
+    {
+      begin.stack_.push(begin.node_);
+      begin.node_ = begin.node_->right;
+    }
+    return begin;
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CRnlIter AvlTree< Key, Value, Compare >::crnlBegin() const noexcept
+  {
+    return rnlBegin();
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::RnlIter AvlTree< Key, Value, Compare >::rnlEnd() const noexcept
+  {
+    return RnlIter(fake_, fake_);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  typename AvlTree< Key, Value, Compare >::CRnlIter AvlTree< Key, Value, Compare >::crnlEnd() const noexcept
+  {
+    return rnlEnd()
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename F >
+  F AvlTree< Key, Value, Compare >::traverse_rnl(F f) const
+  {
+    return helpTravers(crnlBegin(), crnlEnd(), f);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename F >
+  F AvlTree< Key, Value, Compare >::traverse_rnl(F f)
+  {
+    return helpTravers(rnlBegin(), rnlEnd(), f);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename F >
+  F AvlTree< Key, Value, Compare >::traverse_lnr(F f) const
+  {
+    return helpTravers(clnrBegin(), clnrEnd(), f);
+  }
+
+  template< typename Key, typename Value, typename Compare >
+  template< typename F >
+  F AvlTree< Key, Value, Compare >::traverse_lnr(F f)
+  {
+    return helpTravers(lnrBegin(), lnrEnd(), f);
   }
 
   template< typename Key, typename Value, typename Compare >
