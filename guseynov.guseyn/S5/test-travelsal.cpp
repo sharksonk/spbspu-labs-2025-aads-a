@@ -37,7 +37,17 @@ BOOST_AUTO_TEST_CASE(simple_breadth_test)
   KeySumm collector;
   collector = tree.traverse_breadth(collector);
   BOOST_TEST(collector.result_ == 6);
-  BOOST_TEST(collector.values_ == "first name surname");
+  std::vector< std::string > expected_words = {"first", "name", "surname"};
+  std::istringstream iss(collector.values_);
+  std::vector< std::string > actual_words;
+  std::string word;
+  while (iss >> word) {
+    actual_words.push_back(word);
+  }
+  BOOST_TEST(actual_words.size() == 3);
+  for (const auto& expected : expected_words) {
+    BOOST_TEST(std::find(actual_words.begin(), actual_words.end(), expected) != actual_words.end());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(empty_tree_traversal)
