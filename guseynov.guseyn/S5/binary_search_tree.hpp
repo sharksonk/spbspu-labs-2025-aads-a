@@ -4,7 +4,7 @@
 #include <stack>
 #include <queue>
 #include <vector>
-#include "tree.hpp"
+#include <tree.hpp>
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
@@ -18,11 +18,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
+      std::vector< std::pair< Key, Value > > elements;
       auto it = this->begin();
       auto end_it = this->end();
       while (it != end_it) {
-        f(*it);
+        elements.push_back(*it);
         ++it;
+      }
+      for (const auto& element : elements) {
+        f(element);
       }
       return f;
     }
@@ -32,11 +36,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
+      std::vector< std::pair< Key, Value > > elements;
       auto it = this->cbegin();
       auto end_it = this->cend();
       while (it != end_it) {
-        f(*it);
+        elements.push_back(*it);
         ++it;
+      }
+      for (const auto& element : elements) {
+        f(element);
       }
       return f;
     }
@@ -84,6 +92,9 @@ namespace guseynov {
       for (auto it = this->begin(); it != this->end(); ++it) {
         elements.push_back(*it);
       }
+      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
+        return a.first < b.first;
+      });
       for (const auto& element : elements) {
         f(element);
       }
@@ -99,6 +110,9 @@ namespace guseynov {
       for (auto it = this->cbegin(); it != this->cend(); ++it) {
         elements.push_back(*it);
       }
+      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
+        return a.first < b.first;
+      });
       for (const auto& element : elements) {
         f(element);
       }
