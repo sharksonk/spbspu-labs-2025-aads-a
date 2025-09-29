@@ -3,14 +3,14 @@
 
 #include <stack>
 #include <queue>
-#include <tree.hpp>
+#include <vector>
+#include "tree.hpp"
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
   class BinarySearchTree : public Tree< Key, Value, Compare > {
   public:
-  using Base = Tree< Key, Value, Compare >;
-
+    using Base = Tree< Key, Value, Compare >;
     using Tree< Key, Value, Compare >::Tree;
 
     template< typename F >
@@ -45,16 +45,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< std::pair< Key, Value > > stack;
+      std::vector< std::pair< Key, Value > > elements;
       auto it = this->begin();
       auto end_it = this->end();
       while (it != end_it) {
-        stack.push(*it);
+        elements.push_back(*it);
         ++it;
       }
-      while (!stack.empty()) {
-        f(stack.top());
-        stack.pop();
+      for (auto rit = elements.rbegin(); rit != elements.rend(); ++rit) {
+        f(*rit);
       }
       return f;
     }
@@ -64,16 +63,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< std::pair< Key, Value > > stack;
+      std::vector< std::pair< Key, Value > > elements;
       auto it = this->cbegin();
       auto end_it = this->cend();
       while (it != end_it) {
-        stack.push(*it);
+        elements.push_back(*it);
         ++it;
       }
-      while (!stack.empty()) {
-        f(stack.top());
-        stack.pop();
+      for (auto rit = elements.rbegin(); rit != elements.rend(); ++rit) {
+        f(*rit);
       }
       return f;
     }
@@ -83,11 +81,8 @@ namespace guseynov {
         return f;
       }
       std::vector< std::pair< Key, Value > > elements;
-      auto it = this->begin();
-      auto end_it = this->end();
-      while (it != end_it) {
+      for (auto it = this->begin(); it != this->end(); ++it) {
         elements.push_back(*it);
-        ++it;
       }
       for (const auto& element : elements) {
         f(element);
@@ -101,11 +96,8 @@ namespace guseynov {
         return f;
       }
       std::vector< std::pair< Key, Value > > elements;
-      auto it = this->cbegin();
-      auto end_it = this->cend();
-      while (it != end_it) {
+      for (auto it = this->cbegin(); it != this->cend(); ++it) {
         elements.push_back(*it);
-        ++it;
       }
       for (const auto& element : elements) {
         f(element);

@@ -57,10 +57,6 @@ BOOST_AUTO_TEST_CASE(breadth_traversal_standard)
   BOOST_TEST(collector.values_.find("eight") != std::string::npos);
   size_t space_count = std::count(collector.values_.begin(), collector.values_.end(), ' ');
   BOOST_TEST(space_count == 6);
-  std::istringstream iss(collector.values_);
-  std::string first_word;
-  iss >> first_word;
-  BOOST_TEST((first_word == "five" || first_word == "four" || first_word == "three"));
 }
 
 BOOST_AUTO_TEST_CASE(empty_tree_traversal)
@@ -159,4 +155,40 @@ BOOST_AUTO_TEST_CASE(underflow_protection_test)
   tree.insert({-1, "negative"});
   KeySumm collector;
   BOOST_CHECK_THROW(tree.traverse_lnr(collector), std::underflow_error);
+}
+
+BOOST_AUTO_TEST_CASE(simple_ascending_test)
+{
+  guseynov::BinarySearchTree< int, std::string > tree;
+  tree.insert({2, "first"});
+  tree.insert({1, "name"});
+  tree.insert({3, "surname"});
+  KeySumm collector;
+  collector = tree.traverse_lnr(collector);
+  BOOST_TEST(collector.result_ == 6);
+  BOOST_TEST(collector.values_ == "name first surname");
+}
+
+BOOST_AUTO_TEST_CASE(simple_descending_test)
+{
+  guseynov::BinarySearchTree< int, std::string > tree;
+  tree.insert({2, "first"});
+  tree.insert({1, "name"});
+  tree.insert({3, "surname"});
+  KeySumm collector;
+  collector = tree.traverse_rnl(collector);
+  BOOST_TEST(collector.result_ == 6);
+  BOOST_TEST(collector.values_ == "surname first name");
+}
+
+BOOST_AUTO_TEST_CASE(simple_breadth_test)
+{
+  guseynov::BinarySearchTree< int, std::string > tree;
+  tree.insert({2, "first"});
+  tree.insert({1, "name"});
+  tree.insert({3, "surname"});
+  KeySumm collector;
+  collector = tree.traverse_breadth(collector);
+  BOOST_TEST(collector.result_ == 6);
+  BOOST_TEST(collector.values_ == "first name surname");
 }

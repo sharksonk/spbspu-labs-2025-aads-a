@@ -9,11 +9,9 @@ struct KeySumm {
   int result_ = 0;
   std::string values_;
   void operator()(const std::pair< const int, std::string >& key_value) {
-    if (result_ > 0 && key_value.first > std::numeric_limits<int>::max() - result_) {
+    if ((key_value.first > 0 && result_ > std::numeric_limits<int>::max() - key_value.first) ||
+        (key_value.first < 0 && result_ < std::numeric_limits<int>::min() - key_value.first)) {
       throw std::overflow_error("Integer overflow detected");
-    }
-    if (result_ < 0 && key_value.first < std::numeric_limits<int>::min() - result_) {
-      throw std::underflow_error("Integer underflow detected");
     }
     result_ += key_value.first;
     if (!values_.empty()) {
