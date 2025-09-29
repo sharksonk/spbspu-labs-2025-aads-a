@@ -5,7 +5,7 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
-#include "tree.hpp"
+#include <tree.hpp>
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
