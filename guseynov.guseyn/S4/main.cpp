@@ -3,7 +3,7 @@
 #include <string>
 #include <limits>
 #include <functional>
-#include "tree.hpp"
+#include <tree.hpp>
 
 
 using Dictionary = guseynov::Tree< size_t, std::string, std::less< size_t > >;
