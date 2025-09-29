@@ -8,10 +8,14 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   class AvlTree;
 
+  template< typename Key, typename Value, typename Compare >
+  class LnrIterator;
+
   template< typename Key, typename Value, typename Compare = std::less< Key > >
   struct CLnrIterator: public std::iterator< std::forward_iterator_tag, Key, Value, Compare >
   {
     friend class AvlTree< Key, Value, Compare >;
+    friend class LnrIterator< Key, Value, Compare >;
   public:
     using Node = detail::AvlTreeNode< Key, Value >;
     using this_t = CLnrIterator< Key, Value, Compare >;
@@ -19,6 +23,7 @@ namespace karnauhova
 
     CLnrIterator() noexcept;
     CLnrIterator(Node*, Node*) noexcept;
+    CLnrIterator(const LnrIterator< Key, Value, Compare >&) noexcept;
 
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
@@ -46,6 +51,13 @@ namespace karnauhova
     stack_(),
     node_(node),
     fake_(fake)
+  {}
+
+  template< typename Key, typename Value, typename Compare>
+  CLnrIterator< Key, Value, Compare >::CLnrIterator(const LnrIterator< Key, Value, Compare >& copy) noexcept:
+    stack_(copy.stack_),
+    node_(copy.node),
+    fake_(copy.fake)
   {}
 
   template< typename Key, typename Value, typename Compare>

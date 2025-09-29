@@ -1,17 +1,22 @@
 #ifndef CRNL_ITERATOR_HPP
 #define CRNL_ITERATOR_HPP
 #include <functional>
-#include "avltree_node.hpp"
 #include <stack.hpp>
+#include "avltree_node.hpp"
+
 namespace karnauhova
 {
   template< typename Key, typename Value, typename Compare >
   class AvlTree;
 
+  template< typename Key, typename Value, typename Compare >
+  class RnlIterator;
+
   template< typename Key, typename Value, typename Compare = std::less< Key > >
   struct CRnlIterator: public std::iterator< std::forward_iterator_tag, Key, Value, Compare >
   {
     friend class AvlTree< Key, Value, Compare >;
+    friend class RnlIterator< Key, Value, Compare >;
   public:
     using Node = detail::AvlTreeNode< Key, Value >;
     using this_t = CRnlIterator< Key, Value, Compare >;
@@ -19,6 +24,7 @@ namespace karnauhova
 
     CRnlIterator() noexcept;
     CRnlIterator(Node*, Node*) noexcept;
+    CRnlIterator(const RnlIterator< Key, Value, Compare >&) noexcept;
 
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
@@ -46,6 +52,13 @@ namespace karnauhova
     stack_(),
     node_(node),
     fake_(fake)
+  {}
+
+  template< typename Key, typename Value, typename Compare>
+  CRnlIterator< Key, Value, Compare >::CRnlIterator(const RnlIterator< Key, Value, Compare >& copy) noexcept:
+    stack_(copy.stack_),
+    node_(copy.node),
+    fake_(copy.fake)
   {}
 
   template< typename Key, typename Value, typename Compare>
