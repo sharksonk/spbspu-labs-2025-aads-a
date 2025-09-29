@@ -3,14 +3,14 @@
 
 #include <stack>
 #include <queue>
-#include "tree.hpp"
+#include <tree.hpp>
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
   class BinarySearchTree : public Tree< Key, Value, Compare > {
   public:
-    using Base = Tree< Key, Value, Compare >;
-    using Node_t = Node< Key, Value >;
+  using Base = Tree< Key, Value, Compare >;
+
     using Tree< Key, Value, Compare >::Tree;
 
     template< typename F >
@@ -18,17 +18,11 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< Node_t* > stack;
-      Node_t* current = this->getRoot();
-      while (current != nullptr || !stack.empty()) {
-        while (current != nullptr) {
-          stack.push(current);
-          current = current->left;
-        }
-        current = stack.top();
-        stack.pop();
-        f(current->data);
-        current = current->right;
+      auto it = this->begin();
+      auto end_it = this->end();
+      while (it != end_it) {
+        f(*it);
+        ++it;
       }
       return f;
     }
@@ -38,17 +32,11 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< const Node_t* > stack;
-      const Node_t* current = this->getRoot();
-      while (current != nullptr || !stack.empty()) {
-        while (current != nullptr) {
-          stack.push(current);
-          current = current->left;
-        }
-        current = stack.top();
-        stack.pop();
-        f(current->data);
-        current = current->right;
+      auto it = this->cbegin();
+      auto end_it = this->cend();
+      while (it != end_it) {
+        f(*it);
+        ++it;
       }
       return f;
     }
@@ -57,17 +45,16 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< Node_t* > stack;
-      Node_t* current = this->getRoot();
-      while (current != nullptr || !stack.empty()) {
-        while (current != nullptr) {
-          stack.push(current);
-          current = current->right;
-        }
-        current = stack.top();
+      std::stack< std::pair< Key, Value > > stack;
+      auto it = this->begin();
+      auto end_it = this->end();
+      while (it != end_it) {
+        stack.push(*it);
+        ++it;
+      }
+      while (!stack.empty()) {
+        f(stack.top());
         stack.pop();
-        f(current->data);
-        current = current->left;
       }
       return f;
     }
@@ -77,17 +64,16 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::stack< const Node_t* > stack;
-      const Node_t* current = this->getRoot();
-      while (current != nullptr || !stack.empty()) {
-        while (current != nullptr) {
-          stack.push(current);
-          current = current->right;
-        }
-        current = stack.top();
+      std::stack< std::pair< Key, Value > > stack;
+      auto it = this->cbegin();
+      auto end_it = this->cend();
+      while (it != end_it) {
+        stack.push(*it);
+        ++it;
+      }
+      while (!stack.empty()) {
+        f(stack.top());
         stack.pop();
-        f(current->data);
-        current = current->left;
       }
       return f;
     }
@@ -96,18 +82,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::queue< Node_t* > queue;
-      queue.push(this->getRoot());
-      while (!queue.empty()) {
-        Node_t* current = queue.front();
-        queue.pop();
-        f(current->data);
-        if (current->left != nullptr) {
-          queue.push(current->left);
-        }
-        if (current->right != nullptr) {
-          queue.push(current->right);
-        }
+      std::vector< std::pair< Key, Value > > elements;
+      auto it = this->begin();
+      auto end_it = this->end();
+      while (it != end_it) {
+        elements.push_back(*it);
+        ++it;
+      }
+      for (const auto& element : elements) {
+        f(element);
       }
       return f;
     }
@@ -117,18 +100,15 @@ namespace guseynov {
       if (this->empty()) {
         return f;
       }
-      std::queue< const Node_t* > queue;
-      queue.push(this->getRoot());
-      while (!queue.empty()) {
-        const Node_t* current = queue.front();
-        queue.pop();
-        f(current->data);
-        if (current->left != nullptr) {
-          queue.push(current->left);
-        }
-        if (current->right != nullptr) {
-          queue.push(current->right);
-        }
+      std::vector< std::pair< Key, Value > > elements;
+      auto it = this->cbegin();
+      auto end_it = this->cend();
+      while (it != end_it) {
+        elements.push_back(*it);
+        ++it;
+      }
+      for (const auto& element : elements) {
+        f(element);
       }
       return f;
     }
