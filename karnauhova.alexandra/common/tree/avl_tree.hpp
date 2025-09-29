@@ -638,7 +638,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::CLnrIter AvlTree< Key, Value, Compare >::clnrBegin() const noexcept
   {
-    return lnrBegin()
+    return lnrBegin();
   }
 
   template< typename Key, typename Value, typename Compare >
@@ -680,7 +680,7 @@ namespace karnauhova
   template< typename Key, typename Value, typename Compare >
   typename AvlTree< Key, Value, Compare >::CRnlIter AvlTree< Key, Value, Compare >::crnlEnd() const noexcept
   {
-    return rnlEnd()
+    return rnlEnd();
   }
 
   template< typename Key, typename Value, typename Compare >
