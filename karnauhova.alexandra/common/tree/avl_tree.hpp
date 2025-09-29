@@ -116,7 +116,7 @@ namespace karnauhova
     template< typename F, typename Iterator >
     F helpTravers(Iterator, Iterator, F) const;
     template< typename F >
-    static F traverse_breadth_impl(Node*, F);
+    static F traverse_breadth_impl(const AvlTree&, F);
   };
 
   template< typename Key, typename Value, typename Compare >
@@ -582,11 +582,11 @@ namespace karnauhova
 
   template< typename Key, typename Value, typename Compare >
   template< typename F >
-  F AvlTree< Key, Value, Compare >::traverse_breadth_impl(Node* fake, F f)
+  F AvlTree< Key, Value, Compare >::traverse_breadth_impl(const AvlTree& tree, F f)
   {
     Queue< Node* > queue;
-    Node* tmp = fake->left;
-    while (tmp != fake)
+    Node* tmp = tree.fake_->left;
+    while (tmp != tree.fake_)
     {
       queue.push(tmp->left);
       queue.push(tmp->right);
@@ -601,14 +601,14 @@ namespace karnauhova
   template< typename F >
   F AvlTree< Key, Value, Compare >::traverse_breadth(F f) const
   {
-    return traverse_breadth_impl(fake_, f);
+    return traverse_breadth_impl(*this, f);
   }
 
   template< typename Key, typename Value, typename Compare >
   template< typename F >
   F AvlTree< Key, Value, Compare >::traverse_breadth(F f)
   {
-    return traverse_breadth_impl(fake_, f);
+    return traverse_breadth_impl(*this, f);
   }
 
   template< typename Key, typename Value, typename Compare >
