@@ -4,7 +4,7 @@
 #include <stack>
 #include <queue>
 #include <vector>
-#include <tree.hpp>
+#include "tree.hpp"
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
@@ -22,9 +22,6 @@ namespace guseynov {
       for (auto it = this->begin(); it != this->end(); ++it) {
         elements.push_back(*it);
       }
-      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-      });
       for (const auto& element : elements) {
         f(element);
       }
@@ -40,9 +37,6 @@ namespace guseynov {
       for (auto it = this->cbegin(); it != this->cend(); ++it) {
         elements.push_back(*it);
       }
-      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-      });
       for (const auto& element : elements) {
         f(element);
       }
@@ -58,11 +52,8 @@ namespace guseynov {
       for (auto it = this->begin(); it != this->end(); ++it) {
         elements.push_back(*it);
       }
-      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
-        return a.first > b.first;
-      });
-      for (const auto& element : elements) {
-        f(element);
+      for (auto rit = elements.rbegin(); rit != elements.rend(); ++rit) {
+        f(*rit);
       }
       return f;
     }
@@ -76,11 +67,8 @@ namespace guseynov {
       for (auto it = this->cbegin(); it != this->cend(); ++it) {
         elements.push_back(*it);
       }
-      std::sort(elements.begin(), elements.end(), [](const auto& a, const auto& b) {
-        return a.first > b.first;
-      });
-      for (const auto& element : elements) {
-        f(element);
+      for (auto rit = elements.rbegin(); rit != elements.rend(); ++rit) {
+        f(*rit);
       }
       return f;
     }
