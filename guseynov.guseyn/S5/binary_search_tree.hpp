@@ -5,7 +5,7 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
-#include <tree.hpp>
+#include "tree.hpp"
 
 namespace guseynov {
   template < typename Key, typename Value, typename Compare = std::less< Key > >
@@ -26,8 +26,8 @@ namespace guseynov {
       std::sort(elements.begin(), elements.end(), [](const std::pair< Key, Value >& a, const std::pair< Key, Value >& b) {
         return a.first < b.first;
       });
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
@@ -44,8 +44,8 @@ namespace guseynov {
       std::sort(elements.begin(), elements.end(), [](const std::pair< Key, Value >& a, const std::pair< Key, Value >& b) {
         return a.first < b.first;
       });
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
@@ -62,8 +62,8 @@ namespace guseynov {
       std::sort(elements.begin(), elements.end(), [](const std::pair< Key, Value >& a, const std::pair< Key, Value >& b) {
         return a.first > b.first;
       });
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
@@ -80,8 +80,8 @@ namespace guseynov {
       std::sort(elements.begin(), elements.end(), [](const std::pair< Key, Value >& a, const std::pair< Key, Value >& b) {
         return a.first > b.first;
       });
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
@@ -95,8 +95,8 @@ namespace guseynov {
       for (auto it = this->begin(); it != this->end(); ++it) {
         elements.push_back(*it);
       }
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
@@ -110,8 +110,8 @@ namespace guseynov {
       for (auto it = this->cbegin(); it != this->cend(); ++it) {
         elements.push_back(*it);
       }
-      for (const auto& element : elements) {
-        f(element);
+      for (size_t i = 0; i < elements.size(); ++i) {
+        f(elements[i]);
       }
       return f;
     }
