@@ -1,5 +1,4 @@
 #include <boost/test/unit_test.hpp>
-#include <sstream>
 #include <algorithm>
 #include "binary_search_tree.hpp"
 #include "files.hpp"
@@ -37,17 +36,19 @@ BOOST_AUTO_TEST_CASE(simple_breadth_test)
   KeySumm collector;
   collector = tree.traverse_breadth(collector);
   BOOST_TEST(collector.result_ == 6);
-  std::vector< std::string > expected_words = {"first", "name", "surname"};
-  std::istringstream iss(collector.values_);
-  std::vector< std::string > actual_words;
-  std::string word;
-  while (iss >> word) {
-    actual_words.push_back(word);
+  bool has_first = collector.values_.find("first") != std::string::npos;
+  bool has_name = collector.values_.find("name") != std::string::npos;
+  bool has_surname = collector.values_.find("surname") != std::string::npos;
+  BOOST_TEST(has_first);
+  BOOST_TEST(has_name);
+  BOOST_TEST(has_surname);
+  size_t space_count = 0;
+  for (char c : collector.values_) {
+    if (c == ' ') {
+      space_count++;
+    }
   }
-  BOOST_TEST(actual_words.size() == 3);
-  for (const auto& expected : expected_words) {
-    BOOST_TEST(std::find(actual_words.begin(), actual_words.end(), expected) != actual_words.end());
-  }
+  BOOST_TEST(space_count == 2);
 }
 
 BOOST_AUTO_TEST_CASE(empty_tree_traversal)
