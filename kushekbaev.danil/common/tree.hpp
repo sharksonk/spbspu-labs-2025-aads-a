@@ -104,7 +104,7 @@ namespace kushekbaev
   };
 
   template< typename Key, typename Value, typename Cmp >
-  Tree< Key, Value, Cmp>::Tree():
+  Tree< Key, Value, Cmp >::Tree():
     fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
@@ -115,7 +115,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Tree< Key, Value, Cmp>::Tree(const Tree< Key, Value, Cmp >& other):
+  Tree< Key, Value, Cmp >::Tree(const Tree< Key, Value, Cmp >& other):
     fakeroot_(reinterpret_cast< node_t* >(std::malloc(sizeof(node_t)))),
     root_(fakeroot_),
     size_(0)
@@ -147,7 +147,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Tree< Key, Value, Cmp>::Tree(Tree< Key, Value, Cmp >&& other) noexcept:
+  Tree< Key, Value, Cmp >::Tree(Tree< Key, Value, Cmp >&& other) noexcept:
     fakeroot_(std::exchange(other.fakeroot_, nullptr)),
     root_(std::exchange(other.root_, nullptr)),
     size_(std::exchange(other.size_, 0)),
@@ -191,8 +191,8 @@ namespace kushekbaev
   {
     if (*this != other)
     {
-      Tree< Key, Value, Cmp > tmp(other);
-      swap(tmp);
+    Tree< Key, Value, Cmp > tmp(other);
+    swap(tmp);
     }
     return *this;
   }
@@ -201,9 +201,9 @@ namespace kushekbaev
   Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(Tree< Key, Value, Cmp >&& other) noexcept
   {
     if (*this != other)
-    {
-      Tree< Key, Value, Cmp > tmp(std::move(other));
-      swap(tmp);
+  {
+    Tree< Key, Value, Cmp > tmp(std::move(other));
+    swap(tmp);
     }
     return *this;
   }
@@ -375,13 +375,13 @@ namespace kushekbaev
     std::swap(cmp_, other.cmp_);
   }
 
-  template<typename Key, typename Value, typename Cmp>
+  template< typename Key, typename Value, typename Cmp >
   std::pair< Iterator< Key, Value, Cmp >, bool> Tree< Key, Value, Cmp >::insert(const std::pair< Key, Value >& value)
   {
     return emplace(value);
   }
 
-  template<typename Key, typename Value, typename Cmp>
+  template< typename Key, typename Value, typename Cmp >
   std::pair< Iterator< Key, Value, Cmp >, bool> Tree< Key, Value, Cmp >::insert(std::pair< Key, Value >&& value)
   {
     return emplace(std::move(value));
@@ -409,7 +409,7 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   typename Tree< Key, Value, Cmp >::It Tree< Key, Value, Cmp >::insert(It hint, const std::pair<Key, Value>& value)
   {
-    return insert(ConstIterator<Key, Value, Cmp>(hint), value);
+    return insert(ConstIterator<Key, Value, Cmp >(hint), value);
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -767,7 +767,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_lnr(F f) const
+  F Tree< Key, Value, Cmp >::traverse_lnr(F f) const
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -817,7 +817,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_breadth(F f) const
+  F Tree< Key, Value, Cmp >::traverse_breadth(F f) const
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -844,7 +844,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_lnr(F f)
+  F Tree< Key, Value, Cmp >::traverse_lnr(F f)
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -869,7 +869,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_rnl(F f)
+  F Tree< Key, Value, Cmp >::traverse_rnl(F f)
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -894,7 +894,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_breadth(F f)
+  F Tree< Key, Value, Cmp >::traverse_breadth(F f)
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -919,8 +919,8 @@ namespace kushekbaev
     return f;
   }
 
-  template<typename Key, typename Value, typename Cmp>
-  TreeNode< Key, Value, Cmp >* Tree<Key, Value, Cmp>::copySubtree(node_t* node, node_t* parent)
+  template< typename Key, typename Value, typename Cmp >
+  TreeNode< Key, Value, Cmp >* Tree<Key, Value, Cmp >::copySubtree(node_t* node, node_t* parent)
   {
     if (!node)
     {
