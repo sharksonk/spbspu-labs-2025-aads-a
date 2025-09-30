@@ -9,10 +9,10 @@ namespace kushekbaev
   class Vector
   {
     public:
-      Vector() noexcept;
+      Vector();
       Vector(const Vector& other);
       Vector(Vector&& other) noexcept;
-      ~Vector() noexcept;
+      ~Vector();
 
       Vector& operator=(const Vector& other);
       Vector& operator=(Vector&& other) noexcept;
@@ -27,7 +27,9 @@ namespace kushekbaev
 
       void pushBack(const T& value);
       void popFront();
-      void popBack() noexcept;
+      void popBack();
+
+      void swap(Vector& other) noexcept;
 
     private:
       T* data_;
@@ -57,7 +59,7 @@ namespace kushekbaev
   };
 
   template< typename T >
-  Vector< T >::Vector() noexcept:
+  Vector< T >::Vector():
     data_(new T[1]),
     size_(0),
     capacity_(1)
@@ -90,7 +92,7 @@ namespace kushekbaev
   }
 
   template< typename T >
-  Vector< T >::~Vector() noexcept
+  Vector< T >::~Vector()
   {
     delete[] data_;
   }
@@ -105,9 +107,7 @@ namespace kushekbaev
       {
         newHolder.ptr[i] = other.data_[i];
       }
-      delete[] data_;
-      data_ = newHolder.ptr;
-      newHolder.ptr = nullptr;
+      std::swap(data_, newHolder.ptr);
       capacity_ = other.capacity_;
       size_ = other.size_;
     }
@@ -119,9 +119,8 @@ namespace kushekbaev
   {
     if (this != std::addressof(other))
     {
-      std::swap(data_, other.data_);
-      std::swap(size_, other.size_);
-      std::swap(capacity_, other.capacity_);
+      Vector tmp(other);
+      swap(other);
     }
     return *this;
   }
@@ -187,12 +186,24 @@ namespace kushekbaev
   }
 
   template< typename T >
-  void Vector< T >::popBack() noexcept
+  void Vector< T >::popBack()
   {
     if (!empty())
     {
       --size_;
     }
+    else
+    {
+      throw std::out_of_range("The array is empty!");
+    }
+  }
+
+  template< typename T >
+  void Vector< T >::swap(Vector& other) noexcept
+  {
+    std::swap(data_, other.data_);
+    std::swap(size_, other.size_);
+    std::swap(capacity_, other.capacity_);
   }
 
   template< typename T >

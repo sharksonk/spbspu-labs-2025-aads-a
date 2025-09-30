@@ -9,22 +9,29 @@ namespace
 
   bool isOperator(const std::string& symbol)
   {
-    return symbol == "+" || symbol == "-" || symbol == "/" || symbol == "%" || symbol == "*" || symbol == "**";
+    const char* ops[] = {"+", "-", "*", "/", "%", "**"};
+    for (const char* op: ops)
+    {
+      if (symbol == op)
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
   int calculatePriority(const std::string& operation)
   {
-    if (operation == "+" || operation == "-")
+    const std::pair< const char*, int > prios[] =
     {
-      return 1;
-    }
-    if (operation == "*" || operation == "/" || operation == "%")
+      { "+", 1 }, { "-", 1 }, { "*", 2 }, { "/", 2 }, { "%", 2 }, { "**", 3 }
+    };
+    for (const auto& op: prios)
     {
-      return 2;
-    }
-    if (operation == "**")
-    {
-      return 3;
+      if (operation == op.first)
+      {
+        return op.second;
+      }
     }
     return 0;
   }
@@ -139,13 +146,13 @@ namespace
 
   long long int power(long long int x, long long int power)
   {
-    if (x == 0)
+    if (x == 0 && power > 0)
     {
-      if (power <= 0)
-      {
-        throw std::runtime_error("Undefined power!");
-      }
       return 0;
+    }
+    else if (x == 0)
+    {
+      throw std::runtime_error("Undefined power!");
     }
     if (power == 0)
     {

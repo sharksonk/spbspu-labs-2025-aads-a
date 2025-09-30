@@ -32,16 +32,17 @@ void kushekbaev::inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Q
   }
 }
 
-void kushekbaev::output(std::ostream& output, kushekbaev::Stack< long long int >& results)
+void kushekbaev::output(std::ostream& output, const kushekbaev::Stack< long long int >& results)
 {
-  if (!results.empty())
+  auto out_results = results;
+  if (!out_results.empty())
   {
-    output << results.top();
-    results.pop();
-    while (!results.empty())
+    output << out_results.top();
+    out_results.pop();
+    while (!out_results.empty())
     {
-      output << " " << results.top();
-      results.pop();
+      output << " " << out_results.top();
+      out_results.pop();
     }
   }
 }
