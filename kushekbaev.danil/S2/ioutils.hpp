@@ -10,7 +10,7 @@ namespace kushekbaev
 {
   void splitExpr(const std::string& string, kushekbaev::Queue< std::string >& arithmeticQueue);
   void inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Queue< std::string > >& queue);
-  void output(std::ostream& output, kushekbaev::Stack< long long int >& results);
+  void output(std::ostream& output, const kushekbaev::Stack< long long int >& results);
 }
 
 #endif

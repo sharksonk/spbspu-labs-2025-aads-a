@@ -10,8 +10,10 @@ namespace kushekbaev
   {
     public:
       Vector();
+      Vector();
       Vector(const Vector& other);
       Vector(Vector&& other) noexcept;
+      ~Vector();
       ~Vector();
 
       Vector& operator=(const Vector& other);
@@ -71,6 +73,7 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::Vector():
+  Vector< T >::Vector():
     data_(new T[1]),
     size_(0),
     capacity_(1)
@@ -104,6 +107,7 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::~Vector()
+  Vector< T >::~Vector()
   {
     delete[] data_;
   }
@@ -119,6 +123,7 @@ namespace kushekbaev
         newHolder.ptr[i] = other.data_[i];
       }
       std::swap(data_, newHolder.ptr);
+      std::swap(data_, newHolder.ptr);
       capacity_ = other.capacity_;
       size_ = other.size_;
     }
@@ -130,6 +135,8 @@ namespace kushekbaev
   {
     if (this != std::addressof(other))
     {
+      Vector tmp(other);
+      swap(other);
       Vector tmp(other);
       swap(other);
     }
@@ -197,6 +204,7 @@ namespace kushekbaev
   }
 
   template< typename T >
+  void Vector< T >::popBack()
   void Vector< T >::popBack()
   {
     if (!empty())
