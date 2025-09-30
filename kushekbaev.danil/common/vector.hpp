@@ -71,7 +71,6 @@ namespace kushekbaev
 
   template< typename T >
   Vector< T >::Vector():
-  Vector< T >::Vector():
     data_(new T[1]),
     size_(0),
     capacity_(1)
@@ -132,8 +131,6 @@ namespace kushekbaev
   {
     if (this != std::addressof(other))
     {
-      Vector tmp(other);
-      swap(other);
       Vector tmp(other);
       swap(other);
     }
