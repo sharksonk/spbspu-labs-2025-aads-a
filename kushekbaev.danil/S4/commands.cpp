@@ -25,7 +25,7 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
   {
     sorted.pushBack(elem);
   }
-  std::sort(std::addressof(sorted[0]), std::addressof(sorted[0]) + sorted.size());
+  std::sort(sorted.begin(), sorted.end());
   out << name;
   for (size_t i = 0; i < sorted.size(); ++i)
   {

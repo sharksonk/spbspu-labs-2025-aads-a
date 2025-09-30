@@ -18,8 +18,7 @@ int main(int argc, char* argv[])
       std::ifstream filename(argv[1]);
       if (!filename.is_open())
       {
-        std::cerr << "The file couldn't be opened!";
-        return 1;
+        throw std::logic_error("The file cannot be opened!");
       }
       inputExpr(filename, inputQueue);
     }
