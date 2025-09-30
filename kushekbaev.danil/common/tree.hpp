@@ -626,7 +626,7 @@ namespace kushekbaev
     {
       return emplace(std::forward< Args >(args)...).first;
     }
-    std::pair<Key, Value> newData(std::forward<Args>(args)...);
+    std::pair< Key, Value > newData(std::forward< Args >(args)...);
     auto newKey = newData.first;
     if (hint != cend())
     {
@@ -778,7 +778,7 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f(current->data);
+      f = f(current->data);
       current = current->right;
     }
     return f;
@@ -786,7 +786,7 @@ namespace kushekbaev
 
   template< typename Key, typename Value, typename Cmp >
   template< typename F >
-  F Tree< Key, Value, Cmp>::traverse_rnl(F f) const
+  F Tree< Key, Value, Cmp >::traverse_rnl(F f) const
   {
     if (empty() || root_ == fakeroot_)
     {
@@ -803,7 +803,7 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f(current->data);
+      f = f(current->data);
       current = current->left;
     }
     return f;
@@ -823,7 +823,7 @@ namespace kushekbaev
     {
       const node_t* current = queue.front();
       queue.pop();
-      f(current->data);
+      f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
@@ -855,7 +855,7 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f(current->data);
+      f = f(current->data);
       current = current->right;
     }
     return f;
@@ -880,7 +880,7 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f(current->data);
+      f = f(current->data);
       current = current->left;
     }
     return f;
@@ -900,7 +900,7 @@ namespace kushekbaev
     {
       node_t* current = queue.front();
       queue.pop();
-      f(current->data);
+      f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
