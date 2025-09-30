@@ -21,14 +21,14 @@ namespace kushekbaev
 
     Tree();
     Tree(const Tree< Key, Value, Cmp >& other);
-    Tree(Tree< Key, Value, Cmp >&& other);
+    Tree(Tree< Key, Value, Cmp >&& other) noexcept;
     template< typename InputIterator >
     Tree(InputIterator first, InputIterator last);
     explicit Tree(std::initializer_list< std::pair< Key, Value > > il);
     ~Tree();
 
     Tree< Key, Value, Cmp >& operator=(const Tree< Key, Value, Cmp >& other);
-    Tree< Key, Value, Cmp >& operator=(Tree< Key, Value, Cmp >&& other);
+    Tree< Key, Value, Cmp >& operator=(Tree< Key, Value, Cmp >&& other) noexcept;
     bool operator==(const Tree< Key, Value, Cmp >& other) const noexcept;
     bool operator!=(const Tree< Key, Value, Cmp >& other) const noexcept;
 
@@ -133,7 +133,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Tree< Key, Value, Cmp>::Tree(Tree< Key, Value, Cmp >&& other):
+  Tree< Key, Value, Cmp>::Tree(Tree< Key, Value, Cmp >&& other) noexcept:
     fakeroot_(std::exchange(other.fakeroot_, nullptr)),
     root_(std::exchange(other.root_, nullptr)),
     size_(std::exchange(other.size_, 0)),
@@ -175,16 +175,22 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Cmp >
   Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(const Tree< Key, Value, Cmp >& other)
   {
-    Tree< Key, Value, Cmp > tmp(other);
-    swap(tmp);
+    if (*this != other)
+    {
+      Tree< Key, Value, Cmp > tmp(other);
+      swap(tmp);
+    }
     return *this;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(Tree< Key, Value, Cmp >&& other)
+  Tree<Key, Value, Cmp >& Tree< Key, Value, Cmp >::operator=(Tree< Key, Value, Cmp >&& other) noexcept
   {
-    Tree< Key, Value, Cmp > tmp(std::move(other));
-    swap(tmp);
+    if (*this != other)
+    {
+      Tree< Key, Value, Cmp > tmp(std::move(other));
+      swap(tmp);
+    }
     return *this;
   }
 
