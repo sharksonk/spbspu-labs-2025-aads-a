@@ -23,29 +23,29 @@ namespace sharifullina
     AVLtree(AVLtree&& other);
     AVLtree< Key, Value, Compare >& operator=(const AVLtree& other);
     AVLtree< Key, Value, Compare >& operator=(AVLtree&& other);
-    
+
     iter begin() noexcept;
     iter end() noexcept;
     cIter cbegin() const noexcept;
     cIter cend() const noexcept;
-    
+
     iter find(const Key&);
     cIter find(const Key&) const;
-    
+
     void swap(AVLtree< Key, Value, Compare >&) noexcept;
     bool empty() const noexcept;
     size_t size() const noexcept;
-    
+
     iter erase(iter) noexcept;
     size_t erase(const Key&) noexcept;
     size_t count(const Key&) const noexcept;
-    
+
     Value& at(const Key&);
     const Value& at(const Key&) const;
-    
+
     std::pair< iter, bool > insert(const std::pair< Key, Value >&);
     Value& operator[](const Key&);
-    
+
     ~AVLtree();
 
   private:
@@ -63,7 +63,7 @@ namespace sharifullina
     node_t* rotateLeftRight(node_t* root) noexcept;
     int getBalance(node_t* root) noexcept;
     node_t* balance(node_t* root) noexcept;
-    
+
     std::pair< iter, bool > treeInsert(const Key&, const Value&);
     node_t* findMin(node_t* node) noexcept;
     node_t* findMax(node_t* node) noexcept;

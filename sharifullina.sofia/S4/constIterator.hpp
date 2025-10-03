@@ -16,20 +16,20 @@ namespace sharifullina
 
   public:
     using this_t = ConstTreeIterator< Key, Value, Compare >;
-    
+
     ConstTreeIterator();
     ~ConstTreeIterator() = default;
     ConstTreeIterator(const this_t&) = default;
     this_t& operator=(const this_t&) = default;
-    
+
     this_t& operator++() noexcept;
     this_t operator++(int) noexcept;
     this_t& operator--() noexcept;
     this_t operator--(int) noexcept;
-    
+
     const std::pair< Key, Value >& operator*() const;
     const std::pair< Key, Value >* operator->() const;
-    
+
     bool operator==(const this_t&) const noexcept;
     bool operator!=(const this_t&) const noexcept;
 
