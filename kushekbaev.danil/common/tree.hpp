@@ -775,6 +775,7 @@ namespace kushekbaev
     }
     Stack< const node_t* > stack;
     const node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -784,10 +785,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->right;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -800,6 +801,7 @@ namespace kushekbaev
     }
     Stack< const node_t* > stack;
     const node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -809,10 +811,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->left;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -825,11 +827,12 @@ namespace kushekbaev
     }
     Queue< const node_t* > queue;
     queue.push(root_);
+    auto& tmp_f = f;
     while (!queue.empty())
     {
       const node_t* current = queue.front();
       queue.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
@@ -839,7 +842,7 @@ namespace kushekbaev
         queue.push(current->right);
       }
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -852,6 +855,7 @@ namespace kushekbaev
     }
     Stack< node_t* > stack;
     node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -861,10 +865,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->right;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -877,6 +881,7 @@ namespace kushekbaev
     }
     Stack< node_t* > stack;
     node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -886,10 +891,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->left;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -902,11 +907,12 @@ namespace kushekbaev
     }
     Queue< node_t* > queue;
     queue.push(root_);
+    auto& tmp_f = f;
     while (!queue.empty())
     {
       node_t* current = queue.front();
       queue.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
@@ -916,7 +922,7 @@ namespace kushekbaev
         queue.push(current->right);
       }
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
