@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <vector>
+#include <new>
 #include "node.hpp"
 #include "constiterator.hpp"
 
@@ -14,6 +15,7 @@ namespace shramko
   {
   public:
     using const_iterator = ConstIterator< Key, Value, Compare >;
+    using const_reverse_iterator = std::reverse_iterator< const_iterator >;
 
     UBstTree();
     UBstTree(const UBstTree& other);
@@ -33,6 +35,8 @@ namespace shramko
 
     const_iterator cbegin() const noexcept;
     const_iterator cend() const noexcept;
+    const_reverse_iterator crbegin() const noexcept;
+    const_reverse_iterator crend() const noexcept;
     const_iterator find(const Key& key) const noexcept;
 
     Node< Key, Value >* minNode(Node< Key, Value >* node) const;
@@ -50,8 +54,7 @@ namespace shramko
 
     Node< Key, Value >* findNode(Node< Key, Value >* node, const Key& key) const;
 
-    void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode,
-      Node< Key, Value >* parent);
+    void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode, Node< Key, Value >* parent);
   };
 
   template < typename Key, typename Value, typename Compare >
@@ -67,7 +70,15 @@ namespace shramko
     size_(0),
     comp_(other.comp_)
   {
-    copyTree(root_, other.root_, nullptr);
+    try
+    {
+      copyTree(root_, other.root_, nullptr);
+    }
+    catch (std::bad_alloc&)
+    {
+      clear();
+      throw;
+    }
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -195,6 +206,20 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
+  UBstTree< Key, Value, Compare >::crbegin() const noexcept
+  {
+    return const_reverse_iterator(cend());
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
+  UBstTree< Key, Value, Compare >::crend() const noexcept
+  {
+    return const_reverse_iterator(cbegin());
+  }
+
+  template < typename Key, typename Value, typename Compare >
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::find(const Key& key) const noexcept
   {
@@ -248,9 +273,9 @@ namespace shramko
   {
     if (!node)
     {
-      ++size;
       Node< Key, Value >* newNode = new Node< Key, Value >(key, value);
       newNode->parent = parent;
+      ++size;
       return newNode;
     }
     if (comp_(key, node->data.first))
@@ -300,8 +325,29 @@ namespace shramko
     node = new Node< Key, Value >(otherNode->data.first, otherNode->data.second);
     node->parent = parent;
     ++size_;
-    copyTree(node->left, otherNode->left, node);
-    copyTree(node->right, otherNode->right, node);
+    try
+    {
+      copyTree(node->left, otherNode->left, node);
+    }
+    catch (std::bad_alloc&)
+    {
+      delete node;
+      node = nullptr;
+      --size_;
+      throw;
+    }
+    try
+    {
+      copyTree(node->right, otherNode->right, node);
+    }
+    catch (std::bad_alloc&)
+    {
+      clearNode(node->left);
+      delete node;
+      node = nullptr;
+      --size_;
+      throw;
+    }
   }
 }
 
