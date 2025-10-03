@@ -1,5 +1,5 @@
 #include "commands.hpp"
-#include <limits>
+#include <stdexcept>
 
 namespace shramko
 {
@@ -10,8 +10,7 @@ namespace shramko
     TreeOfTrees::const_iterator it = trees.find(dictName);
     if (it == trees.cend())
     {
-      out << "<INVALID COMMAND>\n";
-      return;
+      throw std::invalid_argument("Invalid dictionary name");
     }
     const BasicTree& tree = it->second;
     if (tree.empty())
@@ -33,10 +32,13 @@ namespace shramko
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
     TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (first_it == trees.cend())
     {
-      out << "<INVALID COMMAND>\n";
-      return;
+      throw std::invalid_argument("First dictionary not found");
+    }
+    if (second_it == trees.cend())
+    {
+      throw std::invalid_argument("Second dictionary not found");
     }
     BasicTree result;
     for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
@@ -55,15 +57,19 @@ namespace shramko
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
     TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (first_it == trees.cend())
     {
-      out << "<INVALID COMMAND>\n";
-      return;
+      throw std::invalid_argument("First dictionary not found");
+    }
+    if (second_it == trees.cend())
+    {
+      throw std::invalid_argument("Second dictionary not found");
     }
     BasicTree result;
     for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
     {
-      if (second_it->second.find(it->first) != second_it->second.cend())
+      auto sec_it = second_it->second.find(it->first);
+      if (sec_it != second_it->second.cend())
       {
         result[it->first] = it->second;
       }
@@ -77,10 +83,13 @@ namespace shramko
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
     TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (first_it == trees.cend())
     {
-      out << "<INVALID COMMAND>\n";
-      return;
+      throw std::invalid_argument("First dictionary not found");
+    }
+    if (second_it == trees.cend())
+    {
+      throw std::invalid_argument("Second dictionary not found");
     }
     BasicTree result = first_it->second;
     for (BasicTree::const_iterator it = second_it->second.cbegin(); it != second_it->second.cend(); ++it)

@@ -49,6 +49,8 @@ namespace shramko
 
     Node< Key, Value >* minNode(Node< Key, Value >* node) const;
 
+    Node< Key, Value >* maxNode(Node< Key, Value >* node) const;
+
     void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode,
       Node< Key, Value >* parent);
   };
@@ -143,31 +145,26 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   Value& UBstTree< Key, Value, Compare >::operator[](const Key& key)
   {
-    Node< Key, Value >* node = findNode(root_, key);
-    if (!node)
+    Node< Key, Value >* found = findNode(root_, key);
+    if (found == nullptr)
     {
       root_ = insertNode(root_, key, Value(), nullptr, size_);
-      node = findNode(root_, key);
     }
-    return node->data.second;
+    found = findNode(root_, key);
+    return found->data.second;
   }
 
   template < typename Key, typename Value, typename Compare >
   const Value& UBstTree< Key, Value, Compare >::operator[](const Key& key) const
   {
-    Node< Key, Value >* node = findNode(root_, key);
-    if (!node)
-    {
-      throw std::out_of_range("Key not found");
-    }
-    return node->data.second;
+    return at(key);
   }
 
   template < typename Key, typename Value, typename Compare >
   Value& UBstTree< Key, Value, Compare >::at(const Key& key)
   {
     Node< Key, Value >* node = findNode(root_, key);
-    if (!node)
+    if (node == nullptr)
     {
       throw std::out_of_range("Key not found");
     }
@@ -178,7 +175,7 @@ namespace shramko
   const Value& UBstTree< Key, Value, Compare >::at(const Key& key) const
   {
     Node< Key, Value >* node = findNode(root_, key);
-    if (!node)
+    if (node == nullptr)
     {
       throw std::out_of_range("Key not found");
     }
@@ -189,14 +186,14 @@ namespace shramko
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::cbegin() const noexcept
   {
-    return const_iterator(minNode(root_));
+    return const_iterator(minNode(root_), this);
   }
 
   template < typename Key, typename Value, typename Compare >
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::cend() const noexcept
   {
-    return const_iterator(nullptr);
+    return const_iterator(nullptr, this);
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -204,7 +201,7 @@ namespace shramko
   UBstTree< Key, Value, Compare >::find(const Key& key) const noexcept
   {
     Node< Key, Value >* node = findNode(root_, key);
-    return const_iterator(node);
+    return const_iterator(node, this);
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -274,6 +271,20 @@ namespace shramko
     while (node->left)
     {
       node = node->left;
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  Node< Key, Value >* UBstTree< Key, Value, Compare >::maxNode(Node< Key, Value >* node) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    while (node->right)
+    {
+      node = node->right;
     }
     return node;
   }
