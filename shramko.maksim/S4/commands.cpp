@@ -3,16 +3,26 @@
 
 namespace shramko
 {
+  void invalidOutput(std::ostream& out)
+  {
+    out << "<INVALID COMMAND>\n";
+  }
+
+  bool isValidDict(const TreeOfTrees& trees, const std::string& name)
+  {
+    return trees.find(name) != trees.cend();
+  }
+
   void print(const TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
     std::string dictName;
     in >> dictName;
-    TreeOfTrees::const_iterator it = trees.find(dictName);
-    if (it == trees.cend())
+    if (!isValidDict(trees, dictName))
     {
-      out << "<INVALID COMMAND>\n";
+      invalidOutput(out);
       return;
     }
+    TreeOfTrees::const_iterator it = trees.find(dictName);
     const BasicTree& tree = it->second;
     if (tree.empty())
     {
@@ -29,16 +39,15 @@ namespace shramko
 
   void complement(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
-    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (!isValidDict(trees, firstDict) || !isValidDict(trees, secondDict))
     {
-      out << "<INVALID COMMAND>\n";
+      invalidOutput(out);
       return;
     }
+    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
+    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
     BasicTree result;
     for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
     {
@@ -52,16 +61,15 @@ namespace shramko
 
   void intersect(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
-    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (!isValidDict(trees, firstDict) || !isValidDict(trees, secondDict))
     {
-      out << "<INVALID COMMAND>\n";
+      invalidOutput(out);
       return;
     }
+    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
+    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
     BasicTree result;
     for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
     {
@@ -76,16 +84,15 @@ namespace shramko
 
   void unite(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
-    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
+    if (!isValidDict(trees, firstDict) || !isValidDict(trees, secondDict))
     {
-      out << "<INVALID COMMAND>\n";
+      invalidOutput(out);
       return;
     }
+    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
+    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
     BasicTree result = first_it->second;
     for (BasicTree::const_iterator it = second_it->second.cbegin(); it != second_it->second.cend(); ++it)
     {
