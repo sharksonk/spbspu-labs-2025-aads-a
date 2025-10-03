@@ -150,7 +150,7 @@ namespace
     {
       return 0;
     }
-    else if (x == 0)
+    if (x == 0)
     {
       throw std::runtime_error("Undefined power!");
     }
