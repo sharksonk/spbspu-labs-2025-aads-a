@@ -32,7 +32,6 @@ int main()
   for (const auto& pair: sequences)
   {
     const auto& first = pair.first;
-    const auto& second = pair.second;
     std::cout << sep << first;
     sep = " ";
   }
