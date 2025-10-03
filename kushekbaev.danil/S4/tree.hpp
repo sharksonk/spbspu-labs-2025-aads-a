@@ -1,5 +1,5 @@
-#ifndef UBST_HPP
-#define UBST_HPP
+#ifndef TREE_HPP
+#define TREE_HPP
 
 #include <functional>
 #include <utility>
@@ -44,10 +44,10 @@ namespace kushekbaev
 
     Value& at(const Key& key);
     const Value& at(const Key& key) const;
-    Value& operator[](const Key& key);
-    const Value& operator[](const Key& key) const;
+    Value& operator[](const Key& key) noexcept;
+    const Value& operator[](const Key& key) const noexcept;
 
-    void clear() noexcept;
+    void clear();
 
     void swap(Tree& other);
 
@@ -314,7 +314,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Value& Tree< Key, Value, Cmp >::operator[](const Key& key)
+  Value& Tree< Key, Value, Cmp >::operator[](const Key& key) noexcept
   {
     auto it = find(key);
     if (it == end())
@@ -326,14 +326,14 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const Value& Tree< Key, Value, Cmp >::operator[](const Key& key) const
+  const Value& Tree< Key, Value, Cmp >::operator[](const Key& key) const noexcept
   {
     auto it = find(key);
     return it->second;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  void Tree< Key, Value, Cmp >::clear() noexcept
+  void Tree< Key, Value, Cmp >::clear()
   {
     killChildrenOf(root_);
     root_ = fakeroot_;
@@ -559,7 +559,7 @@ namespace kushekbaev
       fakeroot_->left = root_;
       fakeroot_->right = root_;
       ++size_;
-      return{ It(root_), true };
+      return { It(root_), true };
     }
     node_t* current = root_;
     node_t* parent = nullptr;
@@ -580,7 +580,7 @@ namespace kushekbaev
       else
       {
         delete newNode;
-        return{ It(current), false };
+        return { It(current), false };
       }
     }
     if (!parent)
@@ -607,7 +607,7 @@ namespace kushekbaev
     }
     newNode->left = newNode->right = nullptr;
     ++size_;
-    return{ It(newNode), true };
+    return { It(newNode), true };
   }
 
   template< typename Key, typename Value, typename Cmp >
