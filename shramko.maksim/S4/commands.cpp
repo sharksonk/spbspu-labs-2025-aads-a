@@ -28,6 +28,7 @@ namespace shramko
 
   void complement(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
+    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
@@ -53,6 +54,7 @@ namespace shramko
 
   void intersect(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
+    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);
@@ -79,6 +81,7 @@ namespace shramko
 
   void unite(TreeOfTrees& trees, std::istream& in, std::ostream& out)
   {
+    (void)out;
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
     TreeOfTrees::const_iterator first_it = trees.find(firstDict);

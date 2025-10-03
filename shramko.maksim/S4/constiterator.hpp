@@ -113,8 +113,7 @@ namespace shramko
     }
 
   private:
-    template < typename C >
-    friend class UBstTree< Key, Value, C >;
+    friend class UBstTree< Key, Value, Compare >;
     Node< Key, Value >* node_;
     const UBstTree< Key, Value, Compare >* tree_;
 

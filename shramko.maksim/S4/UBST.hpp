@@ -35,6 +35,9 @@ namespace shramko
     const_iterator cend() const noexcept;
     const_iterator find(const Key& key) const noexcept;
 
+    Node< Key, Value >* minNode(Node< Key, Value >* node) const;
+    Node< Key, Value >* maxNode(Node< Key, Value >* node) const;
+
   private:
     Node< Key, Value >* root_;
     size_t size_;
@@ -46,10 +49,6 @@ namespace shramko
       const Value& value, Node< Key, Value >* parent, size_t& size);
 
     Node< Key, Value >* findNode(Node< Key, Value >* node, const Key& key) const;
-
-    Node< Key, Value >* minNode(Node< Key, Value >* node) const;
-
-    Node< Key, Value >* maxNode(Node< Key, Value >* node) const;
 
     void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode,
       Node< Key, Value >* parent);
@@ -205,6 +204,34 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
+  Node< Key, Value >* UBstTree< Key, Value, Compare >::minNode(Node< Key, Value >* node) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    while (node->left)
+    {
+      node = node->left;
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  Node< Key, Value >* UBstTree< Key, Value, Compare >::maxNode(Node< Key, Value >* node) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    while (node->right)
+    {
+      node = node->right;
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
   void UBstTree< Key, Value, Compare >::clearNode(Node< Key, Value >* node)
   {
     if (!node)
@@ -257,34 +284,6 @@ namespace shramko
     else if (comp_(node->data.first, key))
     {
       return findNode(node->right, key);
-    }
-    return node;
-  }
-
-  template < typename Key, typename Value, typename Compare >
-  Node< Key, Value >* UBstTree< Key, Value, Compare >::minNode(Node< Key, Value >* node) const
-  {
-    if (!node)
-    {
-      return nullptr;
-    }
-    while (node->left)
-    {
-      node = node->left;
-    }
-    return node;
-  }
-
-  template < typename Key, typename Value, typename Compare >
-  Node< Key, Value >* UBstTree< Key, Value, Compare >::maxNode(Node< Key, Value >* node) const
-  {
-    if (!node)
-    {
-      return nullptr;
-    }
-    while (node->right)
-    {
-      node = node->right;
     }
     return node;
   }
