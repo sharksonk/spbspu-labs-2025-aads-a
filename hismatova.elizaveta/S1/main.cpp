@@ -29,8 +29,10 @@ int main()
     return 0;
   }
   const char* sep = "";
-  for (const auto& [first, second]: sequences)
+  for (const auto& pair: sequences)
   {
+    const auto& first = pair.first;
+    const auto& second = pair.second;
     std::cout << sep << first;
     sep = " ";
   }
