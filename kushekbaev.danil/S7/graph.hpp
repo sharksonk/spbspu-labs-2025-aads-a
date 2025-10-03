@@ -5,7 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <map>
-#include "hashtable.hpp"
+#include <hashtable.hpp>
 
 namespace kushekbaev
 {
