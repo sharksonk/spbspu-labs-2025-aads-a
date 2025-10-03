@@ -68,7 +68,6 @@ namespace shramko
     comp_(other.comp_)
   {
     copyTree(root_, other.root_, nullptr);
-    size_ = other.size_;
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -300,6 +299,7 @@ namespace shramko
     }
     node = new Node< Key, Value >(otherNode->data.first, otherNode->data.second);
     node->parent = parent;
+    ++size_;
     copyTree(node->left, otherNode->left, node);
     copyTree(node->right, otherNode->right, node);
   }

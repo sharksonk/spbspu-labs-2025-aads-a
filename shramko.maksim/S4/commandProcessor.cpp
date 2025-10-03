@@ -1,6 +1,5 @@
 #include "commandProcessor.hpp"
 #include "commands.hpp"
-#include <stdexcept>
 
 namespace shramko
 {
@@ -9,27 +8,20 @@ namespace shramko
     if (cmd == "print")
     {
       print(trees, in, out);
-      return;
     }
-    using CommandFunc = void(*)(TreeOfTrees&, std::istream&, std::ostream&);
-    static UBstTree< std::string, CommandFunc > commandMap;
-    if (commandMap.empty())
+    else if (cmd == "complement")
     {
-      commandMap["complement"] = complement;
-      commandMap["intersect"] = intersect;
-      commandMap["union"] = unite;
+      complement(trees, in, out);
     }
-    auto map_it = commandMap.find(cmd);
-    if (map_it == commandMap.cend())
+    else if (cmd == "intersect")
     {
-      out << "<INVALID COMMAND>\n";
-      return;
+      intersect(trees, in, out);
     }
-    try
+    else if (cmd == "union")
     {
-      map_it->second(trees, in, out);
+      unite(trees, in, out);
     }
-    catch (const std::exception&)
+    else
     {
       out << "<INVALID COMMAND>\n";
     }

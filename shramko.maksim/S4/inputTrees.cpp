@@ -12,6 +12,7 @@ void shramko::inputTrees(TreeOfTrees & trees, std::istream & input)
     {
       tree[key] = value;
     }
+    input.clear();
     trees[dictName] = tree;
   }
 }
