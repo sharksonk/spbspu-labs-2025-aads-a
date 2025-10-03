@@ -8,7 +8,7 @@ namespace kushekbaev
   template< typename Key, typename Value >
   struct HashTableSlot
   {
-    std::pair< Key, Value > data;
+    std::pair< Key, Value > data_;
     bool deleted = false;
     bool occupied = false;
   };

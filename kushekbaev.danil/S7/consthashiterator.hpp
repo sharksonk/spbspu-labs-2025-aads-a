@@ -11,25 +11,25 @@ namespace kushekbaev
   template< typename Key, typename Value, typename Hash = std::hash< Key >, typename Equal = std::equal_to< Key > >
   struct ConstHashIterator: public std::iterator< std::bidirectional_iterator_tag, Value >
   {
-    using this_t = ConstHashIterator< Key, Value, Hash, Equal >;
-
     ConstHashIterator();
-    ConstHashIterator(const this_t& other) = default;
+    ConstHashIterator(const ConstHashIterator& other);
+    ConstHashIterator(ConstHashIterator&& other);
     ~ConstHashIterator() = default;
-    this_t& operator=(const this_t& other) = default;
-    this_t& operator++();
-    this_t operator++(int);
-    this_t& operator--();
-    this_t operator--(int);
+    ConstHashIterator& operator=(const ConstHashIterator& other) = default;
+    ConstHashIterator& operator++();
+    ConstHashIterator operator++(int);
+    ConstHashIterator& operator--();
+    ConstHashIterator operator--(int);
     const std::pair< Key, Value >& operator*() const;
     const std::pair< Key, Value >* operator->() const;
-    bool operator==(const this_t& other) const;
-    bool operator!=(const this_t& other) const;
+    bool operator==(const ConstHashIterator& other) const;
+    bool operator!=(const ConstHashIterator& other) const;
 
     private:
       friend class HashTable< Key, Value, Hash, Equal >;
       const HashTable< Key, Value, Hash, Equal >* table_;
       size_t index_;
+      ConstHashIterator(const HashTable< Key, Value, Hash, Equal >* table, size_t index);
       void skip_empty_slots();
   };
 
@@ -43,16 +43,25 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  using this_t = ConstHashIterator< Key, Value, Hash, Equal >;
-
-  template< typename Key, typename Value, typename Hash, typename Equal >
   ConstHashIterator< Key, Value, Hash, Equal >::ConstHashIterator():
     table_(nullptr),
     index_(0)
   {}
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  this_t< Key, Value, Hash, Equal >& ConstHashIterator< Key, Value, Hash, Equal >::operator++()
+  ConstHashIterator< Key, Value, Hash, Equal >::ConstHashIterator(const ConstHashIterator& other):
+    table_(other.table_),
+    index_(other.index_)
+  {}
+
+  template< typename Key, typename Value, typename Hash, typename Equal >
+  ConstHashIterator< Key, Value, Hash, Equal >::ConstHashIterator(ConstHashIterator&& other):
+    table_(std::move(other.table_)),
+    index_(std::move(other.index_))
+  {}
+
+  template< typename Key, typename Value, typename Hash, typename Equal >
+  ConstHashIterator< Key, Value, Hash, Equal >& ConstHashIterator< Key, Value, Hash, Equal >::operator++()
   {
     ++index_;
     skip_empty_slots();
@@ -60,15 +69,15 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  this_t< Key, Value, Hash, Equal > ConstHashIterator< Key, Value, Hash, Equal >::operator++(int)
+  ConstHashIterator< Key, Value, Hash, Equal > ConstHashIterator< Key, Value, Hash, Equal >::operator++(int)
   {
-    this_t tmp = *this;
+    ConstHashIterator tmp = *this;
     ++(*this);
     return tmp;
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  this_t< Key, Value, Hash, Equal >& ConstHashIterator< Key, Value, Hash, Equal >::operator++()
+  ConstHashIterator< Key, Value, Hash, Equal >& ConstHashIterator< Key, Value, Hash, Equal >::operator--()
   {
     --index_;
     skip_empty_slots();
@@ -76,9 +85,9 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  this_t< Key, Value, Hash, Equal > ConstHashIterator< Key, Value, Hash, Equal >::operator++(int)
+  ConstHashIterator< Key, Value, Hash, Equal > ConstHashIterator< Key, Value, Hash, Equal >::operator--(int)
   {
-    this_t tmp = *this;
+    ConstHashIterator tmp = *this;
     --(*this);
     return tmp;
   }
@@ -96,15 +105,23 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  bool ConstHashIterator< Key, Value, Hash, Equal >::operator==(const this_t& other) const
+  bool ConstHashIterator< Key, Value, Hash, Equal >::operator==(const ConstHashIterator& other) const
   {
     return table_ == other.table_ && index_ == other.index_;
   }
 
   template< typename Key, typename Value, typename Hash, typename Equal >
-  bool ConstHashIterator< Key, Value, Hash, Equal >::operator==(const this_t& other) const
+  bool ConstHashIterator< Key, Value, Hash, Equal >::operator!=(const ConstHashIterator& other) const
   {
-    return !(*this == rhs)
+    return !(*this == other);
+  }
+
+  template< typename Key, typename Value, typename Hash, typename Equal >
+  ConstHashIterator< Key, Value, Hash, Equal >::ConstHashIterator(const HashTable< Key, Value, Hash, Equal >* table, size_t index):
+    table_(table),
+    index_(index)
+  {
+    skip_empty_slots();
   }
 }
 
