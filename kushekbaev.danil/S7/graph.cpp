@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-void kushekbaev::Graph::add_vertex(const std::string & str)
+void kushekbaev::Graph::add_vertex(const std::string& str)
 {
-  vertexes_.insert(std::make_pair(str, true));
+  vertexes_.insert(str);
 }
 
 void kushekbaev::Graph::add_edge(std::string first, std::string second, size_t weigth)
@@ -48,7 +48,7 @@ bool kushekbaev::Graph::remove_edge(const std::string& first, const std::string&
   return true;
 }
 
-std::map< std::string, bool > kushekbaev::Graph::get_vertexes() const
+std::set< std::string > kushekbaev::Graph::get_vertexes() const
 {
   return vertexes_;
 }
