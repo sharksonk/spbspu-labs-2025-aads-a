@@ -22,7 +22,7 @@ void kushekbaev::vertexes(std::istream& in, std::ostream& out, const graphsTree&
   {
     throw std::logic_error("<INVALID COMMAND>");
   }
-  std::map< std::string, bool > vertexes = graphs.at(name).get_vertexes();
+  std::set< std::string > vertexes = graphs.at(name).get_vertexes();
   if (vertexes.empty())
   {
     out << "\n";
@@ -30,7 +30,7 @@ void kushekbaev::vertexes(std::istream& in, std::ostream& out, const graphsTree&
   }
   for (auto it = vertexes.cbegin(); it != vertexes.cend(); ++it)
   {
-    out << it->first << "\n";
+    out << *it << "\n";
   }
 }
 
