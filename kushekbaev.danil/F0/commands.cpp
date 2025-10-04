@@ -10,7 +10,7 @@ namespace
 {
   kushekbaev::Vector< std::string > split_line(std::string& line)
   {
-    kushekbaev::Vector< std::string > tokens;
+    Vector< std::string > tokens;
     struct Splitter
     {
       std::string& line;
@@ -185,7 +185,7 @@ void kushekbaev::import_dictionary(std::ostream& out, std::istream& in, dictiona
     }
     if (in_dictionary && !current_dictionary_system_name.empty())
     {
-      kushekbaev::Vector< std::string > tokens = split_line(trimmed_line);
+      Vector< std::string > tokens = split_line(trimmed_line);
       if (tokens.empty())
       {
         continue;
@@ -250,7 +250,7 @@ void kushekbaev::reverse_search(std::ostream& out, std::istream& in, dictionary_
   {
     throw std::out_of_range("<DICTIONARY NOT FOUND>");
   }
-  kushekbaev::Vector< std::string > matching_words;
+  Vector< std::string > matching_words;
   for (const auto& word_pair: dict_it->second)
   {
     const std::string& word = word_pair.first;
@@ -309,7 +309,7 @@ void kushekbaev::remove_translation_at_all(std::ostream& out, std::istream& in, 
   {
     throw std::out_of_range("<DICTIONARY NOT FOUND>");
   }
-  kushekbaev::Vector< std::string > words_to_erase;
+  Vector< std::string > words_to_erase;
   size_t removed_count = 0;
   for (auto& word_pair: dict_it->second)
   {
@@ -342,7 +342,7 @@ void kushekbaev::delete_all_translations(std::ostream& out, std::istream& in, di
   {
     throw std::out_of_range("<DICTIONARY NOT FOUND>");
   }
-  kushekbaev::Vector< std::string > matching_words;
+  Vector< std::string > matching_words;
   for (const auto& word_pair: dict_it->second)
   {
     const std::string& word = word_pair.first;
