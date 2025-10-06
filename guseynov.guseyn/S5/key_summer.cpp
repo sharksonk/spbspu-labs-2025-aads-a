@@ -2,7 +2,6 @@
 
 guseynov::KeySummer::KeySummer():
   result_(0),
-  values_("")
 {}
 
 void guseynov::KeySummer::operator()(const std::pair< const long long, std::string >& key_value)
