@@ -27,7 +27,7 @@ namespace guseynov
     Tree(InputIt first, InputIt last):
       Tree()
     {
-      for (auto it = first; it != last; it++)
+      for (InputIt it = first; it != last; it++)
       {
         insert(*it);
       }
@@ -317,28 +317,7 @@ namespace guseynov
 
     Iterator_t lower_bound(const Key& key) noexcept
     {
-      Node_t* current = getRoot();
-      Node_t* result = nullptr;
-      while (current)
-      {
-        if (!comp_(current->data.first, key))
-        {
-          result = current;
-          current = current->left;
-        }
-        else
-        {
-          current = current->right;
-        }
-      }
-      if (result != nullptr)
-      {
-        return Iterator_t(result);
-      }
-      else
-      {
-        return end();
-      }
+      return const_cast<Iterator_t>(static_cast<const Tree*>(this)->lower_bound(key));
     }
 
     ConstIterator_t lower_bound(const Key& key) const noexcept
@@ -369,28 +348,7 @@ namespace guseynov
 
     Iterator_t upper_bound(const Key& key) noexcept
     {
-      Node_t* current = getRoot();
-      Node_t* result = nullptr;
-      while (current)
-      {
-        if (comp_(key, current->data.first))
-        {
-          result = current;
-          current = current->left;
-        }
-        else
-        {
-          current = current->right;
-        }
-      }
-      if (result != nullptr)
-      {
-        return Iterator_t(result);
-      }
-      else
-      {
-        return end();
-      }
+      return const_cast<Iterator_t>(static_cast<const Tree*>(this)->upper_bound(key));
     }
 
     ConstIterator_t upper_bound(const Key& key) const noexcept
