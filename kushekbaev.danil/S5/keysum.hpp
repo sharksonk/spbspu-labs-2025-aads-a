@@ -11,7 +11,7 @@ namespace kushekbaev
   {
     KeySum operator()(const std::pair< const long long int, std::string >& keyValue);
     long long int sum = 0;
-    std::string value = "";
+    std::string value;
   };
 
   KeySum KeySum::operator()(const std::pair< const long long int, std::string >& keyValue)
@@ -21,11 +21,11 @@ namespace kushekbaev
     result.value = this->value;
     if (sum > 0 && keyValue.first > std::numeric_limits< long long int >::max() - sum)
     {
-      throw std::overflow_error("Overflow!\n");
+      throw std::overflow_error("Overflow!");
     }
     if (sum < 0 && keyValue.first < std::numeric_limits< long long int >::min() - sum)
     {
-      throw std::underflow_error("Underflow!\n");
+      throw std::underflow_error("Underflow!");
     }
     result.sum += keyValue.first;
     result.value += keyValue.second + " ";
