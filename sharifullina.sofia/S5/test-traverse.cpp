@@ -1,4 +1,3 @@
-#define BOOST_TEST_MODULE S5
 #include <boost/test/included/unit_test.hpp>
 #include <string>
 #include <../common/avl_tree/AVLtree.hpp>
