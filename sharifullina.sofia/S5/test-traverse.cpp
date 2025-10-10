@@ -22,26 +22,26 @@ BOOST_AUTO_TEST_CASE(traverses_test)
   } collector;
 
   collector.values = "";
-  constTree.traverse_lnr(collector);
+  collector = constTree.traverse_lnr(collector);
   BOOST_TEST(collector.values == "first second third");
 
   collector.values = "";
-  constTree.traverse_rnl(collector);
+  collector = constTree.traverse_rnl(collector);
   BOOST_TEST(collector.values == "third second first");
 
   collector.values = "";
-  constTree.traverse_breadth(collector);
+  collector = constTree.traverse_breadth(collector);
   BOOST_TEST(collector.values == "second first third");
 
   collector.values = "";
-  tree.traverse_lnr(collector);
+  collector = tree.traverse_lnr(collector);
   BOOST_TEST(collector.values == "first second third");
 
   collector.values = "";
-  tree.traverse_rnl(collector);
+  collector = tree.traverse_rnl(collector);
   BOOST_TEST(collector.values == "third second first");
 
   collector.values = "";
-  tree.traverse_breadth(collector);
+  collector = tree.traverse_breadth(collector);
   BOOST_TEST(collector.values == "second first third");
 }

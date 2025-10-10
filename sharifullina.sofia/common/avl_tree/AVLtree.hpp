@@ -701,6 +701,7 @@ namespace sharifullina
     return find(key) != cend() ? 1 : 0;
   }
 
+
   template< class Key, class Value, class Compare >
   template< typename F >
   F AVLtree< Key, Value, Compare >::traverse_lnr(F f) const
@@ -742,7 +743,6 @@ namespace sharifullina
     }
     return f;
   }
-
   template< class Key, class Value, class Compare >
   template< typename F >
   F AVLtree< Key, Value, Compare >::traverse_breadth(F f) const
@@ -790,7 +790,6 @@ namespace sharifullina
     }
     return f;
   }
-
   template< class Key, class Value, class Compare >
   template< typename F >
   F AVLtree< Key, Value, Compare >::traverse_rnl(F f)
