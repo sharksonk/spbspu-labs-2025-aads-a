@@ -16,15 +16,12 @@ BOOST_AUTO_TEST_CASE(traverses_test)
   const auto& constTree = tree;
   sharifullina::Collector res_lnr, res_rnl, res_nlr;
 
-  res_lnr.values = "";
   res_lnr = constTree.traverse_lnr(res_lnr);
   BOOST_TEST(res_lnr.values == "first second third");
 
-  res_rnl.values = "";
   res_rnl = constTree.traverse_rnl(res_rnl);
   BOOST_TEST(res_rnl.values == "third second first");
 
-  res_nlr.values = "";
   res_nlr = constTree.traverse_breadth(res_nlr);
   BOOST_TEST(res_nlr.values == "second first third");
 }
