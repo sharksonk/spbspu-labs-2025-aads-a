@@ -3,27 +3,7 @@
 #include <limits>
 #include "graph.hpp"
 #include "commands.hpp"
-
-namespace
-{
-  void inputGraphs(std::istream& in, std::map< std::string, kushekbaev::Graph >& graphs)
-  {
-    std::string name;
-    size_t count = 0;
-    while (in >> name >> count)
-    {
-      kushekbaev::Graph gr;
-      for (size_t i = 0; i < count; ++i)
-      {
-        std::string vect1, vect2;
-        size_t weight = 0;
-        in >> vect1 >> vect2 >> weight;
-        gr.add_edge(vect1, vect2, weight);
-      }
-      graphs[name] = gr;
-    }
-  }
-}
+#include "inpututil.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -40,7 +20,7 @@ int main(int argc, char* argv[])
     return 1;
   }
   std::map< std::string, kushekbaev::Graph > graphs;
-  inputGraphs(file, graphs);
+  kushekbaev::inputGraphs(file, graphs);
   std::map< std::string, std::function< void() > > commands;
   commands["graphs"] = std::bind(print_graphs, std::ref(std::cout), std::cref(graphs));
   commands["vertexes"] = std::bind(vertexes, std::ref(std::cin), std::ref(std::cout), std::cref(graphs));
@@ -58,7 +38,7 @@ int main(int argc, char* argv[])
     {
       commands.at(command)();
     }
-    catch(const std::exception& e)
+    catch (const std::exception&)
     {
       if (std::cin.fail())
       {
