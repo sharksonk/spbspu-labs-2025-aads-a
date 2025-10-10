@@ -19,8 +19,8 @@ int main(int argc, char* argv[])
     std::cerr << "INVALID FILE\n";
     return 1;
   }
-  std::map< std::string, kushekbaev::Graph > graphs;
-  kushekbaev::inputGraphs(file, graphs);
+  std::map< std::string, Graph > graphs;
+  inputGraphs(file, graphs);
   std::map< std::string, std::function< void() > > commands;
   commands["graphs"] = std::bind(print_graphs, std::ref(std::cout), std::cref(graphs));
   commands["vertexes"] = std::bind(vertexes, std::ref(std::cin), std::ref(std::cout), std::cref(graphs));
