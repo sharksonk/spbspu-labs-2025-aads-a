@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <sstream>
-#include <AVLtree.hpp>
+#include <common/avl_tree/AVLtree.hpp>
 
 namespace
 {
