@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE S5
 #include <boost/test/included/unit_test.hpp>
 #include <string>
-#include "AVLtree.hpp"
+#include <../common/avl_tree/AVLtree.hpp>
 
 using Tree = sharifullina::AVLtree< int, std::string >;
 
