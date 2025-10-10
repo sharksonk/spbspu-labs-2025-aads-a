@@ -564,7 +564,7 @@ namespace kushekbaev
     node_t* current = root_;
     node_t* parent = nullptr;
     bool isLeft = false;
-    while(current && current != fakeroot_)
+    while (current && current != fakeroot_)
     {
       parent = current;
       if (cmp_(key, current->data.first))
@@ -586,7 +586,6 @@ namespace kushekbaev
     if (!parent)
     {
       delete newNode;
-      throw std::logic_error("Parent is nullptr!");
     }
     newNode->parent = parent;
     if (isLeft)
