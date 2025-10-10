@@ -75,7 +75,27 @@ namespace
     std::cout << "\n";
   }
 
-  void interOperation(DictionaryStorage& storage, const std::string& args)
+  void complementOperation(DictionaryStorage& storage, const std::string& args)
+  {
+    size_t pos = 0;
+    std::string newName = readNextToken(args, pos);
+    std::string name1 = readNextToken(args, pos);
+    std::string name2 = readNextToken(args, pos);
+    const Dictionary& dict1 = storage.get(name1);
+    const Dictionary& dict2 = storage.get(name2);
+    Dictionary result;
+    for (auto it = dict1.cbegin(); it != dict1.cend(); ++it)
+    {
+      if (dict2.count(it->first) == 0)
+      {
+        result[it->first] = it->second;
+      }
+    }
+    storage[newName] = result;
+  }
+
+
+  void intersectOperation(DictionaryStorage& storage, const std::string& args)
   {
     size_t pos = 0;
     std::string newName = readNextToken(args, pos);
@@ -116,8 +136,8 @@ namespace
   void initializeCommands(guseynov::Tree< std::string, DicFunc, std::less< std::string > >& commands)
   {
     commands["print"] = std::bind(printDict, std::placeholders::_1, std::placeholders::_2);
-    commands["complement"] = std::bind(interOperation, std::placeholders::_1, std::placeholders::_2);
-    commands["intersect"] = std::bind(interOperation, std::placeholders::_1, std::placeholders::_2);
+    commands["complement"] = std::bind(complementOperation, std::placeholders::_1, std::placeholders::_2);
+    commands["intersect"] = std::bind(intersectOperation, std::placeholders::_1, std::placeholders::_2);
     commands["union"] = std::bind(unionOperation, std::placeholders::_1, std::placeholders::_2);
   }
 
