@@ -4,11 +4,11 @@
 
 namespace sharifullina
 {
-  struct keySum
+  struct Collector
   {
-    int key_sum;
+    int collector;
     std::string values;
-    keySum();
+    Collector();
     void operator()(const std::pair< int, std::string >& key_value);
   };
 }

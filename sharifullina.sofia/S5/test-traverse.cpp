@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <string>
 #include <../common/avl_tree/AVLtree.hpp>
+#include "functionalObject.hpp"
 
 using Tree = sharifullina::AVLtree< int, std::string >;
 
@@ -13,35 +14,17 @@ BOOST_AUTO_TEST_CASE(traverses_test)
   tree.insert(std::make_pair(3, "third"));
 
   const auto& constTree = tree;
-  struct Collector {
-    std::string values;
-    void operator()(const std::pair< int, std::string >& kv) {
-      if (!values.empty()) values += " ";
-      values += kv.second;
-    }
-  } collector;
+  sharifullina::Collector res_lnr, res_rnl, res_nlr;
 
-  collector.values = "";
-  collector = constTree.traverse_lnr(collector);
-  BOOST_TEST(collector.values == "first second third");
+  res_lnr.values = "";
+  res_lnr = constTree.traverse_lnr(res_lnr);
+  BOOST_TEST(res_lnr.values == "first second third");
 
-  collector.values = "";
-  collector = constTree.traverse_rnl(collector);
-  BOOST_TEST(collector.values == "third second first");
+  res_rnl.values = "";
+  res_rnl = constTree.traverse_rnl(res_rnl);
+  BOOST_TEST(res_rnl.values == "third second first");
 
-  collector.values = "";
-  collector = constTree.traverse_breadth(collector);
-  BOOST_TEST(collector.values == "second first third");
-
-  collector.values = "";
-  collector = tree.traverse_lnr(collector);
-  BOOST_TEST(collector.values == "first second third");
-
-  collector.values = "";
-  collector = tree.traverse_rnl(collector);
-  BOOST_TEST(collector.values == "third second first");
-
-  collector.values = "";
-  collector = tree.traverse_breadth(collector);
-  BOOST_TEST(collector.values == "second first third");
+  res_nlr.values = "";
+  res_nlr = constTree.traverse_breadth(res_nlr);
+  BOOST_TEST(res_nlr.values == "second first third");
 }

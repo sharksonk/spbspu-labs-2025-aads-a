@@ -19,15 +19,15 @@ namespace
   }
 }
 
-sharifullina::keySum::keySum():
-  key_sum(0),
+sharifullina::Collector::Collector():
+  collector(0),
   values()
 {}
 
-void sharifullina::keySum::operator()(const std::pair< int, std::string > & keyValue)
+void sharifullina::Collector::operator()(const std::pair< int, std::string > & keyValue)
 {
-  checkOverflow(key_sum, keyValue.first);
-  key_sum += keyValue.first;
+  checkOverflow(collector, keyValue.first);
+  collector += keyValue.first;
   if (!values.empty())
   {
     values += ' ';

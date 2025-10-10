@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     return 0;
   }
   std::string cmd = argv[1];
-  sharifullina::keySum obj;
+  sharifullina::Collector obj;
   try
   {
     if (cmd == "ascending")
@@ -55,11 +55,11 @@ int main(int argc, char* argv[])
       return 1;
     }
   }
-  catch(const std::exception& e)
+  catch (const std::exception& e)
   {
     std::cerr << e.what() << '\n';
     return 1;
   }
-  std::cout << obj.key_sum << " " << obj.values << "\n";
+  std::cout << obj.collector << " " << obj.values << "\n";
   return 0;
 }
