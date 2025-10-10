@@ -45,10 +45,10 @@ namespace kushekbaev
 
     Value& at(const Key& key);
     const Value& at(const Key& key) const;
-    Value& operator[](const Key& key);
-    const Value& operator[](const Key& key) const;
+    Value& operator[](const Key& key) noexcept;
+    const Value& operator[](const Key& key) const noexcept;
 
-    void clear() noexcept;
+    void clear();
 
     void swap(Tree& other);
 
@@ -328,7 +328,7 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  Value& Tree< Key, Value, Cmp >::operator[](const Key& key)
+  Value& Tree< Key, Value, Cmp >::operator[](const Key& key) noexcept
   {
     auto it = find(key);
     if (it == end())
@@ -340,14 +340,14 @@ namespace kushekbaev
   }
 
   template< typename Key, typename Value, typename Cmp >
-  const Value& Tree< Key, Value, Cmp >::operator[](const Key& key) const
+  const Value& Tree< Key, Value, Cmp >::operator[](const Key& key) const noexcept
   {
     auto it = find(key);
     return it->second;
   }
 
   template< typename Key, typename Value, typename Cmp >
-  void Tree< Key, Value, Cmp >::clear() noexcept
+  void Tree< Key, Value, Cmp >::clear()
   {
     killChildrenOf(root_);
     root_ = fakeroot_;
@@ -573,12 +573,12 @@ namespace kushekbaev
       fakeroot_->left = root_;
       fakeroot_->right = root_;
       ++size_;
-      return{ It(root_), true };
+      return { It(root_), true };
     }
     node_t* current = root_;
     node_t* parent = nullptr;
     bool isLeft = false;
-    while(current && current != fakeroot_)
+    while (current && current != fakeroot_)
     {
       parent = current;
       if (cmp_(key, current->data.first))
@@ -594,13 +594,12 @@ namespace kushekbaev
       else
       {
         delete newNode;
-        return{ It(current), false };
+        return { It(current), false };
       }
     }
     if (!parent)
     {
       delete newNode;
-      throw std::logic_error("Parent is nullptr!");
     }
     newNode->parent = parent;
     if (isLeft)
@@ -621,7 +620,7 @@ namespace kushekbaev
     }
     newNode->left = newNode->right = nullptr;
     ++size_;
-    return{ It(newNode), true };
+    return { It(newNode), true };
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -775,6 +774,7 @@ namespace kushekbaev
     }
     Stack< const node_t* > stack;
     const node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -784,10 +784,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->right;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -800,6 +800,7 @@ namespace kushekbaev
     }
     Stack< const node_t* > stack;
     const node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -809,10 +810,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->left;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -825,11 +826,12 @@ namespace kushekbaev
     }
     Queue< const node_t* > queue;
     queue.push(root_);
+    auto& tmp_f = f;
     while (!queue.empty())
     {
       const node_t* current = queue.front();
       queue.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
@@ -839,7 +841,7 @@ namespace kushekbaev
         queue.push(current->right);
       }
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -852,6 +854,7 @@ namespace kushekbaev
     }
     Stack< node_t* > stack;
     node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -861,10 +864,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->right;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -877,6 +880,7 @@ namespace kushekbaev
     }
     Stack< node_t* > stack;
     node_t* current = root_;
+    auto& tmp_f = f;
     while (current || !stack.empty())
     {
       while (current)
@@ -886,10 +890,10 @@ namespace kushekbaev
       }
       current = stack.top();
       stack.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       current = current->left;
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >
@@ -902,11 +906,12 @@ namespace kushekbaev
     }
     Queue< node_t* > queue;
     queue.push(root_);
+    auto& tmp_f = f;
     while (!queue.empty())
     {
       node_t* current = queue.front();
       queue.pop();
-      f = f(current->data);
+      tmp_f = f(current->data);
       if (current->left)
       {
         queue.push(current->left);
@@ -916,7 +921,7 @@ namespace kushekbaev
         queue.push(current->right);
       }
     }
-    return f;
+    return tmp_f;
   }
 
   template< typename Key, typename Value, typename Cmp >

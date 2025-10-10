@@ -1,7 +1,7 @@
 #include "ioutils.hpp"
 #include <iostream>
 
-void kushekbaev::splitExpr(const std::string& string, kushekbaev::Queue< std::string >& arithmeticQueue)
+void kushekbaev::splitExpr(const std::string& string, Queue< std::string >& arithmeticQueue)
 {
   std::string symbol;
   char delimiter = ' ';
@@ -16,7 +16,7 @@ void kushekbaev::splitExpr(const std::string& string, kushekbaev::Queue< std::st
   }
 }
 
-void kushekbaev::inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Queue< std::string > >& queue)
+void kushekbaev::inputExpr(std::istream& input, Queue< Queue< std::string > >& queue)
 {
   std::string string;
   kushekbaev::Queue< std::string > infixQueue;
@@ -32,7 +32,7 @@ void kushekbaev::inputExpr(std::istream& input, kushekbaev::Queue< kushekbaev::Q
   }
 }
 
-void kushekbaev::output(std::ostream& output, const kushekbaev::Stack< long long int >& results)
+void kushekbaev::output(std::ostream& output, const Stack< long long int >& results)
 {
   auto out_results = results;
   if (!out_results.empty())
