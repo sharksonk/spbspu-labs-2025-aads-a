@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <../common/avl_tree/AVLtree.hpp>
+#include <avl_tree/AVLtree.hpp>
 #include "functionalObject.hpp"
 
 int main(int argc, char* argv[])
