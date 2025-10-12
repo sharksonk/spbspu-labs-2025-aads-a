@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_CASE(ForwardTraversal)
   tree.push(3, "three");
   tree.push(4, "four");
   tree.push(5, "five");
-  auto it = tree.begin();
+  guseynov::Iterator< int, std::string, std::less< int > > it = tree.begin();
 
   BOOST_TEST((*it).first == 1);
   BOOST_TEST((*it).second == "one");
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(ReverseTraversal)
   tree.push(3, "three");
   tree.push(4, "four");
   tree.push(5, "five");
-  auto it = tree.end();
+  guseynov::Iterator< int, std::string, std::less< int > > it = tree.end();
   --it;
 
   BOOST_TEST((*it).first == 5);
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(EraseTest)
   tree.push(2, "two");
   tree.push(3, "three");
 
-  auto it = tree.find(2);
+  guseynov::Iterator< int, std::string, std::less< int > > it = tree.find(2);
   tree.erase(it);
   BOOST_TEST(tree.size() == 2);
 
