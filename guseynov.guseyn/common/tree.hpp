@@ -212,10 +212,10 @@ namespace guseynov
     {
       Iterator_t it = find(key);
       if (it != end())
-      {
-        erase(it);
-        return 1;
-      }
+       {
+         erase(it);
+         return 1;
+       }
       return 0;
     }
 
@@ -276,7 +276,15 @@ namespace guseynov
 
     Iterator_t find(const Key& key) noexcept
     {
-      return Iterator_t(find(getRoot(), key));
+      Node_t* node = find(getRoot(), key);
+      if (node != nullptr)
+      {
+        return Iterator_t(node);
+      }
+      else
+      {
+        return end();
+      }
     }
 
     ConstIterator_t find(const Key& key) const noexcept
