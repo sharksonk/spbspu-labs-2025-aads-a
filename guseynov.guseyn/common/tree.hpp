@@ -183,7 +183,7 @@ namespace guseynov
     template< typename InputIt >
     void insert(InputIt first, InputIt last)
     {
-      for (auto it = first; it != last; ++it)
+      for (InputIt it = first; it != last; ++it)
       {
         push(it->first, it->second);
       }
@@ -230,17 +230,12 @@ namespace guseynov
 
     Value& at(const Key& key)
     {
-      Node_t* node = find(getRoot(), key);
-      if (!node)
-      {
-        throw std::out_of_range("Key not found");
-      }
-      return node->data.second;
+      return const_cast< Value& >(static_cast< const Tree* >(this)->at(key));
     }
 
     const Value& at(const Key& key) const
     {
-      Node_t* node = find(getRoot(), key);
+      const Node_t* node = find(getRoot(), key);
       if (!node)
       {
         throw std::out_of_range("Key not found");
@@ -281,15 +276,7 @@ namespace guseynov
 
     Iterator_t find(const Key& key) noexcept
     {
-      Node_t* node = find(getRoot(), key);
-      if (node != nullptr)
-      {
-        return Iterator_t(node);
-      }
-      else
-      {
-        return end();
-      }
+      return Iterator_t(find(getRoot(), key));
     }
 
     ConstIterator_t find(const Key& key) const noexcept
@@ -307,7 +294,8 @@ namespace guseynov
 
     std::pair< Iterator_t, Iterator_t > equal_range(const Key& key) noexcept
     {
-      return { lower_bound(key), upper_bound(key) };
+      std::pair< ConstIterator_t, ConstIterator_t > constRange = static_cast< const Tree* >(this)->equal_range(key);
+      return { Iterator_t(const_cast< Node_t* >(constRange.first.current_) ), Iterator_t(const_cast< Node_t* >(constRange.second.current_)) };
     }
 
     std::pair< ConstIterator_t, ConstIterator_t > equal_range(const Key& key) const noexcept
@@ -317,7 +305,7 @@ namespace guseynov
 
     Iterator_t lower_bound(const Key& key) noexcept
     {
-      return const_cast<Iterator_t>(static_cast<const Tree*>(this)->lower_bound(key));
+      return Iterator_t(const_cast< Node_t* >(static_cast< const Tree* >(this)->lower_bound(key).current_));
     }
 
     ConstIterator_t lower_bound(const Key& key) const noexcept
@@ -348,7 +336,7 @@ namespace guseynov
 
     Iterator_t upper_bound(const Key& key) noexcept
     {
-      return const_cast<Iterator_t>(static_cast<const Tree*>(this)->upper_bound(key));
+      return Iterator_t(const_cast< Node_t* >(static_cast< const Tree* >(this)->upper_bound(key).current_));
     }
 
     ConstIterator_t upper_bound(const Key& key) const noexcept
