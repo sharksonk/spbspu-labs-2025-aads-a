@@ -216,7 +216,8 @@ BOOST_AUTO_TEST_CASE(RemoveNonexistentTest)
 {
   Tree tree;
   tree.push(1, "one");
-  BOOST_TEST(tree.erase(2) == 0);
+  size_t result = tree.erase(2);
+  BOOST_TEST(result == 0);
   BOOST_TEST(tree.size() == 1);
 }
 
