@@ -54,13 +54,15 @@ namespace hismatova
       }
     };
 
-    List(): list_size(0)
+    List():
+      list_size(0)
     {
       fake = new Node(T());
       fake->next = fake;
     }
 
-    List(std::initializer_list< T > ilist): List()
+    List(std::initializer_list< T > ilist):
+      List()
     {
       for (const auto& val: ilist)
       {
@@ -68,7 +70,8 @@ namespace hismatova
       }
     }
 
-    List(const List& other): List()
+    List(const List& other):
+      List()
     {
       for (auto it = other.begin(); it != other.end(); ++it)
       {
@@ -76,7 +79,9 @@ namespace hismatova
       }
     }
 
-    List(List&& other) noexcept: fake(other.fake), list_size(other.list_size)
+    List(List&& other) noexcept:
+      fake(other.fake),
+      list_size(other.list_size)
     {
       other.fake = nullptr;
       other.list_size = 0;
@@ -90,7 +95,7 @@ namespace hismatova
 
     List& operator=(const List& other)
     {
-      if (std::addressof(*this) != std::addressof(other))
+      if this != std::addressof(other))
       {
         clear();
         for (auto it = other.begin(); it != other.end(); ++it)
@@ -103,7 +108,7 @@ namespace hismatova
 
     List& operator=(List&& other) noexcept
     {
-      if (std::addressof(*this) != std::addressof(other))
+      if this != std::addressof(other))
       {
         clear();
         delete fake;
@@ -339,20 +344,22 @@ namespace hismatova
 
     void assign(size_t count, const T& value)
     {
-      clear();
+      List temp;
       for (size_t i = 0; i < count; ++i)
       {
-        push_back(value);
+        temp.push_back(value);
       }
+      swap(temp);
     }
 
     void assign(std::initializer_list< T > ilist)
     {
-      clear();
+      List temp;
       for (const auto& val: ilist)
       {
-        push_back(val);
+        temp.push_back(val);
       }
+      swap(temp);
     }
 
     void insert(iterator pos, const T& value)
