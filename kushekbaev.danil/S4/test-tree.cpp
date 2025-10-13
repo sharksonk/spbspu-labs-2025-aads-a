@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(moveConstructor)
   dataset_t src_tree;
   src_tree.insert(std::make_pair(1, "1"));
   src_tree.insert(std::make_pair(2, "2"));
-  auto src_tree_before = src_tree;
+  dataset_t src_tree_before = src_tree;
   dataset_t move_tree(std::move(src_tree));
   BOOST_TEST(printTree(move_tree) == "12");
   BOOST_TEST(move_tree.size() == 2);
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(atOp)
   first_tree.insert(std::make_pair(1, "1"));
   first_tree.insert(std::make_pair(2, "2"));
   first_tree.insert(std::make_pair(3, "3"));
-  auto tmp = first_tree.at(1);
+  std::string tmp = first_tree.at(1);
   BOOST_TEST(tmp == "1");
   BOOST_TEST(first_tree[2] == "2");
 }
