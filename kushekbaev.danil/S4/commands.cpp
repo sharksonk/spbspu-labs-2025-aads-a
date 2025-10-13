@@ -21,7 +21,7 @@ void kushekbaev::print(std::ostream& out, std::istream& in, const dict_t& dictio
     return;
   }
   kushekbaev::Vector< std::pair < size_t, std::string > > sorted;
-  for (const auto& elem: result)
+  for (const std::pair< size_t, std::string >& elem: result)
   {
     sorted.pushBack(elem);
   }

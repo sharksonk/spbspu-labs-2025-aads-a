@@ -74,7 +74,7 @@ namespace kushekbaev
     }
     else
     {
-      auto parent = node_->parent;
+      TreeNode< Key, Value, Cmp >* parent = node_->parent;
       while (parent != parent->parent && parent->right == node_)
       {
         node_ = parent;
@@ -106,7 +106,7 @@ namespace kushekbaev
     }
     else
     {
-      auto parent = node_->parent;
+      TreeNode< Key, Value, Cmp >* parent = node_->parent;
       while (node_->parent && node_->parent->left == node_)
       {
         node_ = parent;
