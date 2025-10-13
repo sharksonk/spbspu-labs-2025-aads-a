@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include "tree.hpp"
+#include <tree.hpp>
 
 using dataset_t = kushekbaev::Tree< size_t, std::string >;
 using dict_t = kushekbaev::Tree< std::string, dataset_t >;
