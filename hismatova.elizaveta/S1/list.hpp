@@ -95,7 +95,7 @@ namespace hismatova
 
     List& operator=(const List& other)
     {
-      if this != std::addressof(other))
+      if (this != std::addressof(other))
       {
         clear();
         for (auto it = other.begin(); it != other.end(); ++it)
@@ -108,7 +108,7 @@ namespace hismatova
 
     List& operator=(List&& other) noexcept
     {
-      if this != std::addressof(other))
+      if (this != std::addressof(other))
       {
         clear();
         delete fake;
