@@ -618,7 +618,7 @@ namespace kushekbaev
       return emplace(std::forward< Args >(args)...).first;
     }
     std::pair< Key, Value > newData(std::forward<Args>(args)...);
-    std::pair< Key, Value > newKey = newData.first;
+    auto newKey = newData.first;
     if (hint != cend())
     {
       auto hintKey = hint->first;
