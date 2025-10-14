@@ -3,7 +3,7 @@
 
 #include <istream>
 #include <string>
-#include <UBST.hpp>
+#include "UBST.hpp"
 
 namespace shramko
 {
@@ -11,4 +11,5 @@ namespace shramko
   using TreeOfTrees = UBstTree< std::string, BasicTree >;
   void inputTrees(TreeOfTrees & trees, std::istream & input);
 }
+
 #endif

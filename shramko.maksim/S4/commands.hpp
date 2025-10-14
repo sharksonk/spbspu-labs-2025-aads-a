@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include <UBST.hpp>
+#include "UBST.hpp"
 
 namespace shramko
 {
@@ -14,4 +14,5 @@ namespace shramko
   void intersect(TreeOfTrees & trees, std::istream & in, std::ostream & out);
   void unite(TreeOfTrees & trees, std::istream & in, std::ostream & out);
 }
+
 #endif

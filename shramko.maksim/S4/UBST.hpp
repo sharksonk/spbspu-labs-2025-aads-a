@@ -100,26 +100,28 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   UBstTree< Key, Value, Compare >& UBstTree< Key, Value, Compare >::operator=(const UBstTree& other)
   {
-    if (this != &other)
+    if (this == &other)
     {
-      UBstTree temp(other);
-      swap(temp);
+      return *this;
     }
+    UBstTree temp(other);
+    swap(temp);
     return *this;
   }
 
   template < typename Key, typename Value, typename Compare >
   UBstTree< Key, Value, Compare >& UBstTree< Key, Value, Compare >::operator=(UBstTree&& other) noexcept
   {
-    if (this != &other)
+    if (this == &other)
     {
-      clear();
-      root_ = other.root_;
-      size_ = other.size_;
-      comp_ = std::move(other.comp_);
-      other.root_ = nullptr;
-      other.size_ = 0;
+      return *this;
     }
+    clear();
+    root_ = other.root_;
+    size_ = other.size_;
+    comp_ = std::move(other.comp_);
+    other.root_ = nullptr;
+    other.size_ = 0;
     return *this;
   }
 
@@ -154,13 +156,13 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   Value& UBstTree< Key, Value, Compare >::operator[](const Key& key)
   {
-    Node< Key, Value >* found = findNode(root_, key);
-    if (found == nullptr)
+    Node< Key, Value >* node = findNode(root_, key);
+    if (!node)
     {
       root_ = insertNode(root_, key, Value(), nullptr, size_);
+      node = findNode(root_, key);
     }
-    found = findNode(root_, key);
-    return found->data.second;
+    return node->data.second;
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -173,7 +175,7 @@ namespace shramko
   Value& UBstTree< Key, Value, Compare >::at(const Key& key)
   {
     Node< Key, Value >* node = findNode(root_, key);
-    if (node == nullptr)
+    if (!node)
     {
       throw std::out_of_range("Key not found");
     }
@@ -184,7 +186,7 @@ namespace shramko
   const Value& UBstTree< Key, Value, Compare >::at(const Key& key) const
   {
     Node< Key, Value >* node = findNode(root_, key);
-    if (node == nullptr)
+    if (!node)
     {
       throw std::out_of_range("Key not found");
     }
@@ -192,36 +194,31 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
-  typename UBstTree< Key, Value, Compare >::const_iterator
-  UBstTree< Key, Value, Compare >::cbegin() const noexcept
+  typename UBstTree< Key, Value, Compare >::const_iterator UBstTree< Key, Value, Compare >::cbegin() const noexcept
   {
     return const_iterator(minNode(root_), this);
   }
 
   template < typename Key, typename Value, typename Compare >
-  typename UBstTree< Key, Value, Compare >::const_iterator
-  UBstTree< Key, Value, Compare >::cend() const noexcept
+  typename UBstTree< Key, Value, Compare >::const_iterator UBstTree< Key, Value, Compare >::cend() const noexcept
   {
-    return const_iterator(nullptr, this);
+    return const_iterator();
   }
 
   template < typename Key, typename Value, typename Compare >
-  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
-  UBstTree< Key, Value, Compare >::crbegin() const noexcept
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator UBstTree< Key, Value, Compare >::crbegin() const noexcept
   {
     return const_reverse_iterator(cend());
   }
 
   template < typename Key, typename Value, typename Compare >
-  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
-  UBstTree< Key, Value, Compare >::crend() const noexcept
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator UBstTree< Key, Value, Compare >::crend() const noexcept
   {
     return const_reverse_iterator(cbegin());
   }
 
   template < typename Key, typename Value, typename Compare >
-  typename UBstTree< Key, Value, Compare >::const_iterator
-  UBstTree< Key, Value, Compare >::find(const Key& key) const noexcept
+  typename UBstTree< Key, Value, Compare >::const_iterator UBstTree< Key, Value, Compare >::find(const Key& key) const noexcept
   {
     Node< Key, Value >* node = findNode(root_, key);
     return const_iterator(node, this);
