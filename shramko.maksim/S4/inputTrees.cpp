@@ -1,4 +1,5 @@
 #include "inputTrees.hpp"
+#include <limits>
 
 void shramko::inputTrees(TreeOfTrees & trees, std::istream & input)
 {
@@ -8,11 +9,11 @@ void shramko::inputTrees(TreeOfTrees & trees, std::istream & input)
   while (input >> dictName)
   {
     BasicTree tree;
-    while (input >> key >> value)
+    while (input.peek() != '\n' && input >> key >> value)
     {
       tree[key] = value;
     }
-    input.clear();
     trees[dictName] = tree;
+    input.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
   }
 }
