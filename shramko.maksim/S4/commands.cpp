@@ -21,7 +21,7 @@ namespace shramko
     out << "\n";
   }
 
-  void complement(TreeOfTrees& trees, std::istream& in, std::ostream& out)
+  void complement(TreeOfTrees& trees, std::istream& in, std::ostream&)
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
@@ -38,7 +38,7 @@ namespace shramko
     trees[newDict] = result;
   }
 
-  void intersect(TreeOfTrees& trees, std::istream& in, std::ostream& out)
+  void intersect(TreeOfTrees& trees, std::istream& in, std::ostream&)
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
@@ -55,7 +55,7 @@ namespace shramko
     trees[newDict] = result;
   }
 
-  void unite(TreeOfTrees& trees, std::istream& in, std::ostream& out)
+  void unite(TreeOfTrees& trees, std::istream& in, std::ostream&)
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
