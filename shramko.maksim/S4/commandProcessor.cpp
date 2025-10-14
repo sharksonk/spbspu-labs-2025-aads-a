@@ -10,5 +10,12 @@ void shramko::processCommand(TreeOfTrees & trees, const std::string & cmd, std::
   commandMap["complement"] = complement;
   commandMap["intersect"] = intersect;
   commandMap["union"] = unite;
-  commandMap.at(cmd)(trees, in, out);
+  try
+  {
+    commandMap.at(cmd)(trees, in, out);
+  }
+  catch (const std::out_of_range&)
+  {
+    out << "<INVALID COMMAND>\n";
+  }
 }
