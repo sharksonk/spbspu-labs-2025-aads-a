@@ -1,5 +1,6 @@
 #include "inputTrees.hpp"
 #include <limits>
+#include <iostream>
 
 void shramko::inputTrees(TreeOfTrees & trees, std::istream & input)
 {
