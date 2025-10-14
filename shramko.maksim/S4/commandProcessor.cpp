@@ -2,6 +2,7 @@
 #include "commands.hpp"
 #include <map>
 #include <functional>
+#include <stdexcept>
 
 void shramko::processCommand(TreeOfTrees & trees, const std::string & cmd, std::istream & in, std::ostream & out)
 {

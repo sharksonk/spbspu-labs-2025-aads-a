@@ -7,13 +7,7 @@ namespace shramko
   {
     std::string dictName;
     in >> dictName;
-    TreeOfTrees::const_iterator it = trees.find(dictName);
-    if (it == trees.cend())
-    {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
-    const BasicTree& tree = it->second;
+    const BasicTree& tree = trees.at(dictName);
     if (tree.empty())
     {
       out << "<EMPTY>\n";
@@ -31,17 +25,12 @@ namespace shramko
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
-    {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
+    const BasicTree& first = trees.at(firstDict);
+    const BasicTree& second = trees.at(secondDict);
     BasicTree result;
-    for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
+    for (BasicTree::const_iterator it = first.cbegin(); it != first.cend(); ++it)
     {
-      if (second_it->second.find(it->first) == second_it->second.cend())
+      if (second.find(it->first) == second.cend())
       {
         result[it->first] = it->second;
       }
@@ -53,17 +42,12 @@ namespace shramko
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
-    {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
+    const BasicTree& first = trees.at(firstDict);
+    const BasicTree& second = trees.at(secondDict);
     BasicTree result;
-    for (BasicTree::const_iterator it = first_it->second.cbegin(); it != first_it->second.cend(); ++it)
+    for (BasicTree::const_iterator it = first.cbegin(); it != first.cend(); ++it)
     {
-      if (second_it->second.find(it->first) != second_it->second.cend())
+      if (second.find(it->first) != second.cend())
       {
         result[it->first] = it->second;
       }
@@ -75,15 +59,10 @@ namespace shramko
   {
     std::string newDict, firstDict, secondDict;
     in >> newDict >> firstDict >> secondDict;
-    TreeOfTrees::const_iterator first_it = trees.find(firstDict);
-    TreeOfTrees::const_iterator second_it = trees.find(secondDict);
-    if (first_it == trees.cend() || second_it == trees.cend())
-    {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
-    BasicTree result = first_it->second;
-    for (BasicTree::const_iterator it = second_it->second.cbegin(); it != second_it->second.cend(); ++it)
+    const BasicTree& first = trees.at(firstDict);
+    const BasicTree& second = trees.at(secondDict);
+    BasicTree result = first;
+    for (BasicTree::const_iterator it = second.cbegin(); it != second.cend(); ++it)
     {
       if (result.find(it->first) == result.cend())
       {
