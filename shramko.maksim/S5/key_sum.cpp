@@ -4,7 +4,6 @@
 
 namespace shramko
 {
-
   void KeySum::operator()(const std::pair<const int, std::string>& value)
   {
     bool overflow = (value.first > 0 && result > std::numeric_limits< int >::max() - value.first);
