@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <UBST/UBST.hpp>
-
+#include <string>
+#include "UBST/UBST.hpp"
 #include "key_sum.hpp"
 
 int main(int argc, char* argv[])
@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  UBstTree<int, std::string> dict;
+  UBstTree< int, std::string > dict;
   int key = 0;
-  std::string value = "";
+  std::string value;
   while (file >> key >> value)
   {
     dict[key] = value;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   {
     std::cerr << "Error: " << e.what() << std::endl;
     return 1;
-  }
+  } 
   catch (const std::exception& e)
   {
     std::cerr << "Error: " << e.what() << std::endl;
@@ -74,5 +74,6 @@ int main(int argc, char* argv[])
     std::cout << " " << func.elems;
   }
   std::cout << std::endl;
+
   return 0;
 }
