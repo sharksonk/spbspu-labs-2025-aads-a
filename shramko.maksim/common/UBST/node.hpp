@@ -21,4 +21,5 @@ namespace shramko
     {}
   };
 }
+
 #endif

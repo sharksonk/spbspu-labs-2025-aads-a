@@ -11,4 +11,5 @@ namespace shramko
   using TreeOfTrees = UBstTree< std::string, BasicTree >;
   void inputTrees(TreeOfTrees & trees, std::istream & input);
 }
+
 #endif

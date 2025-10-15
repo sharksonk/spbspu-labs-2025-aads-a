@@ -10,21 +10,23 @@ namespace shramko
   class UBstTree;
 
   template < typename Key, typename Value, typename Compare = std::less< Key > >
-  class ConstIterator
+  class ConstIterator: public std::iterator< std::bidirectional_iterator_tag, std::pair< const Key, Value >,
+    std::ptrdiff_t, const std::pair< const Key, Value >*, const std::pair< const Key, Value >& >
   {
   public:
-    using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::pair< const Key, Value >;
     using difference_type = std::ptrdiff_t;
     using pointer = const value_type*;
     using reference = const value_type&;
 
     ConstIterator():
-      node_(nullptr)
+      node_(nullptr),
+      tree_(nullptr)
     {}
 
-    explicit ConstIterator(Node< Key, Value >* node):
-      node_(node)
+    explicit ConstIterator(Node< Key, Value >* node, const UBstTree< Key, Value, Compare >* tree = nullptr):
+      node_(node),
+      tree_(tree)
     {}
 
     reference operator*() const
@@ -68,22 +70,27 @@ namespace shramko
 
     ConstIterator& operator--()
     {
-      if (node_)
+      if (!node_)
       {
-        if (node_->left)
+        if (tree_)
         {
-          node_ = maxNode(node_->left);
+          node_ = tree_->maxNode(tree_->root_);
         }
-        else
+        return *this;
+      }
+      if (node_->left)
+      {
+        node_ = maxNode(node_->left);
+      }
+      else
+      {
+        Node< Key, Value >* parent = node_->parent;
+        while (parent && node_ == parent->left)
         {
-          Node< Key, Value >* parent = node_->parent;
-          while (parent && node_ == parent->left)
-          {
-            node_ = parent;
-            parent = parent->parent;
-          }
           node_ = parent;
+          parent = parent->parent;
         }
+        node_ = parent;
       }
       return *this;
     }
@@ -108,6 +115,7 @@ namespace shramko
   private:
     friend class UBstTree< Key, Value, Compare >;
     Node< Key, Value >* node_;
+    const UBstTree< Key, Value, Compare >* tree_;
 
     Node< Key, Value >* minNode(Node< Key, Value >* node) const
     {

@@ -1,25 +1,21 @@
 #include "commandProcessor.hpp"
 #include "commands.hpp"
+#include <map>
+#include <functional>
+#include <stdexcept>
 
 void shramko::processCommand(TreeOfTrees & trees, const std::string & cmd, std::istream & in, std::ostream & out)
 {
-  if (cmd == "print")
+  std::map< std::string, std::function< void(TreeOfTrees&, std::istream&, std::ostream&) > > commandMap;
+  commandMap["print"] = print;
+  commandMap["complement"] = complement;
+  commandMap["intersect"] = intersect;
+  commandMap["union"] = unite;
+  try
   {
-    print(trees, in, out);
+    commandMap.at(cmd)(trees, in, out);
   }
-  else if (cmd == "complement")
-  {
-    complement(trees, in, out);
-  }
-  else if (cmd == "intersect")
-  {
-    intersect(trees, in, out);
-  }
-  else if (cmd == "union")
-  {
-    unite(trees, in, out);
-  }
-  else
+  catch (const std::out_of_range&)
   {
     out << "<INVALID COMMAND>\n";
   }
