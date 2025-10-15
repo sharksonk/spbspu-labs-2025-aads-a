@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "UBST.hpp"
+#include <UBST/UBST.hpp>
 
 #include "key_sum.hpp"
 
