@@ -29,6 +29,12 @@ int main(int argc, char* argv[])
     dict[key] = value;
   }
 
+  if (file.fail())
+  {
+    std::cerr << "Error: overflow" << std::endl;
+    return 1;
+  }
+
   if (dict.empty())
   {
     std::cout << "<EMPTY>" << std::endl;
