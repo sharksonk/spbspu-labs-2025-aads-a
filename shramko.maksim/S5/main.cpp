@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
+#include <functional>
 #include "UBST/UBST.hpp"
 #include "key_sum.hpp"
 
@@ -54,25 +56,29 @@ int main(int argc, char* argv[])
 
   std::string command = argv[1];
   KeySum func;
+
+  std::map<std::string, std::function< KeySum(UBstTree< int, std::string >&, KeySum) > > commandMap;
+  commandMap["ascending"] = [](UBstTree< int, std::string >& t, KeySum f)
+  {
+    return t.traverse_lnr(f);
+  };
+  commandMap["descending"] = [](UBstTree< int, std::string >& t, KeySum f)
+  {
+    return t.traverse_rnl(f);
+  };
+  commandMap["breadth"] = [](UBstTree< int, std::string >& t, KeySum f)
+  {
+    return t.traverse_breadth(f);
+  };
+
   try
   {
-    if (command == "ascending")
-    {
-      func = dict.traverse_lnr(func);
-    }
-    else if (command == "descending")
-    {
-      func = dict.traverse_rnl(func);
-    }
-    else if (command == "breadth")
-    {
-      func = dict.traverse_breadth(func);
-    }
-    else
-    {
-      std::cerr << "Invalid command" << std::endl;
-      return 1;
-    }
+    func = commandMap.at(command)(dict, func);
+  }
+  catch (const std::out_of_range&)
+  {
+    std::cerr << "Invalid command" << std::endl;
+    return 1;
   }
   catch (const std::overflow_error& e)
   {
