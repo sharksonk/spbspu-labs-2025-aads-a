@@ -22,10 +22,27 @@ int main(int argc, char* argv[])
   }
 
   UBstTree< int, std::string > dict;
-  int key = 0;
+  int key;
   std::string value;
-  while (file >> key >> value)
+  while (true)
   {
+    if (!(file >> key))
+    {
+      if (file.eof())
+      {
+        break;
+      }
+      else
+      {
+        std::cerr << "Error: overflow" << std::endl;
+        return 1;
+      }
+    }
+    if (!(file >> value))
+    {
+      std::cerr << "Error: overflow" << std::endl;
+      return 1;
+    }
     dict[key] = value;
   }
 
