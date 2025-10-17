@@ -1,7 +1,7 @@
 #include "key_summer.hpp"
 
 guseynov::KeySummer::KeySummer():
-  result_(0),
+  result_(0)
 {}
 
 void guseynov::KeySummer::operator()(const std::pair< const long long, std::string >& key_value)
