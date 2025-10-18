@@ -225,7 +225,7 @@ void kushekbaev::search(std::ostream& out, std::istream& in, dictionary_system& 
     throw std::out_of_range("<WORD NOT FOUND>");
   }
   auto& translations = word_it->second;
-  out << word_it->first << std::string(" ") << *translations.begin();
+  out << word_it->first << " " << *translations.begin();
   auto translation_it = translations.begin();
   ++translation_it;
   for (; translation_it != translations.end(); ++translation_it)
