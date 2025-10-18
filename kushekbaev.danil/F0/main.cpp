@@ -50,7 +50,7 @@ int main()
     {
       commands.at(command)();
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
       std::cout << e.what() << "\n";
       std::cin.clear();

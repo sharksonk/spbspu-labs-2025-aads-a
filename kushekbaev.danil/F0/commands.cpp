@@ -18,9 +18,15 @@ namespace
       bool operator()(std::string& token)
       {
         size_t start = line.find_first_not_of(" \t", pos);
-        if (start == std::string::npos) return false;
+        if (start == std::string::npos)
+        {
+          return false;
+        }
         size_t end = line.find_first_of(" \t", start);
-        if (end == std::string::npos) end = line.size();
+        if (end == std::string::npos)
+        {
+          end = line.size();
+        }
         token = line.substr(start, end - start);
         pos = end;
         return true;
@@ -47,7 +53,7 @@ void kushekbaev::insert(std::ostream& out, std::istream& in, dictionary_system& 
     throw std::logic_error("<THIS TRANSLATION ALREADY EXISTS>");
   }
   translation_set.insert(inputed_translation);
-  out << std::string("Translation inserted successfully.\n");
+  out << "Translation inserted successfully.\n";
 }
 
 void kushekbaev::insert_without_translation(std::ostream& out, std::istream& in, dictionary_system& current_dictionary_system)
@@ -66,7 +72,7 @@ void kushekbaev::print(std::ostream& out, std::istream& in, dictionary_system& c
   auto dict_it = current_dictionary_system.find(dictionary_name);
   if (dict_it == current_dictionary_system.end())
   {
-      throw std::out_of_range("<DICTIONARY NOT FOUND>");
+    throw std::out_of_range("<DICTIONARY NOT FOUND>");
   }
   auto& word_map = dict_it->second;
   out << "In " << dictionary_name << ":\n";
@@ -224,7 +230,7 @@ void kushekbaev::search(std::ostream& out, std::istream& in, dictionary_system& 
   ++translation_it;
   for (; translation_it != translations.end(); ++translation_it)
   {
-    out << std::string(" ") << *translation_it;
+    out << " " << *translation_it;
   }
 }
 
@@ -269,7 +275,7 @@ void kushekbaev::reverse_search(std::ostream& out, std::istream& in, dictionary_
     out << "Words with translation *" << translation_to_find << "*: " << matching_words[0];
     for (size_t i = 1; i < matching_words.size(); ++i)
     {
-      out << std::string(", ") << matching_words[i];
+      out << ", " << matching_words[i];
     }
     out << "\n";
   }
@@ -333,6 +339,7 @@ void kushekbaev::remove_translation_at_all(std::ostream& out, std::istream& in, 
   }
   out << "Removed " << removed_count << " instances of translation '" << translation_to_delete << ".'\n";
 }
+
 void kushekbaev::delete_all_translations(std::ostream& out, std::istream& in, dictionary_system& current_dictionary_system)
 {
   std::string dictionary_name, translation_to_delete;
@@ -384,10 +391,12 @@ void kushekbaev::prefix_search(std::ostream& out, std::istream& in, dictionary_s
     {
       out << "-> " << word << " : ";
       const auto& translations = word_pair.second;
-      for (auto it = translations.begin(); it != translations.end(); ++it)
+      out << *translations.begin();
+      auto start_it = translations.begin();
+      ++start_it;
+      for (auto it = start_it; it != translations.end(); ++it)
       {
-        if (it != translations.begin()) out << ", ";
-        out << *it;
+        out << ", " << *it;
       }
       out << "\n";
       found = true;
@@ -417,10 +426,12 @@ void kushekbaev::no_prefix_search(std::ostream& out, std::istream& in, dictionar
     {
       out << "-> " << word << " : ";
       const auto& translations = word_pair.second;
-      for (auto it = translations.begin(); it != translations.end(); ++it)
+      out << *translations.begin();
+      auto start_it = translations.begin();
+      ++start_it;
+      for (auto it = start_it; it != translations.end(); ++it)
       {
-        if (it != translations.begin()) out << ", ";
-        out << *it;
+        out << ", " << *it;
       }
       out << "\n";
       found = true;
@@ -450,10 +461,12 @@ void kushekbaev::suffix_search(std::ostream& out, std::istream& in, dictionary_s
     {
       out << "-> " << word << " : ";
       const auto& translations = word_pair.second;
-      for (auto it = translations.begin(); it != translations.end(); ++it)
+      out << *translations.begin();
+      auto start_it = translations.begin();
+      ++start_it;
+      for (auto it = start_it; it != translations.end(); ++it)
       {
-        if (it != translations.begin()) out << ", ";
-        out << *it;
+        out << ", " << *it;
       }
       out << "\n";
       found = true;
@@ -482,10 +495,12 @@ void kushekbaev::no_suffix_search(std::ostream& out, std::istream& in, dictionar
     {
       out << "-> " << word << " : ";
       const auto& translations = word_pair.second;
-      for (auto it = translations.begin(); it != translations.end(); ++it)
+      out << *translations.begin();
+      auto start_it = translations.begin();
+      ++start_it;
+      for (auto it = start_it; it != translations.end(); ++it)
       {
-        if (it != translations.begin()) out << ", ";
-        out << *it;
+        out << ", " << *it;
       }
       out << "\n";
       found = true;
