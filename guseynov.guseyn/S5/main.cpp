@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "commands.hpp"
+#include "tree.hpp"
 #include "key_summer.hpp"
 
 int main(int argc, char* argv[])
@@ -32,22 +32,26 @@ int main(int argc, char* argv[])
     return 0;
   }
   guseynov::KeySummer summer;
-  guseynov::CommandTree commands;
-  guseynov::getCommands(commands, tree, summer);
   try
   {
-    auto command = commands.find(mode);
-    if (command != commands.end())
+    if (mode == "ascending")
     {
-      summer.reset();
-      command->second();
-      std::cout << summer.result_ << " " << summer.values_ << "\n";
+      tree.traverse_lnr(summer);
+    }
+    else if (mode == "descending")
+    {
+      tree.traverse_rnl(summer);
+    }
+    else if (mode == "breadth")
+    {
+      tree.traverse_breadth(summer);
     }
     else
     {
       std::cerr << "Invalid mode\n";
       return 1;
     }
+    std::cout << summer.result_ << " " << summer.values_ << "\n";
   }
   catch (const std::exception& e)
   {

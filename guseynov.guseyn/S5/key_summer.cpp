@@ -21,9 +21,3 @@ void guseynov::KeySummer::operator()(const std::pair< const long long, std::stri
   }
   values_ += key_value.second;
 }
-
-void guseynov::KeySummer::reset()
-{
-  result_ = 0;
-  values_.clear();
-}
