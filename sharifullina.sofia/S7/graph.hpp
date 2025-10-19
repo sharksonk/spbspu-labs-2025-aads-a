@@ -44,8 +44,9 @@ namespace sharifullina
     std::vector< std::pair< std::string, std::vector< int > > > getInbound(const std::string & vertex) const;
     void merge(const Graph & graph);
     void extract(const Graph & graph, const std::set< std::string > & extractVertexes);
+    private:
     std::set< std::string > vertexes;
-    HashTable< graph_t, std::vector< int >, detail::PairHash1, detail::PairHash2, std::equal_to< graph_t > > edges;
+    HashTable< std::pair< std::string, std::string >, std::vector< int >, detail::PairHash1, detail::PairHash2 > edges;
   };
 }
 #endif
