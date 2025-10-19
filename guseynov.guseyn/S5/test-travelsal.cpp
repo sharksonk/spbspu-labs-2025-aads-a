@@ -58,8 +58,8 @@ BOOST_AUTO_TEST_CASE(empty_tree_traversal)
 
 BOOST_AUTO_TEST_CASE(overflow_protection_test)
 {
-  guseynov::Tree< int, std::string, std::less<int> > tree;
-  tree.insert({std::numeric_limits<int>::max(), "max"});
+  guseynov::Tree< long long, std::string, std::less<long long> > tree;
+  tree.insert({std::numeric_limits<long long>::max(), "max"});
   tree.insert({1, "one"});
   guseynov::KeySummer collector;
   BOOST_CHECK_THROW(tree.traverse_lnr(collector), std::overflow_error);
@@ -67,8 +67,8 @@ BOOST_AUTO_TEST_CASE(overflow_protection_test)
 
 BOOST_AUTO_TEST_CASE(underflow_protection_test)
 {
-  guseynov::Tree< int, std::string, std::less<int> > tree;
-  tree.insert({std::numeric_limits<int>::min(), "min"});
+  guseynov::Tree< long long, std::string, std::less<long long> > tree;
+  tree.insert({std::numeric_limits<long long>::min(), "min"});
   tree.insert({-1, "negative"});
   guseynov::KeySummer collector;
   BOOST_CHECK_THROW(tree.traverse_lnr(collector), std::underflow_error);
