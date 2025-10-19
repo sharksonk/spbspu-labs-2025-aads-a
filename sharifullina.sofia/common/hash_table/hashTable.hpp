@@ -5,7 +5,7 @@
 #include "iterator.hpp"
 #include "hashNode.hpp"
 
-namespace sharifullina
+namespace sharifullina::detail
 {
   namespace detail
   {
