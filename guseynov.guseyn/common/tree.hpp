@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
+#include <stack>
+#include <queue>
 #include "iterator.hpp"
 #include "cIterator.hpp"
 
@@ -371,6 +373,80 @@ namespace guseynov
       {
         return cend();
       }
+    }
+
+    template< typename F >
+    F& traverse_lnr(F& f) const
+    {
+      if (empty())
+      {
+        return f;
+      }
+      std::stack< const Node_t* > stack;
+      const Node_t* current = getRoot();
+      while (current != nullptr || !stack.empty())
+      {
+        while (current != nullptr)
+        {
+          stack.push(current);
+          current = current->left;
+        }
+        current = stack.top();
+        stack.pop();
+        f(current->data);
+        current = current->right;
+      }
+      return f;
+    }
+
+    template< typename F >
+    F& traverse_rnl(F& f) const
+    {
+      if (empty())
+      {
+        return f;
+      }
+      std::stack< const Node_t* > stack;
+      const Node_t* current = getRoot();
+      while (current != nullptr || !stack.empty())
+      {
+        while (current != nullptr)
+        {
+          stack.push(current);
+          current = current->right;
+        }
+        current = stack.top();
+        stack.pop();
+        f(current->data);
+        current = current->left;
+      }
+      return f;
+    }
+
+    template< typename F >
+    F& traverse_breadth(F& f) const
+    {
+      if (empty())
+      {
+        return f;
+      }
+      std::queue< const Node_t* > queue;
+      queue.push(getRoot());
+      while (!queue.empty())
+      {
+        const Node_t* current = queue.front();
+        queue.pop();
+        f(current->data);
+        if (current->left)
+        {
+          queue.push(current->left);
+        }
+        if (current->right)
+        {
+          queue.push(current->right);
+        }
+      }
+      return f;
     }
 
   private:
