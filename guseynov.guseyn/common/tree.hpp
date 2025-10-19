@@ -376,7 +376,7 @@ namespace guseynov
     }
 
     template< typename F >
-    F traverse_lnr(F f) const
+    F& traverse_lnr(F& f) const
     {
       if (empty())
       {
@@ -400,7 +400,7 @@ namespace guseynov
     }
 
     template< typename F >
-    F traverse_rnl(F f) const
+    F& traverse_rnl(F& f) const
     {
       if (empty())
       {
@@ -424,7 +424,7 @@ namespace guseynov
     }
 
     template< typename F >
-    F traverse_breadth(F f) const
+    F& traverse_breadth(F& f) const
     {
       if (empty())
       {
