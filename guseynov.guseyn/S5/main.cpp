@@ -39,8 +39,9 @@ int main(int argc, char* argv[])
     auto command = commands.find(mode);
     if (command != commands.end())
     {
+      summer.reset();
       command->second();
-      std::cout << summer.result_ << summer.values_ << "\n";
+      std::cout << summer.result_ << " " << summer.values_ << "\n";
     }
     else
     {

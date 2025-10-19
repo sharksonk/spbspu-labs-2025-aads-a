@@ -15,6 +15,7 @@ namespace guseynov
 
     KeySummer();
     void operator()(const std::pair< const long long, std::string >& key_value);
+    void reset();
   };
 }
 

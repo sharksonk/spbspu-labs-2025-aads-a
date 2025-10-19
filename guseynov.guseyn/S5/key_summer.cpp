@@ -1,7 +1,8 @@
 #include "key_summer.hpp"
 
 guseynov::KeySummer::KeySummer():
-  result_(0)
+  result_(0),
+  values_("")
 {}
 
 void guseynov::KeySummer::operator()(const std::pair< const long long, std::string >& key_value)
@@ -12,7 +13,7 @@ void guseynov::KeySummer::operator()(const std::pair< const long long, std::stri
   }
   if (key_value.first < 0 && result_ < std::numeric_limits< long long >::min() - key_value.first)
   {
-    throw std::overflow_error("Key sum overflow");
+    throw std::underflow_error("Key sum underflow");
   }
   result_ += key_value.first;
   if (!values_.empty())
@@ -20,4 +21,10 @@ void guseynov::KeySummer::operator()(const std::pair< const long long, std::stri
     values_ += " ";
   }
   values_ += key_value.second;
+}
+
+void guseynov::KeySummer::reset()
+{
+  result_ = 0;
+  values_.clear();
 }

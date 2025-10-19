@@ -14,27 +14,27 @@ namespace guseynov
   template< class F >
   void ascending(DataTree& tree, F& f)
   {
-    f = tree.traverse_lnr(f);
+    tree.traverse_lnr(f);
   }
 
   template< class F >
   void descending(DataTree& tree, F& f)
   {
-    f = tree.traverse_rnl(f);
+    tree.traverse_rnl(f);
   }
 
   template< class F >
   void breadth(DataTree& tree, F& f)
   {
-    f = tree.traverse_breadth(f);
+    tree.traverse_breadth(f);
   }
 
   template< class F >
   void getCommands(CommandTree& commands, DataTree& tree, F& f)
   {
-    commands.insert(std::make_pair("ascending", std::bind(ascending< F >, std::ref(tree), std::ref(f))));
-    commands.insert(std::make_pair("descending", std::bind(descending< F >, std::ref(tree), std::ref(f))));
-    commands.insert(std::make_pair("breadth", std::bind(breadth< F >, std::ref(tree), std::ref(f))));
+    commands.insert(std::make_pair("ascending", [&tree, &f]() { ascending(tree, f); }));
+    commands.insert(std::make_pair("descending", [&tree, &f]() { descending(tree, f); }));
+    commands.insert(std::make_pair("breadth", [&tree, &f]() { breadth(tree, f); }));
   }
 }
 
