@@ -19,39 +19,43 @@ namespace
 
 void shramko::Graph::extract(const Graph& graph, const std::set< std::string >& extractVertexes)
 {
+  Graph temp;
   for (auto it = extractVertexes.cbegin(); it != extractVertexes.cend(); ++it)
   {
-    add_vertex(*it);
+    temp.add_vertex(*it);
   }
 
   for (auto it = graph.edges.cbegin(); it != graph.edges.cend(); ++it)
   {
     const auto vertexes = it->first;
 
-    if (has_vertex(vertexes.first) && has_vertex(vertexes.second))
+    if (temp.has_vertex(vertexes.first) && temp.has_vertex(vertexes.second))
     {
       for (auto itWeight = it->second.cbegin(); itWeight != it->second.cend(); ++itWeight)
       {
-        add_edge(vertexes.first, vertexes.second, *itWeight);
+        temp.add_edge(vertexes.first, vertexes.second, *itWeight);
       }
     }
   }
+  *this = std::move(temp);
 }
 
 void shramko::Graph::merge(const Graph& graph)
 {
+  Graph temp(*this);
+  for (auto it = graph.vertexes.cbegin(); it != graph.vertexes.cend(); ++it)
+  {
+    temp.add_vertex(*it);
+  }
+
   for (auto it = graph.edges.cbegin(); it != graph.edges.cend(); ++it)
   {
     for (auto itWeight = it->second.cbegin(); itWeight != it->second.cend(); ++itWeight)
     {
-      add_edge(it->first.first, it->first.second, *itWeight);
+      temp.add_edge(it->first.first, it->first.second, *itWeight);
     }
   }
-
-  for (auto it = graph.vertexes.cbegin(); it != graph.vertexes.cend(); ++it)
-  {
-    add_vertex(*it);
-  }
+  *this = std::move(temp);
 }
 
 void shramko::Graph::add_vertex(const std::string& v)
@@ -86,16 +90,19 @@ bool shramko::Graph::has_edge(const std::string& v1, const std::string& v2, int 
 
 void shramko::Graph::add_edge(const std::string& v1, const std::string& v2, int weight)
 {
-  edges[{v1, v2}].push_back(weight);
-  vertexes.insert(v1);
-  vertexes.insert(v2);
+  Graph temp(*this);
+  temp.edges[{v1, v2}].push_back(weight);
+  temp.vertexes.insert(v1);
+  temp.vertexes.insert(v2);
+  *this = std::move(temp);
 }
 
 void shramko::Graph::delete_edge(const std::string& v1, const std::string& v2, int weight)
 {
-  auto it = edges.find({v1, v2});
+  Graph temp(*this);
+  auto it = temp.edges.find({v1, v2});
 
-  if (it == edges.end())
+  if (it == temp.edges.end())
   {
     throw std::logic_error("ERROR: there is no such edge");
   }
@@ -124,8 +131,9 @@ void shramko::Graph::delete_edge(const std::string& v1, const std::string& v2, i
 
   if (weights.empty())
   {
-    edges.erase(it);
+    temp.edges.erase(it);
   }
+  *this = std::move(temp);
 }
 
 std::vector< std::string > shramko::Graph::get_vertexes() const
