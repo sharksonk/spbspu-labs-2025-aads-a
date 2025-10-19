@@ -33,6 +33,7 @@ namespace sharifullina
 {
   struct Graph
   {
+    using graph_t = std::pair< std::string, std::string >;
     void addEdge(const std::string & v1, const std::string & v2, int weight);
     void addVertex(const std::string & v);
     void deleteEdge(const std::string & v1, const std::string & v2, int weight);
@@ -44,7 +45,7 @@ namespace sharifullina
     void merge(const Graph & graph);
     void extract(const Graph & graph, const std::set< std::string > & extractVertexes);
     std::set< std::string > vertexes;
-    HashTable< std::pair< std::string, std::string >, std::vector< int >, detail::PairHash1, detail::PairHash2, std::equal_to< std::pair< std::string, std::string > > > edges;
+    HashTable< graph_t, std::vector< int >, detail::PairHash1, detail::PairHash2, std::equal_to< graph_t > > edges;
   };
 }
 #endif
