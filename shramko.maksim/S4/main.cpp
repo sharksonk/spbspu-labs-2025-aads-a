@@ -26,4 +26,5 @@ int main(int argc, char** argv)
     processCommand(trees, command, std::cin, std::cout);
     std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
   }
+  return 0;
 }

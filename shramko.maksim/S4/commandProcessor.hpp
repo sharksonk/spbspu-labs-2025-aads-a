@@ -8,4 +8,5 @@ namespace shramko
 {
   void processCommand(TreeOfTrees & trees, const std::string & cmd, std::istream & in, std::ostream & out);
 }
+
 #endif

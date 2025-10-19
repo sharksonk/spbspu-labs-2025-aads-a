@@ -3,9 +3,9 @@
 
 #include <cstddef>
 #include <stdexcept>
-#include <vector>
 #include <stack>
 #include <queue>
+#include <new>
 #include "node.hpp"
 #include "constiterator.hpp"
 
@@ -16,6 +16,7 @@ namespace shramko
   {
   public:
     using const_iterator = ConstIterator< Key, Value, Compare >;
+    using const_reverse_iterator = std::reverse_iterator< const_iterator >;
 
     UBstTree();
     UBstTree(const UBstTree& other);
@@ -35,6 +36,8 @@ namespace shramko
 
     const_iterator cbegin() const noexcept;
     const_iterator cend() const noexcept;
+    const_reverse_iterator crbegin() const noexcept;
+    const_reverse_iterator crend() const noexcept;
     const_iterator find(const Key& key) const noexcept;
 
     template < typename F >
@@ -46,6 +49,8 @@ namespace shramko
     template < typename F >
     F traverse_breadth(F f) const;
 
+    friend class ConstIterator< Key, Value, Compare >;
+
   private:
     Node< Key, Value >* root_;
     size_t size_;
@@ -53,12 +58,14 @@ namespace shramko
 
     void clearNode(Node< Key, Value >* node);
 
-    Node< Key, Value >* insertNode(Node< Key, Value >* node,
-      const Key& key, const Value& value, Node< Key, Value >* parent, size_t& size);
+    Node< Key, Value >* insertNode(Node< Key, Value >* node, const Key& key,
+                                   const Value& value, Node< Key, Value >* parent, size_t& size);
 
-    Node< Key, Value >* findNode(Node< Key, Value >* node, const Key& key) const;
+    Node< Key, Value >* findNode(Node< Key, Value >* node, const Key& key);
+    const Node< Key, Value >* findNode(const Node< Key, Value >* node, const Key& key) const;
 
-    Node< Key, Value >* minNode(Node< Key, Value >* node) const;
+    const Node< Key, Value >* minNode(const Node< Key, Value >* node) const;
+    const Node< Key, Value >* maxNode(const Node< Key, Value >* node) const;
 
     void copyTree(Node< Key, Value >*& node, Node< Key, Value >* otherNode, Node< Key, Value >* parent);
   };
@@ -76,8 +83,15 @@ namespace shramko
     size_(0),
     comp_(other.comp_)
   {
-    copyTree(root_, other.root_, nullptr);
-    size_ = other.size_;
+    try
+    {
+      copyTree(root_, other.root_, nullptr);
+    }
+    catch (std::bad_alloc&)
+    {
+      clear();
+      throw;
+    }
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -99,26 +113,28 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   UBstTree< Key, Value, Compare >& UBstTree< Key, Value, Compare >::operator=(const UBstTree& other)
   {
-    if (this != &other)
+    if (this == &other)
     {
-      UBstTree temp(other);
-      swap(temp);
+      return *this;
     }
+    UBstTree temp(other);
+    swap(temp);
     return *this;
   }
 
   template < typename Key, typename Value, typename Compare >
   UBstTree< Key, Value, Compare >& UBstTree< Key, Value, Compare >::operator=(UBstTree&& other) noexcept
   {
-    if (this != &other)
+    if (this == &other)
     {
-      clear();
-      root_ = other.root_;
-      size_ = other.size_;
-      comp_ = std::move(other.comp_);
-      other.root_ = nullptr;
-      other.size_ = 0;
+      return *this;
     }
+    clear();
+    root_ = other.root_;
+    size_ = other.size_;
+    comp_ = std::move(other.comp_);
+    other.root_ = nullptr;
+    other.size_ = 0;
     return *this;
   }
 
@@ -165,12 +181,7 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   const Value& UBstTree< Key, Value, Compare >::operator[](const Key& key) const
   {
-    Node< Key, Value >* node = findNode(root_, key);
-    if (!node)
-    {
-      throw std::out_of_range("Key not found");
-    }
-    return node->data.second;
+    return at(key);
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -187,7 +198,7 @@ namespace shramko
   template < typename Key, typename Value, typename Compare >
   const Value& UBstTree< Key, Value, Compare >::at(const Key& key) const
   {
-    Node< Key, Value >* node = findNode(root_, key);
+    const Node< Key, Value >* node = findNode(root_, key);
     if (!node)
     {
       throw std::out_of_range("Key not found");
@@ -199,22 +210,36 @@ namespace shramko
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::cbegin() const noexcept
   {
-    return const_iterator(minNode(root_));
+    return const_iterator(minNode(root_), this);
   }
 
   template < typename Key, typename Value, typename Compare >
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::cend() const noexcept
   {
-    return const_iterator(nullptr);
+    return const_iterator(nullptr, this);
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
+  UBstTree< Key, Value, Compare >::crbegin() const noexcept
+  {
+    return const_reverse_iterator(cend());
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  typename UBstTree< Key, Value, Compare >::const_reverse_iterator
+  UBstTree< Key, Value, Compare >::crend() const noexcept
+  {
+    return const_reverse_iterator(cbegin());
   }
 
   template < typename Key, typename Value, typename Compare >
   typename UBstTree< Key, Value, Compare >::const_iterator
   UBstTree< Key, Value, Compare >::find(const Key& key) const noexcept
   {
-    Node< Key, Value >* node = findNode(root_, key);
-    return const_iterator(node);
+    const Node< Key, Value >* node = findNode(root_, key);
+    return const_iterator(node, this);
   }
 
   template < typename Key, typename Value, typename Compare >
@@ -287,6 +312,70 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
+  Node< Key, Value >* UBstTree< Key, Value, Compare >::findNode(Node< Key, Value >* node, const Key& key)
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    if (comp_(key, node->data.first))
+    {
+      return findNode(node->left, key);
+    }
+    else if (comp_(node->data.first, key))
+    {
+      return findNode(node->right, key);
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  const Node< Key, Value >* UBstTree< Key, Value, Compare >::findNode(const Node< Key, Value >* node, const Key& key) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    if (comp_(key, node->data.first))
+    {
+      return findNode(node->left, key);
+    }
+    else if (comp_(node->data.first, key))
+    {
+      return findNode(node->right, key);
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  const Node< Key, Value >* UBstTree< Key, Value, Compare >::minNode(const Node< Key, Value >* node) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    while (node->left)
+    {
+      node = node->left;
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
+  const Node< Key, Value >* UBstTree< Key, Value, Compare >::maxNode(const Node< Key, Value >* node) const
+  {
+    if (!node)
+    {
+      return nullptr;
+    }
+    while (node->right)
+    {
+      node = node->right;
+    }
+    return node;
+  }
+
+  template < typename Key, typename Value, typename Compare >
   void UBstTree< Key, Value, Compare >::clearNode(Node< Key, Value >* node)
   {
     if (!node)
@@ -304,9 +393,9 @@ namespace shramko
   {
     if (!node)
     {
-      ++size;
       Node< Key, Value >* newNode = new Node< Key, Value >(key, value);
       newNode->parent = parent;
+      ++size;
       return newNode;
     }
     if (comp_(key, node->data.first))
@@ -325,40 +414,9 @@ namespace shramko
   }
 
   template < typename Key, typename Value, typename Compare >
-  Node< Key, Value >* UBstTree< Key, Value, Compare >::findNode(Node< Key, Value >* node, const Key& key) const
-  {
-    if (!node)
-    {
-      return nullptr;
-    }
-    if (comp_(key, node->data.first))
-    {
-      return findNode(node->left, key);
-    }
-    else if (comp_(node->data.first, key))
-    {
-      return findNode(node->right, key);
-    }
-    return node;
-  }
-
-  template < typename Key, typename Value, typename Compare >
-  Node< Key, Value >* UBstTree< Key, Value, Compare >::minNode(Node< Key, Value >* node) const
-  {
-    if (!node)
-    {
-      return nullptr;
-    }
-    while (node->left)
-    {
-      node = node->left;
-    }
-    return node;
-  }
-
-  template < typename Key, typename Value, typename Compare >
   void UBstTree< Key, Value, Compare >::copyTree(Node< Key, Value >*& node,
-    Node< Key, Value >* otherNode, Node< Key, Value >* parent)
+    Node< Key, Value >* otherNode,
+    Node< Key, Value >* parent)
   {
     if (!otherNode)
     {
@@ -367,8 +425,30 @@ namespace shramko
     }
     node = new Node< Key, Value >(otherNode->data.first, otherNode->data.second);
     node->parent = parent;
-    copyTree(node->left, otherNode->left, node);
-    copyTree(node->right, otherNode->right, node);
+    ++size_;
+    try
+    {
+      copyTree(node->left, otherNode->left, node);
+    }
+    catch (std::bad_alloc&)
+    {
+      delete node;
+      node = nullptr;
+      --size_;
+      throw;
+    }
+    try
+    {
+      copyTree(node->right, otherNode->right, node);
+    }
+    catch (std::bad_alloc&)
+    {
+      clearNode(node->left);
+      delete node;
+      node = nullptr;
+      --size_;
+      throw;
+    }
   }
 }
 

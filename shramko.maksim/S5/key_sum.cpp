@@ -2,19 +2,22 @@
 #include <limits>
 #include <stdexcept>
 
-void shramko::KeySum::operator()(const std::pair< const int, std::string >& value)
+namespace shramko
 {
-  bool overflow = (value.first > 0 && result > std::numeric_limits< int >::max() - value.first);
-  bool underflow = (value.first < 0 && result < std::numeric_limits< int >::min() - value.first);
-  if (overflow || underflow)
+  void KeySum::operator()(const std::pair<const int, std::string>& value)
   {
-    throw std::overflow_error("overflow");
-  }
+    bool overflow = (value.first > 0 && result > std::numeric_limits< int >::max() - value.first);
+    bool underflow = (value.first < 0 && result < std::numeric_limits< int >::min() - value.first);
+    if (overflow || underflow)
+    {
+      throw std::overflow_error("overflow");
+    }
 
-  result += value.first;
-  if (!elems.empty())
-  {
-    elems += " ";
+    result += value.first;
+    if (!elems.empty())
+    {
+      elems += " ";
+    }
+    elems += value.second;
   }
-  elems += value.second;
 }

@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/tools/output_test_stream.hpp>
-#include <UBST.hpp>
+#include <UBST/UBST.hpp>
 
 using namespace shramko;
 
@@ -26,16 +26,7 @@ BOOST_AUTO_TEST_CASE(InsertAndFindTest)
   BOOST_TEST(tree.at(5) == "five");
   BOOST_TEST(tree.at(15) == "fifteen");
 
-  bool caught = false;
-  try
-  {
-    tree.at(20);
-  }
-  catch (const std::out_of_range&)
-  {
-    caught = true;
-  }
-  BOOST_TEST(caught);
+  BOOST_CHECK_THROW(tree.at(20), std::out_of_range);
 
   auto it = tree.find(5);
   BOOST_TEST(it != tree.cend());
