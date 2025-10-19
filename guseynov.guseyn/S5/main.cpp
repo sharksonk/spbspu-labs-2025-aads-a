@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
     std::cout << "<EMPTY>\n";
     return 0;
   }
-  guseynov::CommandTree commands;
   guseynov::KeySummer summer;
+  guseynov::CommandTree commands;
   guseynov::getCommands(commands, tree, summer);
   try
   {
