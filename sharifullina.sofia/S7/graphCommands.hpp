@@ -8,7 +8,7 @@
 namespace sharifullina
 {
   using map = std::map< std::string, sharifullina::Graph >;
-  
+
   void getGraphs(std::ostream & out, const map & graphs);
   void getVertexes(std::istream & in, std::ostream & out, const map & graphs);
   void getOutbound(std::istream & in, std::ostream & out, const map & graphs);

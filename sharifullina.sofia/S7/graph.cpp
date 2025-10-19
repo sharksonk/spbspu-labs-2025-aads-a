@@ -24,7 +24,7 @@ void sharifullina::Graph::extract(const Graph & graph, const std::set< std::stri
   {
     addVertex(*it);
   }
-  
+
   auto it = graph.edges.begin();
   auto endIt = graph.edges.end();
   while (it != endIt)
@@ -77,7 +77,7 @@ bool sharifullina::Graph::hasEdge(const std::string & v1, const std::string & v2
   {
     return false;
   }
-  
+
   for (int existWeight: it->second)
   {
     if (existWeight == weight)
@@ -139,7 +139,7 @@ std::vector< std::string > sharifullina::Graph::getVertexes() const
 std::vector< std::pair< std::string, std::vector< int > > > sharifullina::Graph::getOutbound(const std::string & vertex) const
 {
   std::vector< std::pair< std::string, std::vector< int > > > result;
-  
+
   auto it = edges.begin();
   auto endIt = edges.end();
   while (it != endIt)
@@ -150,7 +150,7 @@ std::vector< std::pair< std::string, std::vector< int > > > sharifullina::Graph:
     }
     ++it;
   }
-  
+
   bubbleSort(result);
   return result;
 }
@@ -158,7 +158,7 @@ std::vector< std::pair< std::string, std::vector< int > > > sharifullina::Graph:
 std::vector< std::pair< std::string, std::vector< int > > > sharifullina::Graph::getInbound(const std::string & vertex) const
 {
   std::vector< std::pair< std::string, std::vector< int > > > result;
-  
+
   auto it = edges.begin();
   auto endIt = edges.end();
   while (it != endIt)
@@ -169,7 +169,7 @@ std::vector< std::pair< std::string, std::vector< int > > > sharifullina::Graph:
     }
     ++it;
   }
-  
+
   bubbleSort(result);
   return result;
 }
