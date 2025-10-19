@@ -10,45 +10,36 @@ int main()
   using namespace kushekbaev;
   using dictionary_system = HashTable< std::string, HashTable< std::string, Vector< std::string > > >;
   dictionary_system curr_ds;
-  Tree< std::string, std::function< void() > > commands;
-  commands["insert"] = std::bind(insert, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["insert_without_translation"] = std::bind(insert_without_translation,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["print"] = std::bind(print, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["remove"] = std::bind(kushekbaev::remove, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["save"] = std::bind(save, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["import_dictionary"] = std::bind(import_dictionary,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["search"] = std::bind(search, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["clear_dictionary"] = std::bind(clear_dictionary,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["reverse_search"] = std::bind(reverse_search, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["remove_translation"] = std::bind(remove_translation,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["remove_translation_at_all"] = std::bind(remove_translation_at_all,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["delete_all_translations"] = std::bind(delete_all_translations,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["prefix_search"] = std::bind(prefix_search, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["no_prefix_search"] = std::bind(no_prefix_search,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["suffix_search"] = std::bind(suffix_search, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["no_suffix_search"] = std::bind(no_suffix_search,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["merge"] = std::bind(merge, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["split"] = std::bind(split, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["find_words_without_translation"] = std::bind(find_words_without_translations,
-    std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["complement"] = std::bind(complement, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["intersect"] = std::bind(intersect, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
-  commands["unification"] = std::bind(unification, std::ref(std::cout), std::ref(std::cin), std::ref(curr_ds));
+  Tree< std::string, std::function< void(std::ostream&, std::istream&, dictionary_system&) > > commands;
+  commands["insert"] = insert;
+  commands["insert_without_translation"] = insert_without_translation;
+  commands["print"] = print;
+  commands["remove"] = kushekbaev::remove;
+  commands["save"] = save;
+  commands["import_dictionary"] = import_dictionary;
+  commands["search"] = search;
+  commands["clear_dictionary"] = clear_dictionary;
+  commands["reverse_search"] = reverse_search;
+  commands["remove_translation"] = remove_translation;
+  commands["remove_translation_at_all"] = remove_translation_at_all;
+  commands["delete_all_translations"] = delete_all_translations;
+  commands["prefix_search"] = prefix_search;
+  commands["no_prefix_search"] = no_prefix_search;
+  commands["suffix_search"] = suffix_search;
+  commands["no_suffix_search"] = no_suffix_search;
+  commands["merge"] = merge;
+  commands["split"] = split;
+  commands["find_words_without_translation"] = find_words_without_translations;
+  commands["complement"] = complement;
+  commands["intersect"] = intersect;
+  commands["unification"] = unification;
 
   std::string command;
   while (std::cin >> command)
   {
     try
     {
-      commands.at(command)();
+      commands.at(command)(std::cout, std::cin, curr_ds);
     }
     catch (const std::exception& e)
     {

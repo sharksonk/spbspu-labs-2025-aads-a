@@ -232,6 +232,7 @@ void kushekbaev::search(std::ostream& out, std::istream& in, dictionary_system& 
   {
     out << " " << *translation_it;
   }
+  out << "\n";
 }
 
 void kushekbaev::clear_dictionary(std::ostream& out, std::istream& in, dictionary_system& current_dictionary_system)
@@ -487,7 +488,7 @@ void kushekbaev::no_suffix_search(std::ostream& out, std::istream& in, dictionar
     throw std::out_of_range("<DICTIONARY NOT FOUND>");
   }
   bool found = false;
-  out << "Words with bo suffix '" << suffix << "':\n";
+  out << "Words without suffix '" << suffix << "':\n";
   for (const auto& word_pair: dict_it->second)
   {
     const std::string& word = word_pair.first;
@@ -614,31 +615,31 @@ void kushekbaev::find_words_without_translations(std::ostream& out, std::istream
 
 void kushekbaev::complement(std::ostream& out, std::istream& in, dictionary_system& current_dictionary_system)
 {
-    std::string new_name, dict1_name, dict2_name;
-    in >> new_name >> dict1_name >> dict2_name;
-    auto dict1_it = current_dictionary_system.find(dict1_name);
-    auto dict2_it = current_dictionary_system.find(dict2_name);
-    if (dict1_it == current_dictionary_system.end() || dict2_it == current_dictionary_system.end())
+  std::string new_name, dict1_name, dict2_name;
+  in >> new_name >> dict1_name >> dict2_name;
+  auto dict1_it = current_dictionary_system.find(dict1_name);
+  auto dict2_it = current_dictionary_system.find(dict2_name);
+  if (dict1_it == current_dictionary_system.end() || dict2_it == current_dictionary_system.end())
+  {
+    throw std::out_of_range("<DICTIONARY NOT FOUND>");
+  }
+  if (dict1_name == dict2_name)
+  {
+    current_dictionary_system[new_name] = {};
+    out << "Created empty dictionary (same dictionaries complemented)\n";
+    return;
+  }
+  auto& new_dict = current_dictionary_system[new_name] = {};
+  const auto& dict1 = dict1_it->second;
+  const auto& dict2 = dict2_it->second;
+  for (const auto& word_entry: dict1)
+  {
+    if (dict2.find(word_entry.first) == dict2.cend())
     {
-      throw std::out_of_range("<DICTIONARY NOT FOUND>");
+      new_dict.insert(word_entry);
     }
-    if (dict1_name == dict2_name)
-    {
-      current_dictionary_system[new_name] = {};
-      out << "Created empty dictionary (same dictionaries complemented)\n";
-      return;
-    }
-    auto& new_dict = current_dictionary_system[new_name] = {};
-    const auto& dict1 = dict1_it->second;
-    const auto& dict2 = dict2_it->second;
-    for (const auto& word_entry: dict1)
-    {
-      if (dict2.find(word_entry.first) == dict2.cend())
-      {
-        new_dict.insert(word_entry);
-      }
-    }
-    out << "Complement dictionary created successfully\n";
+  }
+  out << "Complement dictionary created successfully\n";
 }
 
 void kushekbaev::intersect(std::ostream& out, std::istream& in, dictionary_system& current_dictionary_system)
