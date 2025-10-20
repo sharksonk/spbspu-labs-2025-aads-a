@@ -87,36 +87,19 @@ bool sharifullina::Graph::hasEdge(const std::string & v1, const std::string & v2
 void sharifullina::Graph::addEdge(const std::string & v1, const std::string & v2, int weight)
 {
   auto edgeKey = std::make_pair(v1, v2);
-  auto it = edges.find(edgeKey);
-
-  if (it != edges.end())
+  auto result = edges.insert(edgeKey, std::vector< int >());
+  bool weightExists = false;
+  for (size_t i = 0; i < result.first->second.size(); ++i)
   {
-    bool weightExists = false;
-    const auto& weights = it->second;
-
-    auto weightIt = weights.begin();
-    while (weightIt != weights.end())
+    if (result.first->second[i] == weight)
     {
-      if (*weightIt == weight)
-      {
-        weightExists = true;
-        break;
-      }
-      ++weightIt;
-    }
-    if (!weightExists)
-    {
-      std::vector< int > newWeights = weights;
-      newWeights.push_back(weight);
-
-      edges.erase(it);
-      edges.insert(edgeKey, newWeights);
+      weightExists = true;
+      break;
     }
   }
-  else
+  if (!weightExists)
   {
-    std::vector< int > data = {weight};
-    edges.insert(edgeKey, data);
+    result.first->second.push_back(weight);
   }
   vertexes.insert(v1);
   vertexes.insert(v2);
