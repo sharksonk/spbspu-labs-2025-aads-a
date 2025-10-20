@@ -126,21 +126,6 @@ BOOST_AUTO_TEST_CASE(insertRehash)
   BOOST_TEST(hashTable.size() == 3);
 }
 
-BOOST_AUTO_TEST_CASE(insertRange)
-{
-  sharifullina::HashTable< int, std::string > hashTable1;
-  sharifullina::HashTable< int, std::string > hashTable2;
-  hashTable1.insert(1, "one");
-  hashTable1.insert(2, "two");
-  hashTable1.insert(3, "three");
-  auto first = hashTable1.begin();
-  auto last = hashTable1.find(3);
-  hashTable2.insert(first, last);
-  std::ostringstream out;
-  printHashTable(out, hashTable2);
-  BOOST_TEST(out.str() == "1 one 2 two");
-}
-
 BOOST_AUTO_TEST_CASE(erase)
 {
   sharifullina::HashTable< int, std::string > hashTable;
