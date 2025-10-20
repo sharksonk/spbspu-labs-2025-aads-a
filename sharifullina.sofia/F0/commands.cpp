@@ -50,7 +50,7 @@ namespace
   struct WordEntry
   {
     const std::pair< const std::string, sharifullina::AVLtree< std::string, bool > > & data;
-    WordEntry(const std::pair< const std::string, sharifullina::HashTable< std::string, int > > & pair):
+    WordEntry(const std::pair< const std::string, sharifullina::AVLtree< std::string, bool > > & pair):
       data(pair)
     {}
   };
@@ -60,7 +60,7 @@ namespace
     out << entry.data.first << ' ';
     for (auto it = entry.data.second.begin(); it != entry.data.second.end(); ++it)
     {
-        out << it->first << ' ';
+      out << it->first << ' ';
     }
     return out;
   }
@@ -117,7 +117,7 @@ namespace
 
     bool operator()(const std::pair< std::string, sharifullina::Dictionary > & pair)
     {
-        return std::find(names.cbegin(), names.cend(), pair.first) != names.cend();
+      return std::find(names.cbegin(), names.cend(), pair.first) != names.cend();
     }
   };
 
@@ -129,7 +129,7 @@ namespace
 
     void push_back(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & pair)
     {
-        output[pair.first].insert(pair.second.cbegin(), pair.second.cend());
+      output[pair.first].insert(pair.second.cbegin(), pair.second.cend());
     }
   };
 
@@ -141,8 +141,8 @@ namespace
 
     void push_back(const std::pair< std::string, sharifullina::Dictionary > & pair)
     {
-        MergePusher pusher{output};
-        std::copy(pair.second.cbegin(), pair.second.cend(), std::back_inserter(pusher));
+      MergePusher pusher{output};
+      std::copy(pair.second.cbegin(), pair.second.cend(), std::back_inserter(pusher));
     }
   };
 
@@ -159,7 +159,7 @@ namespace
     const sharifullina::Dictionary & discard;
     bool operator()(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
     {
-        return discard.find(rhs.first) == discard.cend();
+      return discard.find(rhs.first) == discard.cend();
     }
   };
 
@@ -284,6 +284,13 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("no translations provided");
   }
+  for (auto it = translations.begin(); it != translations.end(); ++it)
+  {
+    if (dict.find(it->first) != dict.end())
+    {
+      throw std::runtime_error("duplicate translation detected");
+    }
+  }
   dict[word] = translations;
 }
 
@@ -302,7 +309,15 @@ void sharifullina::addTranslation(std::istream & in, DictCollection & dicts)
   }
   auto & dict = dicts[dictName];
   auto wordIt = dict.find(word);
-  wordIt->second.insert(translation);
+  auto & translations = wordIt->second;
+  for (auto it = translations.begin(); it != translations.end(); ++it)
+  {
+    if (it->first == translation)
+    {
+      throw std::runtime_error("duplicate translation detected");
+    }
+  }
+  translations.insert(translation);
 }
 
 void sharifullina::removeTranslation(std::istream & in, DictCollection & dicts)
