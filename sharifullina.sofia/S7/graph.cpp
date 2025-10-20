@@ -43,17 +43,13 @@ void sharifullina::Graph::extract(const Graph & graph, const std::set< std::stri
 
 void sharifullina::Graph::merge(const Graph & graph)
 {
-  auto it = graph.edges.begin();
-  auto endIt = graph.edges.end();
-  while (it != endIt)
+  for (auto it = graph.edges.cbegin(); it != graph.edges.cend(); it++)
   {
     for (auto itWeight = it->second.cbegin(); itWeight != it->second.cend(); ++itWeight)
     {
       addEdge(it->first.first, it->first.second, *itWeight);
     }
-    ++it;
   }
-
   for (auto it = graph.vertexes.cbegin(); it != graph.vertexes.cend(); it++)
   {
     addVertex(*it);
