@@ -33,7 +33,6 @@ namespace sharifullina
 {
   struct Graph
   {
-    using graph_t = std::pair< std::string, std::string >;
     void addEdge(const std::string & v1, const std::string & v2, int weight);
     void addVertex(const std::string & v);
     void deleteEdge(const std::string & v1, const std::string & v2, int weight);
