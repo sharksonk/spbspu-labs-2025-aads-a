@@ -3,14 +3,16 @@
 
 #include <iostream>
 #include <string>
-#include <unordered_map>
-#include <set>
-#include <functional>
+
+#include <hash_table/hashTable.hpp>
+#include <avl_tree/AVLtree.hpp>
+#include <list/list.hpp>
 
 namespace sharifullina
 {
-  using Dictionary = std::unordered_map< std::string, std::set< std::string > >;
-  using DictCollection = std::unordered_map< std::string, Dictionary >;
+  using TranslationSet = AVLtree< std::string, bool >;
+  using Dictionary = HashTable< std::string, TranslationSet >;
+  using DictCollection = HashTable< std::string, Dictionary >;
 
   void createDict(std::istream & in, DictCollection & dicts);
   void deleteDict(std::istream & in, DictCollection & dicts);
