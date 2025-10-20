@@ -27,7 +27,12 @@ namespace sharifullina
     using iterator = HashConstIterator< Key, T, HS1, HS2, EQ >;
 
     HashTable();
+    HashTable(const HashTable & rhs);
+    HashTable(HashTable && rhs) noexcept;
     ~HashTable();
+
+    HashTable & operator=(const HashTable & rhs);
+    HashTable & operator=(HashTable && rhs) noexcept;
 
     iterator begin() const noexcept;
     iterator end() const noexcept;
@@ -69,6 +74,59 @@ namespace sharifullina
   HashTable< Key, T, HS1, HS2, EQ >::~HashTable()
   {
     delete[] slots_;
+  }
+
+  template< class Key, class T, class HS1, class HS2, class EQ >
+  HashTable< Key, T, HS1, HS2, EQ >::HashTable(const HashTable & rhs):
+    slots_(new HashNode< Key, T >[rhs.capacity_]),
+    capacity_(rhs.capacity_),
+    size_(rhs.size_)
+  {
+    for (size_t i = 0; i < capacity_; ++i)
+    {
+      if (rhs.slots_[i].occupied && !rhs.slots_[i].deleted)
+      {
+        slots_[i] = rhs.slots_[i];
+      }
+    }
+  }
+
+  template< class Key, class T, class HS1, class HS2, class EQ >
+  HashTable< Key, T, HS1, HS2, EQ >::HashTable(HashTable && rhs) noexcept:
+    slots_(rhs.slots_),
+    capacity_(rhs.capacity_),
+    size_(rhs.size_)
+  {
+    rhs.slots_ = nullptr;
+    rhs.capacity_ = 0;
+    rhs.size_ = 0;
+  }
+
+  template< class Key, class T, class HS1, class HS2, class EQ >
+  HashTable< Key, T, HS1, HS2, EQ > & HashTable< Key, T, HS1, HS2, EQ >::operator=(const HashTable & rhs)
+  {
+    if (this != std::addressof(rhs))
+    {
+      HashTable tmp(rhs);
+      swap(tmp);
+    }
+    return *this;
+  }
+
+  template< class Key, class T, class HS1, class HS2, class EQ >
+  HashTable< Key, T, HS1, HS2, EQ > & HashTable< Key, T, HS1, HS2, EQ >::operator=(HashTable && rhs) noexcept
+  {
+    if (this != std::addressof(rhs))
+    {
+      delete[] slots_;
+      slots_ = rhs.slots_;
+      capacity_ = rhs.capacity_;
+      size_ = rhs.size_;
+      rhs.slots_ = nullptr;
+      rhs.capacity_ = 0;
+      rhs.size_ = 0;
+    }
+    return *this;
   }
 
   template< class Key, class T, class HS1, class HS2, class EQ >
