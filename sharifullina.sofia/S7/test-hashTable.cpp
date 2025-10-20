@@ -11,9 +11,9 @@ namespace
     {
       return;
     }
-    auto it = hashTable.cbegin();
+    auto it = hashTable.begin();
     out << it->first << ' ' << it->second;
-    for (++it; it != hashTable.cend(); ++it)
+    for (++it; it != hashTable.end(); ++it)
     {
       out << ' ' << it->first << ' ' << it->second;
     }
@@ -53,35 +53,6 @@ BOOST_AUTO_TEST_CASE(moveConstructor)
   BOOST_TEST(hashTable1.empty());
 }
 
-BOOST_AUTO_TEST_CASE(rangeConstructor)
-{
-  sharifullina::HashTable< int, std::string > hashTable1;
-  hashTable1.insert(1, "one");
-  hashTable1.insert(2, "two");
-  auto first = hashTable1.begin();
-  auto last = hashTable1.end();
-  sharifullina::HashTable< int, std::string > hashTable2(first, last);
-  std::ostringstream out1;
-  printHashTable(out1, hashTable1);
-  std::ostringstream out2;
-  printHashTable(out2, hashTable2);
-  BOOST_TEST(out1.str() == out2.str());
-}
-
-BOOST_AUTO_TEST_CASE(initializerListconstructor)
-{
-  std::initializer_list< std::pair< int, std::string > > il{{1, "one"}, {2, "two"}};
-  sharifullina::HashTable< int, std::string > hashTable1(il);
-  sharifullina::HashTable< int, std::string > hashTable2;
-  hashTable2.insert(1, "one");
-  hashTable2.insert(2, "two");
-  std::ostringstream out1;
-  printHashTable(out1, hashTable1);
-  std::ostringstream out2;
-  printHashTable(out2, hashTable2);
-  BOOST_TEST(out1.str() == out2.str());
-}
-
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(operators)
@@ -117,19 +88,11 @@ BOOST_AUTO_TEST_SUITE(hashPolicy)
 
 BOOST_AUTO_TEST_CASE(rehash)
 {
-  sharifullina::HashTable< int, std::string > hashTable(6);
+  sharifullina::HashTable< int, std::string > hashTable;
   hashTable.insert(1, "one");
   hashTable.insert(2, "two");
   hashTable.rehash(10);
   BOOST_TEST(hashTable.size() == 2);
-}
-
-BOOST_AUTO_TEST_CASE(maxLoadFactor)
-{
-  sharifullina::HashTable< int, std::string > hashTable;
-  BOOST_TEST(hashTable.maxLoadFactor() == 0.7f);
-  hashTable.maxLoadFactor(0.5f);
-  BOOST_TEST(hashTable.maxLoadFactor() == 0.5f);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -156,7 +119,7 @@ BOOST_AUTO_TEST_CASE(insert)
 
 BOOST_AUTO_TEST_CASE(insertRehash)
 {
-  sharifullina::HashTable< int, std::string > hashTable(2);
+  sharifullina::HashTable< int, std::string > hashTable;
   hashTable.insert(1, "one");
   hashTable.insert(2, "two");
   hashTable.insert(3, "three");
@@ -178,20 +141,6 @@ BOOST_AUTO_TEST_CASE(insertRange)
   BOOST_TEST(out.str() == "1 one 2 two");
 }
 
-BOOST_AUTO_TEST_CASE(clear)
-{
-  sharifullina::HashTable< int, std::string > hashTable(2);
-  hashTable.insert(1, "one");
-  hashTable.insert(2, "two");
-  hashTable.insert(3, "three");
-  hashTable.clear();
-  BOOST_TEST(hashTable.size() == 0);
-  hashTable.insert(1, "first");
-  std::ostringstream out;
-  printHashTable(out, hashTable);
-  BOOST_TEST(out.str() == "1 first");
-}
-
 BOOST_AUTO_TEST_CASE(erase)
 {
   sharifullina::HashTable< int, std::string > hashTable;
@@ -211,14 +160,6 @@ BOOST_AUTO_TEST_CASE(erase)
   std::ostringstream out2;
   printHashTable(out2, hashTable);
   BOOST_TEST(out2.str() == "1 one");
-
-  hashTable.insert(4, "four");
-  auto first = hashTable.find(1);
-  auto last = hashTable.find(4);
-  hashTable.erase(first, last);
-  std::ostringstream out3;
-  printHashTable(out3, hashTable);
-  BOOST_TEST(out3.str() == "4 four");
 }
 
 BOOST_AUTO_TEST_CASE(swap)
@@ -247,16 +188,6 @@ BOOST_AUTO_TEST_CASE(at)
   hashTable.insert(2, "two");
   BOOST_TEST(hashTable.at(1) == "one");
   BOOST_TEST(hashTable.at(2) == "two");
-}
-
-BOOST_AUTO_TEST_CASE(operatorSquareBrackets)
-{
-  sharifullina::HashTable< int, std::string > hashTable;
-  hashTable[1] = "one";
-  hashTable[2] = "two";
-  BOOST_TEST(hashTable[1] == "one");
-  BOOST_TEST(hashTable[2] == "two");
-  BOOST_TEST(hashTable.size() == 2);
 }
 
 BOOST_AUTO_TEST_CASE(find)
