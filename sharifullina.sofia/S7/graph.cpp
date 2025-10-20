@@ -86,8 +86,12 @@ bool sharifullina::Graph::hasEdge(const std::string & v1, const std::string & v2
 
 void sharifullina::Graph::addEdge(const std::string & v1, const std::string & v2, int weight)
 {
-  std::vector< int > data = {weight};
-  edges.insert({v1, v2}, data);
+  auto result = edges.insert({v1, v2}, std::vector< int >());
+  auto & weights = result.first->second;
+  if (std::find(weights.begin(), weights.end(), weight) == weights.end())
+  {
+    weights.push_back(weight);
+  }
   vertexes.insert(v1);
   vertexes.insert(v2);
 }
@@ -99,7 +103,6 @@ void sharifullina::Graph::deleteEdge(const std::string & v1, const std::string &
   {
     throw std::logic_error("ERROR: there is no such edge");
   }
-
   auto & weights = edges.at(it->first);
   auto itWeight = weights.begin();
   bool deleted = false;
