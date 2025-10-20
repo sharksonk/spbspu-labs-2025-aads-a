@@ -94,7 +94,7 @@ void sharifullina::Graph::addEdge(const std::string & v1, const std::string & v2
   //std::vector< int > data = {weight};
   //edges.insert({v1, v2}, data);
   //vertexes.insert(v1);
-  //vertexes.insert(v2); 
+  //vertexes.insert(v2);
 }
 
 void sharifullina::Graph::deleteEdge(const std::string & v1, const std::string & v2, int weight)
