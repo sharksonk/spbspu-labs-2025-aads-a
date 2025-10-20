@@ -47,6 +47,8 @@ namespace sharifullina
     iterator erase(iterator pos);
     size_t erase(const Key & key);
 
+    void swap(HashTable & rhs) noexcept;
+
     iterator find(const Key & key) const noexcept;
 
     float loadFactor() const noexcept;
@@ -133,6 +135,14 @@ namespace sharifullina
   HashConstIterator< Key, T, HS1, HS2, EQ > HashTable< Key, T, HS1, HS2, EQ >::begin() const noexcept
   {
     return iterator(slots_, capacity_, 0);
+  }
+
+  template< class Key, class T, class HS1, class HS2, class EQ >
+  void HashTable< Key, T, HS1, HS2, EQ >::swap(HashTable & rhs) noexcept
+  {
+    std::swap(slots_, rhs.slots_);
+    std::swap(capacity_, rhs.capacity_);
+    std::swap(size_, rhs.size_);
   }
 
   template< class Key, class T, class HS1, class HS2, class EQ >
