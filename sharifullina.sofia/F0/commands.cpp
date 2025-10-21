@@ -139,7 +139,7 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   if (translations.empty())
   {
     throw std::runtime_error("no translations provided");
-  } 
+  }
   dict[word] = translations;
 }
 
@@ -337,7 +337,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
   if (count < 1)
   {
     throw std::runtime_error("invalid count");
-  } 
+  }
   if (!dictExists(dictName, dicts))
   {
     throw std::runtime_error("dictionary or word(s) not found");
@@ -569,7 +569,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
           if (existing.find(t->first) != existing.end())
           {
             existing.erase(t->first);
-          }    
+          }
           else
           {
             existing.insert(t->first);
