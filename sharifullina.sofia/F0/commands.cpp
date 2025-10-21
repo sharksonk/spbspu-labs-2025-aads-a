@@ -71,7 +71,7 @@ namespace
     }
     return dict;
   }
-
+}
 void sharifullina::createDict(std::istream & in, DictCollection & dicts)
 {
   std::string name;
@@ -286,7 +286,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
     {
       throw std::runtime_error("invalid count");
     }
-    dictNames.push_back(name);
+    dictNames.pushBack(name);
   }
   for (size_t i = 0; i < dictNames.size(); ++i)
   {
@@ -350,7 +350,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
     {
       throw std::runtime_error("invalid count");
     }
-    words.push_back(word);
+    words.pushBack(word);
   }
   const Dictionary & dict = dicts.at(dictName);
   for (auto it = words.begin(); it != words.end(); ++it)
@@ -502,7 +502,7 @@ void sharifullina::subtractDicts(std::istream & in, DictCollection & dicts)
     {
       throw std::runtime_error("invalid count");
     }
-    dictNames.push_back(name);
+    dictNames.pushBack(name);
     if (!dictExists(name, dicts))
     {
       throw std::runtime_error("dictionary not found");
@@ -541,7 +541,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
     {
       throw std::runtime_error("invalid count");
     }
-    dictNames.push_back(name);
+    dictNames.pushBack(name);
     if (!dictExists(name, dicts))
     {
       throw std::runtime_error("dictionary not found");
