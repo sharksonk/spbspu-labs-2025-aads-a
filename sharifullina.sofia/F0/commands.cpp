@@ -142,7 +142,8 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("no translations provided");
   }
-  dict[word] = translations;
+  auto & temp = dict.at(word);
+  temp = translations;
 }
 
 void sharifullina::addTranslation(std::istream & in, DictCollection & dicts)
