@@ -43,7 +43,7 @@ namespace
     std::string translation;
     while (in >> translation)
     {
-      translations.insert(translation);
+      translations.insert({translation, true});
     }
   }
 

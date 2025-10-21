@@ -11,7 +11,7 @@
 namespace sharifullina
 {
   using TransSet = AVLtree< std::string, bool >;
-  using Dictionary = HashTable< std::string, TranslationSet >;
+  using Dictionary = HashTable< std::string, TransSet >;
   using DictCollection = HashTable< std::string, Dictionary >;
 
   void createDict(std::istream & in, DictCollection & dicts);
