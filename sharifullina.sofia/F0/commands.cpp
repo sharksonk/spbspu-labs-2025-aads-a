@@ -160,7 +160,7 @@ void sharifullina::addTranslation(std::istream & in, DictCollection & dicts)
     throw std::runtime_error("dictionary or word not found");
   }
   auto & temp = dicts.at(dictName).at(word);
-  temp.insert(translation);
+  temp.insert({translation, true});
 }
 
 void sharifullina::removeTranslation(std::istream & in, DictCollection & dicts)
@@ -188,7 +188,8 @@ void sharifullina::removeTranslation(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("dictionary, word or translation not found");
   }
-  translations.erase(transIt->first);
+  auto & temp = dict.at(word);
+  temp.erase(transIt->first);
   if (translations.empty())
   {
     dict.erase(wordIt);
@@ -228,7 +229,7 @@ void sharifullina::findTranslations(std::istream & in, const DictCollection & di
   }
   const auto & translations = dicts.at(dictName).at(word);
   bool first = true;
-  for (auto t = translations.begin(); t != translations.end(); ++t)
+  for (auto t = translations.cbegin(); t != translations.cend(); ++t)
   {
     if (!first) out << ' ';
     out << t->first;
@@ -323,12 +324,12 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
         auto & exist = mergedDict.at(word);
         for (auto t = translations.cbegin(); t != translations.cend(); ++t)
         {
-          exist.insert(t);
+          exist.insert(*t);
         }
       }
     }
   }
-  dicts.insert({newDictName, mergedDict});
+  dicts.insert(newDictName, mergedDict);
 }
 
 void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, std::ostream & out)
@@ -375,7 +376,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
     {
       for (auto t = ts.cbegin(); t != ts.cend(); ++t)
       {
-        commonTranslations.insert(t);
+        commonTranslations.insert(*t);
       }
       first = false;
     }
@@ -386,7 +387,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
       {
         if (commonTranslations.find(t->first) != commonTranslations.end())
         {
-          temp.insert(t);
+          temp.insert(*t);
         }
       }
       commonTranslations = temp;
@@ -403,7 +404,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
   out << '\n';
 }
 
-void sharifullina::saveDict(std::istream & in, const DictCollection & dicts, std::ostream & out)
+void sharifullina::saveDict(std::istream & in, const DictCollection & dicts, std::ostream &)
 {
   std::string dictName;
   std::string filename;
@@ -455,7 +456,7 @@ void sharifullina::loadDict(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("file not found or invalid format");
   }
-  dicts.insert({dictName, newDict});
+  dicts.insert(dictName, newDict);
 }
 
 void sharifullina::statDict(std::istream & in, const DictCollection & dicts, std::ostream & out)
@@ -523,7 +524,7 @@ void sharifullina::subtractDicts(std::istream & in, DictCollection & dicts)
       resultDict.erase(it->first);
     }
   }
-  dicts.insert({newDictName, resultDict});
+  dicts.insert(newDictName, resultDict);
 }
 
 void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
@@ -578,7 +579,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
           }
           else
           {
-            existing.insert(t->first);
+            existing.insert({t->first, true});
           }
         }
       }
