@@ -79,7 +79,8 @@ namespace
     {
       throw std::out_of_range("list is too small");
     }
-    for (auto it = list.cbegin(), size_t k = 0; k != i; ++k, ++it)
+    auto it = list.cbegin();
+    for (size_t k = 0; k != i; ++k, ++it)
     {
       if (i == k)
       {
@@ -87,7 +88,6 @@ namespace
       }
     }
   }
-
 }
 void sharifullina::createDict(std::istream & in, DictCollection & dicts)
 {
