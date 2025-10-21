@@ -87,6 +87,7 @@ namespace
         return *it;
       }
     }
+    throw std::runtime_error("unexpected behaviour");
   }
 }
 void sharifullina::createDict(std::istream & in, DictCollection & dicts)
@@ -324,7 +325,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
   Dictionary mergedDict;
   for (size_t i = 0; i < dictNames.size(); ++i)
   {
-    const Dictionary & current = dicts[findInList(dictNames, i)];
+    const Dictionary & current = dicts.at(findInList(dictNames, i));
     for (auto it = current.begin(); it != current.end(); ++it)
     {
       const std::string & word = it->first;
