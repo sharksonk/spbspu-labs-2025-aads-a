@@ -3,14 +3,15 @@
 #include <numeric>
 #include <iterator>
 #include <iomanip>
+#include <sstream>
 
 namespace
 {
-    bool dictExists(const std::string & name, const sharifullina::DictCollection & dicts)
-    {
+  bool dictExists(const std::string & name, const sharifullina::DictCollection & dicts)
+  {
     for (auto it = dicts.begin(); it != dicts.end(); ++it)
     {
-      if ((*it).first == name)
+      if (it->first == name)
       {
         return true;
       }
@@ -20,70 +21,30 @@ namespace
 
   bool wordExists(const std::string & dictName, const std::string & word, const sharifullina::DictCollection & dicts)
   {
-  for (auto dictIt = dicts.begin(); dictIt != dicts.end(); ++dictIt)
-  {
-    if ((*dictIt).first == dictName)
+    for (auto it = dicts.begin(); it != dicts.end(); ++it)
     {
-      const auto & dictionary = (*dictIt).second;
-      for (auto wordIt = dictionary.begin(); wordIt != dictionary.end(); ++wordIt)
+      if (it->first == dictName)
       {
-        if ((*wordIt).first == word)
+        const auto & dict = it->second;
+        for (auto jt = dict.begin(); jt != dict.end(); ++jt)
         {
-          return true;
+          if (jt->first == word)
+          {
+            return true;
+          }
         }
       }
-      return false;
     }
-  }
-  return false;
-  }
-
-  struct DictExists
-  {
-    const sharifullina::DictCollection & dicts;
-    bool operator()(const std::string & rhs)
-    {
-      return dictExists(rhs, dicts);
-    }
-  };
-
-  struct WordEntry
-  {
-    const std::pair< const std::string, sharifullina::AVLtree< std::string, bool > > & data;
-    WordEntry(const std::pair< const std::string, sharifullina::AVLtree< std::string, bool > > & pair):
-      data(pair)
-    {}
-  };
-
-  std::ostream & operator<<(std::ostream & out, const WordEntry & entry)
-  {
-    out << entry.data.first << ' ';
-    for (auto it = entry.data.second.begin(); it != entry.data.second.end(); ++it)
-    {
-      out << it->first << ' ';
-    }
-    return out;
-  }
-
-  struct DictNameView
-  {
-    const std::pair< const std::string, sharifullina::Dictionary > & data;
-    DictNameView(const std::pair< const std::string, sharifullina::Dictionary > & pair):
-      data(pair)
-    {}
-  };
-
-  std::ostream & operator<<(std::ostream & out, const DictNameView & view)
-  {
-    out << view.data.first;
-    return out;
+    return false;
   }
 
   void readTranslations(std::istream & in, sharifullina::AVLtree< std::string, bool > & translations)
   {
-    std::istream_iterator< std::string > it(in);
-    std::istream_iterator< std::string > end;
-    std::copy(it, end, std::inserter(translations, translations.begin()));
+    std::string translation;
+    while (in >> translation)
+    {
+      translations.insert(translation);
+    }
   }
 
   sharifullina::Dictionary readDictionary(std::istream & in)
@@ -111,117 +72,10 @@ namespace
     return dict;
   }
 
-  struct MergeCondition
-  {
-    const sharifullina::List< std::pair< std::string, int > > & names;
-
-    bool operator()(const std::pair< std::string, sharifullina::Dictionary > & pair)
-    {
-      return std::find(names.cbegin(), names.cend(), pair.first) != names.cend();
-    }
-  };
-
-  struct MergePusher
-  {
-    using value_type = std::pair< std::string, sharifullina::AVLtree< std::string, bool > >;
-
-    sharifullina::Dictionary & output;
-
-    void push_back(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & pair)
-    {
-      output[pair.first].insert(pair.second.cbegin(), pair.second.cend());
-    }
-  };
-
-  struct MergeWrapper
-  {
-    using value_type = std::pair< std::string, sharifullina::Dictionary >;
-
-    sharifullina::Dictionary output;
-
-    void push_back(const std::pair< std::string, sharifullina::Dictionary > & pair)
-    {
-      MergePusher pusher{output};
-      std::copy(pair.second.cbegin(), pair.second.cend(), std::back_inserter(pusher));
-    }
-  };
-
-  struct TranslationCounter
-  {
-    size_t operator()(size_t sum, const std::pair< const std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
-    {
-      return sum + rhs.second.size();
-    }
-  };
-
-  struct SubstractCondition
-  {
-    const sharifullina::Dictionary & discard;
-    bool operator()(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
-    {
-      return discard.find(rhs.first) == discard.cend();
-    }
-  };
-
-  struct WordChecker
-  {
-    const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & src;
-    bool operator()(const std::pair< std::string, sharifullina::Dictionary > & rhs)
-    {
-      return rhs.second.find(src.first) != rhs.second.end();
-    }
-  };
-
-  struct SymDiffCondition
-  {
-    const sharifullina::DictCollection & all;
-    bool operator()(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
-    {
-      return std::count_if(all.cbegin(), all.cend(), WordChecker{rhs}) == 1;
-    }
-  };
-
-  struct WordInside
-  {
-    const sharifullina::List< std::pair< std::string, int > > & src;
-    bool operator()(const std::pair< std::string, std::set< std::string > > & rhs)
-    {
-      return std::find(src.cbegin(), src.cend(), rhs.first) != src.cend();
-    }
-  };
-
-  struct TranslationInside
-  {
-    const std::string & src;
-    bool operator()(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
-    {
-      return std::find(rhs.second.cbegin(), rhs.second.cend(), src) != rhs.second.cend();
-    }
-  };
-
-  struct SetWrapper
-  {
-    using value_type = std::pair< std::string, sharifullina::AVLtree< std::string, bool > >;
-    sharifullina::AVLtree< std::string, bool > output;
-    void push_back(const std::pair< std::string, sharifullina::AVLtree< std::string, bool > > & rhs)
-    {
-      output.insert(rhs.second.cbegin(), rhs.second.cend());
-    }
-  };
-
-  struct CommonCondition
-  {
-    const sharifullina::Dictionary & src;
-    bool operator()(const std::string & rhs)
-    {
-      return std::all_of(src.cbegin(), src.cend(), TranslationInside{rhs});
-    }
-  };
-}
-
 void sharifullina::createDict(std::istream & in, DictCollection & dicts)
 {
   std::string name;
+
   if (!(in >> name))
   {
     throw std::runtime_error("invalid arguments for createdict");
@@ -242,7 +96,6 @@ void sharifullina::deleteDict(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("invalid arguments for deletedict");
   }
-
   auto it = dicts.find(name);
   if (it == dicts.end())
   {
@@ -258,7 +111,10 @@ void sharifullina::listDicts(std::istream &, const DictCollection & dicts, std::
     out << "<EMPTY>\n";
     return;
   }
-  std::copy(dicts.cbegin(), dicts.cend(), std::ostream_iterator< DictNameView >(out, "\n"));
+  for (auto it = dicts.begin(); it != dicts.end(); ++it)
+  {
+    out << it->first << '\n';
+  }
 }
 
 void sharifullina::addWord(std::istream & in, DictCollection & dicts)
@@ -278,19 +134,12 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("word already exists");
   }
-  sharifullina::AVLtree< std::string, bool > translations;
+  sharifullina::AVLtree<std::string, bool> translations;
   readTranslations(in, translations);
   if (translations.empty())
   {
     throw std::runtime_error("no translations provided");
-  }
-  for (auto it = translations.begin(); it != translations.end(); ++it)
-  {
-    if (dict.find(it->first) != dict.end())
-    {
-      throw std::runtime_error("duplicate translation detected");
-    }
-  }
+  } 
   dict[word] = translations;
 }
 
@@ -307,17 +156,7 @@ void sharifullina::addTranslation(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("dictionary or word not found");
   }
-  auto & dict = dicts[dictName];
-  auto wordIt = dict.find(word);
-  auto & translations = wordIt->second;
-  for (auto it = translations.begin(); it != translations.end(); ++it)
-  {
-    if (it->first == translation)
-    {
-      throw std::runtime_error("duplicate translation detected");
-    }
-  }
-  translations.insert(translation);
+  dicts[dictName][word].insert(translation);
 }
 
 void sharifullina::removeTranslation(std::istream & in, DictCollection & dicts)
@@ -383,13 +222,14 @@ void sharifullina::findTranslations(std::istream & in, const DictCollection & di
   {
     throw std::runtime_error("dictionary or word not found");
   }
-  const auto & dict = dicts.at(dictName);
-  auto wordIt = dict.find(word);
-  if (wordIt == dict.end())
+  const auto & translations = dicts[dictName][word];
+  bool first = true;
+  for (auto t = translations.begin(); t != translations.end(); ++t)
   {
-    throw std::runtime_error("dictionary or word not found");
+    if (!first) out << ' ';
+    out << t->first;
+    first = false;
   }
-  std::copy(wordIt->second.cbegin(), wordIt->second.cend(), std::ostream_iterator< std::string >(out, " "));
   out << '\n';
 }
 
@@ -410,7 +250,20 @@ void sharifullina::listWords(std::istream & in, const DictCollection & dicts, st
     out << "<EMPTY>\n";
     return;
   }
-  std::copy(dict.cbegin(), dict.cend(), std::ostream_iterator< WordEntry >(out, "\n"));
+
+  for (auto it = dict.begin(); it != dict.end(); ++it)
+  {
+    out << it->first << ' ';
+    const auto & translations = it->second;
+    bool first = true;
+    for (auto t = translations.begin(); t != translations.end(); ++t)
+    {
+      if (!first) out << ' ';
+      out << t->first;
+      first = false;
+    }
+    out << '\n';
+  }
 }
 
 void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
@@ -425,23 +278,52 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("invalid count");
   }
-  sharifullina::List< std::pair< std::string, int > > dictNames;
-  std::copy(std::istream_iterator< std::string >(in), std::istream_iterator< std::string >(), std::back_inserter(dictNames));
-  if (dictNames.size() != count)
+  sharifullina::List<std::string> dictNames;
+  for (int i = 0; i < count; ++i)
   {
-    throw std::runtime_error("invalid count");
+    std::string name;
+    if (!(in >> name))
+    {
+      throw std::runtime_error("invalid count");
+    }
+    dictNames.push_back(name);
   }
-  if (!std::all_of(dictNames.cbegin(), dictNames.cend(), DictExists{dicts}))
+  for (size_t i = 0; i < dictNames.size(); ++i)
   {
-    throw std::runtime_error("dictionary not found");
+    if (!dictExists(dictNames[i], dicts))
+    {
+      throw std::runtime_error("dictionary not found");
+    }
   }
   if (dictExists(newDictName, dicts))
   {
     throw std::runtime_error("dictionary already exists");
   }
-  MergeWrapper wrapper;
-  std::copy_if(dicts.cbegin(), dicts.cend(), std::back_inserter(wrapper), MergeCondition{dictNames});
-  dicts[newDictName] = wrapper.output;
+
+  Dictionary mergedDict;
+  for (size_t i = 0; i < dictNames.size(); ++i)
+  {
+    const Dictionary & current = dicts[dictNames[i]];
+    for (auto it = current.begin(); it != current.end(); ++it)
+    {
+      const std::string & word = it->first;
+      const auto & translations = it->second;
+
+      if (mergedDict.find(word) == mergedDict.end())
+      {
+        mergedDict[word] = translations;
+      }
+      else
+      {
+        auto & exist = mergedDict[word];
+        for (auto t = translations.begin(); t != translations.end(); ++t)
+        {
+          exist.insert(t->first);
+        }
+      }
+    }
+  }
+  dicts[newDictName] = mergedDict;
 }
 
 void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, std::ostream & out)
@@ -455,35 +337,64 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
   if (count < 1)
   {
     throw std::runtime_error("invalid count");
-  }
+  } 
   if (!dictExists(dictName, dicts))
   {
     throw std::runtime_error("dictionary or word(s) not found");
   }
-  sharifullina::List< std::pair< std::string, int > > words;
-  std::copy(std::istream_iterator< std::string >(in), std::istream_iterator< std::string >(), std::back_inserter(words));
-  if (words.size() != count)
+  sharifullina::List<std::string> words;
+  for (int i = 0; i < count; ++i)
   {
-    throw std::runtime_error("invalid count");
+    std::string word;
+    if (!(in >> word))
+    {
+      throw std::runtime_error("invalid count");
+    }
+    words.push_back(word);
   }
-  const auto & dict = dicts.at(dictName);
-  if (!std::all_of(dict.cbegin(), dict.cend(), WordInside{words}))
+  const Dictionary & dict = dicts.at(dictName);
+  for (auto it = words.begin(); it != words.end(); ++it)
   {
-    throw std::runtime_error("dictionary or word(s) not found");
+    if (dict.find(*it) == dict.end())
+    {
+      throw std::runtime_error("dictionary or word(s) not found");
+    }
   }
-  sharifullina::Dictionary temp;
-  std::copy_if(dict.cbegin(), dict.cend(), std::inserter(temp, temp.end()), WordInside{words});
-  SetWrapper wrapper;
-  std::copy_if(dict.cbegin(), dict.cend(), std::back_inserter(wrapper), WordInside{words});
-  sharifullina::AVLtree< std::string, bool > commonTs;
-  std::copy_if(wrapper.output.cbegin(), wrapper.output.cend(), std::inserter(commonTs, commonTs.end()), CommonCondition{temp});
 
-  if (commonTs.empty())
+  AVLtree< std::string, bool > commonTranslations;
+  bool first = true;
+  for (auto it = words.begin(); it != words.end(); ++it)
   {
-    out << "<EMPTY>\n";
-    return;
+    const TransSet & ts = dict.at(*it);
+    if (first)
+    {
+      for (auto t = ts.begin(); t != ts.end(); ++t)
+      {
+        commonTranslations.insert(t->first);
+      }
+      first = false;
+    }
+    else
+    {
+      AVLtree< std::string, bool > temp;
+      for (auto t = ts.begin(); t != ts.end(); ++t)
+      {
+        if (commonTranslations.find(t->first) != commonTranslations.end())
+        {
+          temp.insert(t->first);
+        }
+      }
+      commonTranslations = temp;
+    }
   }
-  std::copy(commonTs.cbegin(), commonTs.cend(), std::ostream_iterator< std::string >(out, " "));
+  if (commonTranslations.empty())
+  {
+    out << "<EMPTY>\n"; return;
+  }
+  for (auto t = commonTranslations.begin(); t != commonTranslations.end(); ++t)
+  {
+    out << t->first << ' ';
+  }
   out << '\n';
 }
 
@@ -504,8 +415,17 @@ void sharifullina::saveDict(std::istream & in, const DictCollection & dicts, std
   {
     throw std::runtime_error("dictionary not found or file error");
   }
-  const auto & dict = dicts.at(dictName);
-  std::copy(dict.cbegin(), dict.cend(), std::ostream_iterator< WordEntry >(out, "\n"));
+  const Dictionary & dict = dicts.at(dictName);
+  for (auto it = dict.begin(); it != dict.end(); ++it)
+  {
+    file << it->first;
+    const TransSet & ts = it->second;
+    for (auto t = ts.begin(); t != ts.end(); ++t)
+    {
+      file << ' ' << t->first;
+    }
+    file << '\n';
+  }
 }
 
 void sharifullina::loadDict(std::istream & in, DictCollection & dicts)
@@ -544,10 +464,15 @@ void sharifullina::statDict(std::istream & in, const DictCollection & dicts, std
   {
     throw std::runtime_error("dictionary not found");
   }
-  const auto & dict = dicts.at(dictName);
+  const Dictionary & dict = dicts.at(dictName);
   size_t totalWords = dict.size();
-  size_t totalTranslations = std::accumulate(dict.cbegin(), dict.cend(), 0, TranslationCounter{});
+  size_t totalTranslations = 0;
+  for (auto it = dict.begin(); it != dict.end(); ++it)
+  {
+    totalTranslations += it->second.size();
+  }
   double avgTranslations = totalWords > 0 ? static_cast< double >(totalTranslations) / totalWords : 0.0;
+
   out << "Words: " << totalWords << "\n";
   out << "Translations: " << totalTranslations << "\n";
   out << "Average translations per word: " << avgTranslations << "\n";
@@ -565,30 +490,35 @@ void sharifullina::subtractDicts(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("invalid count");
   }
-  sharifullina::List< std::pair< std::string, int > > dictNames;
-  std::copy(std::istream_iterator< std::string >(in), std::istream_iterator< std::string >(), std::back_inserter(dictNames));
-  if (dictNames.size() != count)
-  {
-    throw std::runtime_error("invalid count");
-  }
-  if (!std::all_of(dictNames.cbegin(), dictNames.cend(), DictExists{dicts}))
-  {
-    throw std::runtime_error("dictionary not found");
-  }
   if (dictExists(newDictName, dicts))
   {
     throw std::runtime_error("dictionary already exists");
   }
-  auto target = dicts.find(dictNames[0]);
-
-  MergeWrapper wrapper;
-  std::copy_if(dicts.begin(), target, std::back_inserter(wrapper), MergeCondition{dictNames});
-  std::copy_if(std::next(target), dicts.end(), std::back_inserter(wrapper), MergeCondition{dictNames});
-
-  sharifullina::Dictionary newDict;
-  auto & temp = target->second;
-  std::copy_if(temp.cbegin(), temp.cend(), std::inserter(newDict, newDict.end()), SubstractCondition{wrapper.output});
-  dicts[newDictName] = newDict;
+  sharifullina::List< std::string > dictNames;
+  for (int i = 0; i < count; ++i)
+  {
+    std::string name;
+    if (!(in >> name))
+    {
+      throw std::runtime_error("invalid count");
+    }
+    dictNames.push_back(name);
+    if (!dictExists(name, dicts))
+    {
+      throw std::runtime_error("dictionary not found");
+    }
+  }
+  const Dictionary & baseDict = dicts.at(dictNames[0]);
+  Dictionary resultDict = baseDict;
+  for (size_t i = 1; i < dictNames.size(); ++i)
+  {
+    const Dictionary & other = dicts.at(dictNames[i]);
+    for (auto it = other.begin(); it != other.end(); ++it)
+    {
+      resultDict.erase(it->first);
+    }
+  }
+  dicts[newDictName] = resultDict;
 }
 
 void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
@@ -603,27 +533,52 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("invalid count");
   }
-  sharifullina::List< std::pair< std::string, int > > dictNames;
-  std::copy(std::istream_iterator< std::string >(in), std::istream_iterator< std::string >(), std::back_inserter(dictNames));
-  if (dictNames.size() != count)
+  sharifullina::List< std::string > dictNames;
+  for (int i = 0; i < count; ++i)
   {
-    throw std::runtime_error("invalid count");
-  }
-  if (!std::all_of(dictNames.cbegin(), dictNames.cend(), DictExists{dicts}))
-  {
-    throw std::runtime_error("dictionary not found");
+    std::string name;
+    if (!(in >> name))
+    {
+      throw std::runtime_error("invalid count");
+    }
+    dictNames.push_back(name);
+    if (!dictExists(name, dicts))
+    {
+      throw std::runtime_error("dictionary not found");
+    }
   }
   if (dictExists(newDictName, dicts))
   {
     throw std::runtime_error("dictionary already exists");
   }
-  MergeWrapper wrapper;
-  std::copy_if(dicts.cbegin(), dicts.cend(), std::back_inserter(wrapper), MergeCondition{dictNames});
-
-  sharifullina::Dictionary newDict;
-  auto & temp = wrapper.output;
-  std::copy_if(temp.cbegin(), temp.cend(), std::inserter(newDict, newDict.end()), SymDiffCondition{dicts});
-  dicts[newDictName] = newDict;
+  Dictionary resultDict;
+  for (size_t i = 0; i < dictNames.size(); ++i)
+  {
+    const Dictionary & current = dicts.at(dictNames[i]);
+    for (auto it = current.begin(); it != current.end(); ++it)
+    {
+      if (resultDict.find(it->first) == resultDict.end())
+      {
+        resultDict[it->first] = it->second;
+      }
+      else
+      {
+        auto & existing = resultDict[it->first];
+        for (auto t = it->second.begin(); t != it->second.end(); ++t)
+        {
+          if (existing.find(t->first) != existing.end())
+          {
+            existing.erase(t->first);
+          }    
+          else
+          {
+            existing.insert(t->first);
+          }
+        }
+      }
+    }
+  }
+  dicts[newDictName] = resultDict;
 }
 
 void sharifullina::loadFile(const std::string & filename, DictCollection & dicts)
