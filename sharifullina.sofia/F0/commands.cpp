@@ -66,7 +66,8 @@ namespace
       }
       if (!translations.empty())
       {
-        dict[word] = translations;
+        auto & temp = dict.at(word);
+        temp = translations;
       }
     }
     return dict;
@@ -86,7 +87,8 @@ void sharifullina::createDict(std::istream & in, DictCollection & dicts)
     throw std::runtime_error("dictionary already exists");
   }
 
-  dicts[name] = Dictionary{};
+  auto & temp = dicts.at(name);
+  temp = Dictionary{};
 }
 
 void sharifullina::deleteDict(std::istream & in, DictCollection & dicts)
@@ -129,7 +131,7 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("dictionary not found");
   }
-  auto & dict = dicts[dictName];
+  auto & dict = dicts.at(dictName);
   if (dict.find(word) != dict.end())
   {
     throw std::runtime_error("word already exists");
@@ -172,7 +174,7 @@ void sharifullina::removeTranslation(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("dictionary, word or translation not found");
   }
-  auto & dict = dicts[dictName];
+  auto & dict = dicts.at(dictName);
   auto wordIt = dict.find(word);
   if (wordIt == dict.end())
   {
@@ -203,7 +205,7 @@ void sharifullina::deleteWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("dictionary or word not found");
   }
-  auto & dict = dicts[dictName];
+  auto & dict = dicts.at(dictName);
   if (dict.erase(word) == 0)
   {
     throw std::runtime_error("dictionary or word not found");
@@ -279,7 +281,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
     throw std::runtime_error("invalid count");
   }
   sharifullina::List<std::string> dictNames;
-  for (int i = 0; i < count; ++i)
+  for (size_t i = 0; i < count; ++i)
   {
     std::string name;
     if (!(in >> name))
@@ -315,7 +317,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
       }
       else
       {
-        auto & exist = mergedDict[word];
+        auto & exist = mergedDict.at(word);
         for (auto t = translations.begin(); t != translations.end(); ++t)
         {
           exist.insert(t->first);
@@ -343,7 +345,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
     throw std::runtime_error("dictionary or word(s) not found");
   }
   sharifullina::List<std::string> words;
-  for (int i = 0; i < count; ++i)
+  for (size_t i = 0; i < count; ++i)
   {
     std::string word;
     if (!(in >> word))
@@ -495,7 +497,7 @@ void sharifullina::subtractDicts(std::istream & in, DictCollection & dicts)
     throw std::runtime_error("dictionary already exists");
   }
   sharifullina::List< std::string > dictNames;
-  for (int i = 0; i < count; ++i)
+  for (size_t i = 0; i < count; ++i)
   {
     std::string name;
     if (!(in >> name))
@@ -534,7 +536,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
     throw std::runtime_error("invalid count");
   }
   sharifullina::List< std::string > dictNames;
-  for (int i = 0; i < count; ++i)
+  for (size_t i = 0; i < count; ++i)
   {
     std::string name;
     if (!(in >> name))
@@ -564,7 +566,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
       else
       {
         auto & existing = resultDict[it->first];
-        for (auto t = it->second.begin(); t != it->second.end(); ++t)
+        for (auto t = it->second.cbegin(); t != it->second.cend(); ++t)
         {
           if (existing.find(t->first) != existing.end())
           {
@@ -578,7 +580,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
       }
     }
   }
-  dicts[newDictName] = resultDict;
+  dicts.insert({newDictName, resultDict});
 }
 
 void sharifullina::loadFile(const std::string & filename, DictCollection & dicts)
