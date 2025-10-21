@@ -10,7 +10,7 @@
 
 namespace sharifullina
 {
-  using TranslationSet = AVLtree< std::string, bool >;
+  using TransSet = AVLtree< std::string, bool >;
   using Dictionary = HashTable< std::string, TranslationSet >;
   using DictCollection = HashTable< std::string, Dictionary >;
 
