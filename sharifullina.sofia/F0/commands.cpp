@@ -72,6 +72,22 @@ namespace
     }
     return dict;
   }
+
+  const std::string & findInList(const sharifullina::List< std::string > & list, size_t i)
+  {
+    if (i > list.size())
+    {
+      throw std::out_of_range("list is too small");
+    }
+    for (auto it = list.cbegin(), size_t k = 0; k != i; ++k, ++it)
+    {
+      if (i == k)
+      {
+        return *it;
+      }
+    }
+  }
+
 }
 void sharifullina::createDict(std::istream & in, DictCollection & dicts)
 {
@@ -295,7 +311,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
   }
   for (size_t i = 0; i < dictNames.size(); ++i)
   {
-    if (!dictExists(dictNames[i], dicts))
+    if (!dictExists(findInList(dictNames, i), dicts))
     {
       throw std::runtime_error("dictionary not found");
     }
@@ -308,7 +324,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
   Dictionary mergedDict;
   for (size_t i = 0; i < dictNames.size(); ++i)
   {
-    const Dictionary & current = dicts[dictNames[i]];
+    const Dictionary & current = dicts[findInList(dictNames, i)];
     for (auto it = current.begin(); it != current.end(); ++it)
     {
       const std::string & word = it->first;
@@ -514,11 +530,11 @@ void sharifullina::subtractDicts(std::istream & in, DictCollection & dicts)
       throw std::runtime_error("dictionary not found");
     }
   }
-  const Dictionary & baseDict = dicts.at(dictNames[0]);
+  const Dictionary & baseDict = dicts.at(findInList(dictNames, 0));
   Dictionary resultDict = baseDict;
   for (size_t i = 1; i < dictNames.size(); ++i)
   {
-    const Dictionary & other = dicts.at(dictNames[i]);
+    const Dictionary & other = dicts.at(findInList(dictNames, i));
     for (auto it = other.begin(); it != other.end(); ++it)
     {
       resultDict.erase(it->first);
@@ -560,7 +576,7 @@ void sharifullina::symdiffDicts(std::istream & in, DictCollection & dicts)
   Dictionary resultDict;
   for (size_t i = 0; i < dictNames.size(); ++i)
   {
-    const Dictionary & current = dicts.at(dictNames[i]);
+    const Dictionary & current = dicts.at(findInList(dictNames, i));
     for (auto it = current.begin(); it != current.end(); ++it)
     {
       if (resultDict.find(it->first) == resultDict.end())
