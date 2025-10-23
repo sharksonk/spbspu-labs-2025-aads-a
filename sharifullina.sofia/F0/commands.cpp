@@ -153,7 +153,7 @@ void sharifullina::addWord(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("word already exists");
   }
-  sharifullina::AVLtree<std::string, bool> translations;
+  sharifullina::AVLtree< std::string, bool > translations;
   readTranslations(in, translations);
   if (translations.empty())
   {
@@ -300,7 +300,7 @@ void sharifullina::mergeDicts(std::istream & in, DictCollection & dicts)
   {
     throw std::runtime_error("invalid count");
   }
-  sharifullina::List<std::string> dictNames;
+  sharifullina::List< std::string > dictNames;
   for (size_t i = 0; i < count; ++i)
   {
     std::string name;
@@ -365,7 +365,7 @@ void sharifullina::findCommon(std::istream & in, const DictCollection & dicts, s
   {
     throw std::runtime_error("dictionary or word(s) not found");
   }
-  sharifullina::List<std::string> words;
+  sharifullina::List< std::string > words;
   for (size_t i = 0; i < count; ++i)
   {
     std::string word;
